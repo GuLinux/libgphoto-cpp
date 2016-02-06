@@ -1,6 +1,6 @@
 /*
- * <one line to give the program's name and a brief idea of what it does.>
- * Copyright (C) 2016  <copyright holder> <email>
+ * libgphoto++ - modern c++ wrapper library for gphoto2
+ * Copyright (C) 2016 Marco Gulino <marco AT gulinux.net>
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,8 +14,7 @@
  * 
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- * 
- */
+*/
 
 #include "camerafile.h"
 #include "gphoto_wrapper.h"
