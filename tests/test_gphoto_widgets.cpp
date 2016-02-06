@@ -110,6 +110,7 @@ TEST_F(TestGPhotoWidgets, testSetStringValue) {
   ASSERT_EQ(string{"Foo Bla"}, string{new_value});
 }
 
+
 TEST_F(TestGPhotoWidgets, testGetRangeValue) {
   auto widget = make_shared<Widget>(range_widget, gphoto, LoggerPtr{});
   float value = *widget->get<Widget::RangeValue>();
@@ -188,6 +189,23 @@ TEST_F(TestGPhotoWidgets, testFindChildrenOfChildren) {
   ASSERT_TRUE(static_cast<bool>(section_window_item));
 }
 
+TEST_F(TestGPhotoWidgets, testParent) {
+  auto sub_sub_item = make_shared<Widget>(section_widget_item, gphoto, LoggerPtr{});
+  auto sub_item = make_shared<Widget>(section_widget, gphoto, LoggerPtr{});
+  auto top = make_shared<Widget>(top_window, gphoto, LoggerPtr{});
+  ASSERT_EQ(*sub_item, *sub_sub_item->parent());
+  ASSERT_EQ(*top, *sub_item->parent());
+  ASSERT_FALSE( static_cast<bool>(top->parent()));
+};
+
+TEST_F(TestGPhotoWidgets, testPath) {
+  auto sub_sub_item = make_shared<Widget>(section_widget_item, gphoto, LoggerPtr{});
+  auto sub_item = make_shared<Widget>(section_widget, gphoto, LoggerPtr{});
+  auto top = make_shared<Widget>(top_window, gphoto, LoggerPtr{});
+  ASSERT_EQ("/top_window", top->path());
+  ASSERT_EQ("/top_window/section_window", sub_item->path());
+  ASSERT_EQ("/top_window/section_window/section_window_item", sub_sub_item->path());
+}
 
 chrono::system_clock::time_point TestGPhotoWidgets::time(int year, int month, int day, int hour, int min, int sec) const
 {

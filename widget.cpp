@@ -66,6 +66,17 @@ GPhoto::Widgets Widget::children() const
   return widgets;
 }
 
+Widgets Widget::all_children() const
+{
+  Widgets widgets;
+  for(auto w: children()) {
+    widgets.push_back(w);
+    widgets.merge(w->all_children());
+  };
+  return widgets;
+}
+
+
 WidgetPtr Widget::Private::find_by(function<int(::CameraWidget*&)> run, const string &field_name) const
 {
     CameraWidget *widget;
@@ -134,4 +145,54 @@ void Widget::set_value(const shared_ptr< void >& value)
 }
 
 
+bool Widget::operator!=(const Widget& other) const
+{
+  return ! (other == *this);
+}
 
+bool Widget::operator==(const Widget& other) const
+{
+  return other.id() == id();
+}
+
+
+WidgetPtr Widget::parent() const
+{
+  CameraWidget *parent;
+  try {
+    d->gphoto << GP2_RUN(this, &parent) { return gp_widget_get_parent(d->widget, &parent); };
+    return make_shared<Widget>(parent, d->gphoto, d->log);
+  } catch(GPhoto::Exception &e) {
+    lDebug(d->log) << "Error getting widget " << name() << " parent: " << e.what();
+    return {};
+  }
+}
+
+string Widget::path() const
+{
+  list<string> paths;
+  auto widget = shared_from_this();
+  while(widget) {
+    paths.push_front(widget->name());
+    widget = widget->parent();
+  }
+  stringstream s;
+  for(auto p: paths)
+    s << '/' << p;
+  return s.str();
+}
+
+ostream& operator<<(ostream& o, const Widget& w)
+{
+  static map<Widget::Type, string> types {
+    { Widget::String, "String" },
+    { Widget::Range, "Range" },
+    { Widget::Toggle, "Toggle" },
+    { Widget::Button, "Button" },
+    { Widget::Date, "Date" },
+    { Widget::Window, "Window" },
+    { Widget::Section, "Section" },
+    { Widget::Menu, "Menu" },
+  };
+  return o << w.path() << "{ " << types[w.type()] << ": " << w.name() << "}";
+}

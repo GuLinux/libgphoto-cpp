@@ -54,7 +54,7 @@ namespace GPhoto {
   
   class GPhotoCamera {
   public:
-    GPhotoCamera(Camera *camera, const GPhotoDriverPtr &driver);
+    GPhotoCamera(::Camera *camera, const GPhotoDriverPtr &driver);
     ~GPhotoCamera();
     typedef std::function<int(::GPContext*, ::Camera*)> CameraRun;
     int operator() (std::function< int(::GPContext*, ::Camera*)> run);

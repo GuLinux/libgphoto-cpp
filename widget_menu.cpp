@@ -4,7 +4,7 @@
 using namespace GPhoto;
 using namespace std;
 
-Widget::MenuValue::MenuValue(Widget* widget): Value< string, char* >(widget, [](const string &s) -> char*{ return s.c_str(); })
+Widget::MenuValue::MenuValue(Widget* widget): StringValue(widget)
 {
   int choices = (*widget->d->gphoto)(GP2_RUN(this, &widget) { return gp_widget_count_choices(widget->d->widget); });
   for(int i=0; i<choices; i++) {

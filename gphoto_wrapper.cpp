@@ -88,17 +88,17 @@ int GPhotoDriver::operator()(ContextRun run)
 
 DPTR_CLASS(GPhotoCamera) {
 public:
-  Private(Camera* camera, const GPhotoDriverPtr& driver);
-  Camera* camera;
+  Private(::Camera* camera, const GPhotoDriverPtr& driver);
+  ::Camera* camera;
   GPhotoDriverPtr driver;
 };
 
-GPhotoCamera::Private::Private(Camera* camera, const GPhotoDriverPtr& driver) : camera{camera}, driver{driver}
+GPhotoCamera::Private::Private(::Camera* camera, const GPhotoDriverPtr& driver) : camera{camera}, driver{driver}
 {
 }
 
 
-GPhotoCamera::GPhotoCamera(Camera* camera, const GPhotoDriverPtr& driver) : dptr(camera, driver)
+GPhotoCamera::GPhotoCamera(::Camera* camera, const GPhotoDriverPtr& driver) : dptr(camera, driver)
 {
 }
 

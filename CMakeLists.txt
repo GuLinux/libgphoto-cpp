@@ -16,6 +16,8 @@ PROJECT(libgphoto++ CXX)
 set(libgphoto++_SRCS 
   camerafile.cpp
   gphoto_wrapper.cpp
+  driver.cpp
+  camera.cpp
   logger.cpp
   read_jpeg_image.cpp
   read_raw_image.cpp
@@ -24,7 +26,10 @@ set(libgphoto++_SRCS
 )
 
 add_library(gphoto++ STATIC ${libgphoto++_SRCS})
+set(gphoto++_DEPS                  ${GPHOTO2_LIBRARY} ${GPHOTO2_PORT_LIBRARY} ${LIBRAW_LIBRARIES} ${JPEG_LIBRARIES})
+set(libgphoto++_LIBRARIES gphoto++ ${gphoto++_DEPS} PARENT_SCOPE)
+
+
 if(GTest_FOUND)
   add_subdirectory(tests)
 endif(GTest_FOUND)
-set(libgphoto++_LIBRARIES gphoto++ ${GPHOTO2_LIBRARY} ${GPHOTO2_PORT_LIBRARY} ${LIBRAW_LIBRARIES} ${JPEG_LIBRARIES} PARENT_SCOPE)

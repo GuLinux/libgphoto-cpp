@@ -27,7 +27,7 @@
 #include "logger.h"
 namespace GPhoto {
 
-class Widget
+class Widget : public std::enable_shared_from_this<Widget>
 {
 public:
   Widget(CameraWidget *widget, const GPhoto::GPhotoWrapperPtr &gphoto, const Logger::ptr &log);
@@ -36,27 +36,38 @@ public:
   class RangeValue;
   class MenuValue;
   class BoolValue;
-  class ButtonValue;
   class DateValue;
   enum Type {String, Range, Toggle, Button, Date, Window, Section, Menu};
   Widgets children() const;
+  Widgets all_children() const;
   
   WidgetPtr child_by_name(const std::string &name) const;
   WidgetPtr child_by_label(const std::string &label) const;
   
   std::string name() const;
-    int id() const;
+  int id() const;
   std::string label() const;
   Type type() const;
+  
+  bool operator==(const Widget &other) const;
+  inline bool operator==(const WidgetPtr &other) const { return *other == *this; }
+  bool operator!=(const Widget &other) const;
+  inline bool operator!=(const WidgetPtr &other) const { return *other != *this; }
+  
+  WidgetPtr parent() const;
+  
+  std::string path() const;
 
   template<typename T> std::shared_ptr<T> get() { return std::shared_ptr<T>{new T(this)}; }
-  operator CameraWidget*() const;
+  operator CameraWidget*() const; // TODO: remove
   
   template<typename V, typename C = V, typename Cs = C> class Value {
   public:
+    typedef std::shared_ptr<Value<V, C, Cs>> ptr;
     typedef std::function<Cs(V &)> V2C;
     typedef std::function<V(C c)> C2V;
     operator V() const { return value; }
+    V get() const { return value; }
     Value &operator=(const V &value) { this->value = value; return *this; }
     void set(const V &value) { *this = value; }
     virtual ~Value() {
@@ -87,5 +98,8 @@ private:
 };
 }
 
+std::ostream &operator<<(std::ostream &o, const GPhoto::Widget &w);
+inline std::ostream &operator<<(std::ostream &o, const GPhoto::WidgetPtr &w) { return o << *w; }
+template<typename A, typename B, typename C> inline std::ostream &operator<<(std::ostream &o, const GPhoto::Widget::Value<A, B, C> &v) { return o << v.get(); }
 
 #endif // GPHOTO_WIDGET_H

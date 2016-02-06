@@ -19,29 +19,47 @@
  * 
  */
 
-#ifndef GPHOTO_WIDGET_MENU_H
-#define GPHOTO_WIDGET_MENU_H
-#include "widget_string.h"
-#include <vector>
-#include <ostream>
+#include "driver.h"
+#include "gphoto_wrapper.h"
+#include "logger.h"
+#include "camera.h"
 
-namespace GPhoto {
-class Widget::MenuValue : public Widget::StringValue {
+using namespace GPhoto;
+using namespace std;
+
+DPTR_CLASS(Driver) {
 public:
-  struct Choice {
-    std::string text;
-    bool operator==(const Choice &o) const;
-    bool operator==(const std::string &s) const;
-  };
-  typedef std::vector<Choice> Choices;
-  Choices choices() const;
+  Private(const LoggerPtr &logger, Driver *q);
+  GPhotoDriverPtr driver;
+  LoggerPtr logger;
 private:
-  friend class Widget;
-  MenuValue(Widget* widget);
-  Choices _choices;
+  Driver *q;
 };
+
+Driver::Private::Private(const LoggerPtr &logger, Driver* q) : driver{make_shared<GPhotoDriver>()}, logger{logger}, q{q}
+{
+
 }
 
-std::ostream &operator<<(std::ostream &s, const GPhoto::Widget::MenuValue::Choice &c);
 
-#endif
+Driver::Driver(const LoggerPtr &logger) : dptr(logger, this)
+{
+
+}
+
+Driver::~Driver()
+{
+
+}
+
+GPhoto::CameraPtr Driver::autodetect() const
+{
+  ::Camera *camera;
+  try {
+    d->driver << CTX_RUN(this, &camera){ return gp_camera_new(&camera); } << CTX_RUN(this, &camera) { return gp_camera_init(camera, gp_ctx); };
+    return make_shared<GPhoto::Camera>(make_shared<GPhotoCamera>(camera, d->driver), d->logger);
+  } catch(GPhoto::Exception &e) {
+    lWarning(d->logger) << "Unable to connect to gphoto2 camera: " << e.what();
+    return {};
+  }
+}

@@ -19,29 +19,23 @@
  * 
  */
 
-#ifndef GPHOTO_WIDGET_MENU_H
-#define GPHOTO_WIDGET_MENU_H
-#include "widget_string.h"
-#include <vector>
-#include <ostream>
+#ifndef GPHOTO_DRIVER_H
+#define GPHOTO_DRIVER_H
+#include "fwd.h"
+#include "dptr.h"
+
 
 namespace GPhoto {
-class Widget::MenuValue : public Widget::StringValue {
+
+class Driver
+{
 public:
-  struct Choice {
-    std::string text;
-    bool operator==(const Choice &o) const;
-    bool operator==(const std::string &s) const;
-  };
-  typedef std::vector<Choice> Choices;
-  Choices choices() const;
+    Driver(const LoggerPtr &logger = {});
+    ~Driver();
+    GPhoto::CameraPtr autodetect() const;
 private:
-  friend class Widget;
-  MenuValue(Widget* widget);
-  Choices _choices;
+  DPTR
 };
 }
 
-std::ostream &operator<<(std::ostream &s, const GPhoto::Widget::MenuValue::Choice &c);
-
-#endif
+#endif // GPHOTO_DRIVER_H

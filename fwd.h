@@ -29,22 +29,17 @@ typedef struct _Camera Camera;
 typedef struct _CameraWidget CameraWidget;
 }
 
+#define fwd_class(name) class name; typedef std::shared_ptr<name> name##Ptr;
 namespace GPhoto {
-  class GPhotoWrapper;
-  typedef std::shared_ptr<GPhotoWrapper> GPhotoWrapperPtr;
-  class GPhotoDriver;
-  typedef std::shared_ptr<GPhotoDriver> GPhotoDriverPtr;
-  class GPhotoCamera;
-  typedef std::shared_ptr<GPhotoCamera> GPhotoCameraPtr;
-  class CameraFile;
-  typedef std::shared_ptr<CameraFile> CameraFilePtr;
-  class Widget;
-  typedef std::shared_ptr<Widget> WidgetPtr;
+  fwd_class(GPhotoWrapper)
+  fwd_class(GPhotoDriver)
+  fwd_class(GPhotoCamera)
+  fwd_class(CameraFile)
+  fwd_class(Widget)
+  fwd_class(Logger)
+  fwd_class(Driver)
+  fwd_class(Camera)
   typedef std::list<WidgetPtr> Widgets;
-  
-  class Logger;
-  typedef std::shared_ptr<Logger> LoggerPtr;
-  
 };
 
 #endif

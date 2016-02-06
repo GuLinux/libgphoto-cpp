@@ -19,29 +19,27 @@
  * 
  */
 
-#ifndef GPHOTO_WIDGET_MENU_H
-#define GPHOTO_WIDGET_MENU_H
-#include "widget_string.h"
-#include <vector>
-#include <ostream>
+#ifndef GPHOTO_CAMERA_H
+#define GPHOTO_CAMERA_H
 
+#include "fwd.h"
+#include "dptr.h"
 namespace GPhoto {
-class Widget::MenuValue : public Widget::StringValue {
+
+class Camera
+{
 public:
-  struct Choice {
-    std::string text;
-    bool operator==(const Choice &o) const;
-    bool operator==(const std::string &s) const;
-  };
-  typedef std::vector<Choice> Choices;
-  Choices choices() const;
+    Camera(const GPhotoCameraPtr &camera, const LoggerPtr &logger = {});
+    ~Camera();
+    WidgetPtr settings() const;
+    std::string summary() const;
+    
 private:
-  friend class Widget;
-  MenuValue(Widget* widget);
-  Choices _choices;
+  DPTR
 };
 }
 
-std::ostream &operator<<(std::ostream &s, const GPhoto::Widget::MenuValue::Choice &c);
+std::ostream &operator<<(std::ostream &o, const GPhoto::Camera &c);
+inline std::ostream &operator<<(std::ostream &o, const GPhoto::CameraPtr &c) { return o << *c; }
 
-#endif
+#endif // GPHOTO_CAMERA_H
