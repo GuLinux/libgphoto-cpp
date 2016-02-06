@@ -3,6 +3,7 @@
 #include "widgets.h"
 #include <gphoto2/gphoto2.h>
 #include <ctime>
+#include <algorithm>
 
 using namespace std;
 using namespace GPhoto;
@@ -17,6 +18,8 @@ namespace {
     CameraWidget *menu_widget;
     CameraWidget *date_widget;
     CameraWidget *bool_widget;
+    CameraWidget *section_widget;
+    CameraWidget *section_widget_item;
     chrono::system_clock::time_point time(int year, int month, int day, int hour, int min, int sec) const;
   };
 }
@@ -55,6 +58,14 @@ TestGPhotoWidgets::TestGPhotoWidgets() : gphoto{new GPhotoWrapper}
 	 << GP2_RUN(this) { return gp_widget_set_name(bool_widget, "bool_window"); }
 	 << GP2_RUN(this) { return gp_widget_append(top_window, bool_widget); }
 	 << GP2_RUN(this) { bool b = true; return gp_widget_set_value(bool_widget, &b); }
+	 
+	 << GP2_RUN(this) { return gp_widget_new(GP_WIDGET_SECTION, "Section Widget", &section_widget); }
+	 << GP2_RUN(this) { return gp_widget_set_name(section_widget, "section_window"); }
+	 << GP2_RUN(this) { return gp_widget_append(top_window, section_widget); }
+	 
+	 << GP2_RUN(this) { return gp_widget_new(GP_WIDGET_TEXT, "Section Widget Item", &section_widget_item); }
+	 << GP2_RUN(this) { return gp_widget_set_name(section_widget_item, "section_window_item"); }
+	 << GP2_RUN(this) { return gp_widget_append(section_widget, section_widget_item); }
 	    ;
 }
 
@@ -68,7 +79,7 @@ TEST_F(TestGPhotoWidgets, testTopWindowCreation) {
 TEST_F(TestGPhotoWidgets, testAllChildren) {
   auto widget = make_shared<Widget>(top_window, gphoto, LoggerPtr{});
   auto children = widget->children();
-  ASSERT_EQ(5, children.size());
+  ASSERT_EQ(6, children.size());
   ASSERT_EQ("text_window", (*children.begin())->name());
 }
 
@@ -159,6 +170,22 @@ TEST_F(TestGPhotoWidgets, testSetBool) {
   widget->get<Widget::BoolValue>()->set(false);
   bool value = *widget->get<Widget::BoolValue>();
   ASSERT_FALSE(value);
+}
+
+TEST_F(TestGPhotoWidgets, testSectionWidget) {
+  auto widget = make_shared<Widget>(section_widget, gphoto, LoggerPtr{});
+  auto children = widget->children();
+  ASSERT_EQ(1, children.size());
+  ASSERT_EQ("section_window_item", (*children.begin())->name());
+}
+
+TEST_F(TestGPhotoWidgets, testFindChildrenOfChildren) {
+  auto widget = make_shared<Widget>(top_window, gphoto, LoggerPtr{});
+  auto children = widget->children();
+  ASSERT_EQ(0, count_if(begin(children), end(children), [](const WidgetPtr &w){ return w->name() == "section_window_item";}));
+  
+  auto section_window_item = widget->child_by_name("section_window_item");
+  ASSERT_TRUE(static_cast<bool>(section_window_item));
 }
 
 
