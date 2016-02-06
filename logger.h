@@ -27,6 +27,7 @@
 #include <string>
 #include <sstream>
 #include <functional>
+#include <chrono>
 
 
 
@@ -71,6 +72,11 @@ template<typename T> GPhoto::Logger::Out& operator<<(GPhoto::Logger::Out& out, c
   std::stringstream s;
   s << t;
   return out << s.str();
+}
+
+inline std::ostream &operator<<(std::ostream &o, const std::chrono::time_point<std::chrono::system_clock> &t) {
+  std::time_t tt = std::chrono::system_clock::to_time_t(t);
+  return o << std::ctime(&tt);
 }
 
 #define lLog(level, logger) if(logger) logger->out(GPhoto::Logger::level)

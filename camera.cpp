@@ -80,11 +80,16 @@ string GPhoto::Camera::summary() const
 future< CameraFilePtr > GPhoto::Camera::shoot_bulb(double exposure_msec, const ShooterPtr& shooter) const
 {
   return async([=]{
-    auto shoot = shooter->shoot();
-    auto start = steady_clock::now();
-    auto expected_duration = nanoseconds(static_cast<long>(exposure_msec*1000));
-    while(steady_clock::now() - start < expected_duration)
-      this_thread::sleep_for(nanoseconds(1));
+    {
+      lDebug(d->logger) << "Shooting with bulb mode...";
+      auto shoot = shooter->shoot();
+      auto start = steady_clock::now();
+      duration<double, milli> expected_duration{exposure_msec};
+      lDebug(d->logger) << "start: " << start.time_since_epoch().count() << ", duration: " << expected_duration.count();
+      while( duration<double, milli>{steady_clock::now() - start} < expected_duration) {
+	this_thread::sleep_for(nanoseconds(1));
+      }
+    }
     return d->wait_for_file();
   });
 }
@@ -106,27 +111,32 @@ CameraFilePtr GPhoto::Camera::Private::wait_for_file(int timeout)
   void *event_data;
   CameraFilePath *camera_file;
   lDebug(logger) << "Waiting for file with timeout: " << timeout;
-  
-  camera << CAM_RUN(this, &timeout, &event_type, &event_data) { return gp_camera_wait_for_event(gp_cam, timeout, &event_type, &event_data, gp_ctx); };
-  switch(event_type) {
-    case GP_EVENT_TIMEOUT:
-      throw TimeoutError("Timeout waiting for file capture");
-    case GP_EVENT_UNKNOWN:
-      lDebug(logger) << "Unknown event received.";
-      break;
-    case GP_EVENT_CAPTURE_COMPLETE:
-      lDebug(logger) << "Capture complete";
-      break;
-    case GP_EVENT_FOLDER_ADDED:
-      camera_file = event_data;
-      lDebug(logger) << "Wait for file: folder <" << camera_file->folder << "/" << camera_file->name << "> returned instead. Error?";
-      break;
-    case GP_EVENT_FILE_ADDED:
-      camera_file = event_data;
-      lDebug(logger) << "Wait for file: file <" << camera_file->folder << "/" << camera_file->name << "> added";
-      return make_shared<GPhoto::CameraFile>(camera_file->folder, camera_file->name, camera);
+  while(true) {
+    camera << CAM_RUN(this, &timeout, &event_type, &event_data) { return gp_camera_wait_for_event(gp_cam, timeout, &event_type, &event_data, gp_ctx); };
+    switch(event_type) {
+      case GP_EVENT_TIMEOUT:
+	throw TimeoutError("Timeout waiting for file capture");
+      case GP_EVENT_UNKNOWN:
+	lDebug(logger) << "Unknown event received.";
+	break;
+      case GP_EVENT_CAPTURE_COMPLETE:
+	lDebug(logger) << "Capture complete";
+	break;
+      case GP_EVENT_FOLDER_ADDED:
+	camera_file = event_data;
+	lDebug(logger) << "Wait for file: folder <" << camera_file->folder << "/" << camera_file->name << "> returned instead. Error?";
+	break;
+      case GP_EVENT_FILE_ADDED:
+	camera_file = event_data;
+	lDebug(logger) << "Wait for file: file <" << camera_file->folder << "/" << camera_file->name << "> added";
+	return make_shared<GPhoto::CameraFile>(camera_file->folder, camera_file->name, camera);
+    }
   }
-  return {};
+}
+
+void GPhoto::Camera::set_settings(const WidgetPtr& settings)
+{
+  d->camera << CAM_RUN(this, &settings) { return gp_camera_set_config(gp_cam, *settings, gp_ctx); };
 }
 
 

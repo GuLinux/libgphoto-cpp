@@ -141,10 +141,6 @@ TEST_F(TestGPhotoWidgets, testMenuChoices) {
   ASSERT_EQ(expected, choices);
 }
 
-ostream &operator<<(ostream &o, const chrono::system_clock::time_point &t) {
-  auto time = chrono::system_clock::to_time_t(t);
-  return o << std::asctime(std::gmtime(&time));
-}
 
 TEST_F(TestGPhotoWidgets, testGetDate) {
   auto widget = make_shared<Widget>(date_widget, gphoto, LoggerPtr{});

@@ -35,6 +35,7 @@ public:
     Camera(const GPhotoCameraPtr &camera, const LoggerPtr &logger = {});
     ~Camera();
     WidgetPtr settings() const;
+    void set_settings(const WidgetPtr &settings);
     std::string summary() const;
     std::future<CameraFilePtr> shoot_preset() const;
     std::future<CameraFilePtr> shoot_bulb(double exposure_msec, const ShooterPtr &shooter) const;
