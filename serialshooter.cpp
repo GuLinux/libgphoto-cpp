@@ -29,11 +29,12 @@ class SerialShooter::Private {
 public:
   Private(const string &device_path, SerialShooter *q);
   string device_path;
+  class Shoot;
 private:
   SerialShooter *q;
 };
 
-class SerialShooter::Shoot {
+class SerialShooter::Private::Shoot : public Shooter::Shoot {
 public:
   Shoot(const string &device_path);
   ~Shoot();
@@ -54,9 +55,9 @@ SerialShooter::~SerialShooter()
 {
 }
 
-shared_ptr< SerialShooter::Shoot > SerialShooter::shoot() const
+Shooter::ShootPtr SerialShooter::shoot() const
 {
-  return make_shared<Shoot>(d->device_path);
+  return make_shared<Private::Shoot>(d->device_path);
 }
 
 
@@ -75,7 +76,7 @@ SerialShooter::error::error(const string& message): runtime_error(message)
 #include <string.h>
 #include <unistd.h>
 
-SerialShooter::Shoot::Shoot(const string& device_path)
+SerialShooter::Private::Shoot::Shoot(const string& device_path)
 {
     bulb_fd = open(device_path.c_str(), O_RDWR, O_NONBLOCK);
     if(bulb_fd == -1) {
@@ -85,7 +86,7 @@ SerialShooter::Shoot::Shoot(const string& device_path)
     }
 }
 
-SerialShooter::Shoot::~Shoot()
+SerialShooter::Private::Shoot::~Shoot()
 {
   if(bulb_fd > -1)
     close(bulb_fd);

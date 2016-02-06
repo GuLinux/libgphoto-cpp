@@ -34,7 +34,7 @@ namespace GPhoto {
 class Logger {
 public:
   typedef std::shared_ptr<Logger> ptr;
-  enum Level {TRACE, DEBUG, INFO, WARNING, ERROR};
+  enum Level {TRACE = 0, DEBUG = 10, INFO = 20, WARNING = 30, ERROR = 40};
   typedef std::function<void(const std::string &message, Level level)> Printer;
   Logger(const Printer &printer);
   ~Logger();

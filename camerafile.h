@@ -22,6 +22,7 @@
 
 #include "fwd.h"
 #include <vector>
+#include <ostream>
 
 namespace GPhoto {
 
@@ -36,11 +37,15 @@ public:
   void save(const std::string &path);
   void copy(std::vector<uint8_t> &data);
   std::vector<uint8_t> data();
+  std::string path() const;
   Info info() const;
   void delete_on_camera();
 private:
     DPTR
 };
 }
+
+std::ostream &operator<<(std::ostream &o, const GPhoto::CameraFile::Info &info);
+std::ostream &operator<<(std::ostream &o, const GPhoto::CameraFile &camera_file);
 
 #endif // GPHOTO_CAMERAFILE_H

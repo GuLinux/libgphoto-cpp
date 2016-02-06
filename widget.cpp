@@ -163,7 +163,7 @@ WidgetPtr Widget::parent() const
     d->gphoto << GP2_RUN(this, &parent) { return gp_widget_get_parent(d->widget, &parent); };
     return make_shared<Widget>(parent, d->gphoto, d->log);
   } catch(GPhoto::Exception &e) {
-    lDebug(d->log) << "Error getting widget " << name() << " parent: " << e.what();
+    lTrace(d->log) << "Error getting widget " << name() << " parent: " << e.what();
     return {};
   }
 }

@@ -20,6 +20,7 @@
  */
 
 #include "gphoto_wrapper.h"
+#include "exceptions.h"
 using namespace GPhoto;
 using namespace std;
 DPTR_CLASS(GPhotoWrapper) {
@@ -45,14 +46,6 @@ public:
 };
 
 GPhotoDriver::Private::Private(GPContext* context) : wrapper{new GPhotoWrapper()}, context{context}
-{
-}
-
-Exception::Exception(int error_code): runtime_error(gp_result_as_string(error_code))
-{
-}
-
-Exception::Exception(const std::string& __arg): runtime_error(__arg)
 {
 }
 

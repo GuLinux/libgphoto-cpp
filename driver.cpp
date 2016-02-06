@@ -22,6 +22,7 @@
 #include "driver.h"
 #include "gphoto_wrapper.h"
 #include "logger.h"
+#include "exceptions.h"
 #include "camera.h"
 
 using namespace GPhoto;

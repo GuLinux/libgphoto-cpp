@@ -19,26 +19,21 @@
  * 
  */
 
-#ifndef GPHOTO_SERIALSHOOTER_H
-#define GPHOTO_SERIALSHOOTER_H
 
-#include "shooter.h"
-#include "dptr.h"
+#include "exceptions.h"
+#include <gphoto2/gphoto2.h>
 
-namespace GPhoto {
-class SerialShooter : public Shooter {
-public:
-  class error : public std::runtime_error {
-  public:
-    error(const std::string& message);
-  };
-  SerialShooter(const std::string &device_path);
-  ~SerialShooter();
-  virtual ShootPtr shoot() const;
-  void set_device_path(const std::string &device_path);
-private:
-    DPTR
-};
+using namespace std;
+using namespace GPhoto;
+Exception::Exception(int error_code): runtime_error(gp_result_as_string(error_code))
+{
 }
 
-#endif // GPHOTO_SERIALSHOOTER_H
+Exception::Exception(const string& __arg): runtime_error(__arg)
+{
+}
+
+TimeoutError::TimeoutError(const string& __arg): Exception(__arg)
+{
+
+}

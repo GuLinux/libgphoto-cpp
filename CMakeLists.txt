@@ -22,11 +22,12 @@ set(libgphoto++_SRCS
   read_jpeg_image.cpp
   read_raw_image.cpp
   serialshooter.cpp
+  exceptions.cpp
   ${gphoto_widgets_SRCS}
 )
 
 add_library(gphoto++ STATIC ${libgphoto++_SRCS})
-set(gphoto++_DEPS                  ${GPHOTO2_LIBRARY} ${GPHOTO2_PORT_LIBRARY} ${LIBRAW_LIBRARIES} ${JPEG_LIBRARIES})
+set(gphoto++_DEPS ${GPHOTO2_LIBRARY} ${GPHOTO2_PORT_LIBRARY} ${LIBRAW_LIBRARIES} ${JPEG_LIBRARIES} pthread)
 set(libgphoto++_LIBRARIES gphoto++ ${gphoto++_DEPS} PARENT_SCOPE)
 
 

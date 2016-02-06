@@ -23,12 +23,13 @@
 #include <vector>
 
 using namespace GPhoto;
+using namespace std;
 
 DPTR_CLASS(GPhoto::CameraFile) {
 public:
-  Private(const std::string& folder, const std::string& file, const GPhotoCameraPtr& camera, GPhoto::CameraFile* q);
-  std::string folder;
-  std::string file;
+  Private(const string& folder, const string& file, const GPhotoCameraPtr& camera, GPhoto::CameraFile* q);
+  string folder;
+  string file;
   GPhotoCameraPtr camera;
   ::CameraFile *camera_file;
   CameraFileInfo info;
@@ -36,14 +37,14 @@ private:
   GPhoto::CameraFile *q;
 };
 
-GPhoto::CameraFile::Private::Private(const std::string &folder, const std::string &file, const GPhotoCameraPtr &camera, CameraFile* q)
+GPhoto::CameraFile::Private::Private(const string &folder, const string &file, const GPhotoCameraPtr &camera, CameraFile* q)
   : folder{folder}, file{file}, camera{camera}, q{q}
 {
 }
 
 
 
-GPhoto::CameraFile::CameraFile(const std::string &folder, const std::string &file, const GPhotoCameraPtr &camera)
+GPhoto::CameraFile::CameraFile(const string &folder, const string &file, const GPhotoCameraPtr &camera)
  : dptr(folder, file, camera, this)
 {
   d->camera << CAM_RUN(this) { return gp_file_new(&d->camera_file); }
@@ -57,24 +58,24 @@ GPhoto::CameraFile::~CameraFile()
 }
 
 
-void GPhoto::CameraFile::save(const std::string& path)
+void GPhoto::CameraFile::save(const string& path)
 {
   d->camera << CAM_RUN(this, path) { return gp_file_save(d->camera_file, path.c_str()); };
 }
 
 
-void GPhoto::CameraFile::copy(std::vector< uint8_t >& data)
+void GPhoto::CameraFile::copy(vector< uint8_t >& data)
 {
   size_t size;
   const char *cdata;
   d->camera << CAM_RUN(this, &cdata, &size) { return gp_file_get_data_and_size(d->camera_file, &cdata, &size); };
   data.resize(size);
-  std::copy(cdata, cdata + size, std::begin(data));
+  std::copy(cdata, cdata + size, begin(data));
 }
 
-std::vector< uint8_t > GPhoto::CameraFile::data()
+vector< uint8_t > GPhoto::CameraFile::data()
 {
-  std::vector<uint8_t> data;
+  vector<uint8_t> data;
   copy(data);
   return data;
 }
@@ -88,3 +89,20 @@ void GPhoto::CameraFile::delete_on_camera()
 {
   d->camera << CAM_RUN(this) { return gp_camera_file_delete(gp_cam, d->folder.c_str(), d->file.c_str(), gp_ctx); };
 }
+
+string GPhoto::CameraFile::path() const
+{
+  return d->folder + "/" + d->file;
+}
+
+
+ostream& operator<<(ostream& o, const GPhoto::CameraFile::Info& info)
+{
+  return o << "size: " << info.size << " bytes, width: " << info.width << ", height: " << info.height;
+}
+
+ostream& operator<<(ostream& o, const GPhoto::CameraFile& camera_file)
+{
+  return o << "CameraFile { " << camera_file.path() << ", " << camera_file.info() << " }";
+}
+

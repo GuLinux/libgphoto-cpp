@@ -24,6 +24,9 @@
 
 #include "fwd.h"
 #include "dptr.h"
+#include <functional>
+#include <future>
+#include <ostream>
 namespace GPhoto {
 
 class Camera
@@ -33,7 +36,8 @@ public:
     ~Camera();
     WidgetPtr settings() const;
     std::string summary() const;
-    
+    std::future<CameraFilePtr> shoot_preset() const;
+    std::future<CameraFilePtr> shoot_bulb(double exposure_msec, const ShooterPtr &shooter) const;
 private:
   DPTR
 };

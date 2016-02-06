@@ -22,6 +22,7 @@
 #ifndef FORWARD_DECLARATIONS_H
 #define FORWARD_DECLARATIONS_H
 #include <list>
+#include "exceptions.h"
 #include "dptr.h"
 extern "C" {
 typedef struct _GPContext GPContext;
@@ -39,6 +40,7 @@ namespace GPhoto {
   fwd_class(Logger)
   fwd_class(Driver)
   fwd_class(Camera)
+  fwd_class(Shooter)
   typedef std::list<WidgetPtr> Widgets;
 };
 

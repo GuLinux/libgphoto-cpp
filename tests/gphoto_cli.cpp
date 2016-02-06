@@ -3,6 +3,9 @@
 #include "driver.h"
 #include "widgets.h"
 #include <sstream>
+#include <iomanip>
+#include <map>
+#include "camerafile.h"
 using namespace std;
 using namespace GPhoto;
 
@@ -40,7 +43,18 @@ string value2string(const WidgetPtr &widget) {
 }
 
 int main(int argc, char **argv) {
-  GPhoto::Driver driver;
+  GPhoto::Driver driver(make_shared<Logger>([](const string &message, Logger::Level level){
+    static map<Logger::Level, string> levels {
+      {Logger::DEBUG, "DEBUG"},
+      {Logger::ERROR, "ERROR"},
+      {Logger::INFO, "INFO"},
+      {Logger::TRACE, "TRACE"},
+      {Logger::WARNING, "WARNING"},
+    };
+    if(level == Logger::TRACE)
+      return;
+    cerr << "[" << setfill(' ') << setw(8) << levels[level] << "] " << message << endl;
+  }));
   auto camera = driver.autodetect();
   if(!camera) {
     cerr << "Error finding camera" << endl;
@@ -52,5 +66,11 @@ int main(int argc, char **argv) {
   for(auto setting: camera->settings()->all_children()) {
     cout << "** " << setting << ", value: " << value2string(setting) << endl;
   }
+  
+  auto file = camera->shoot_preset();
+  file.wait();
+  CameraFilePtr cf = file.get();
+  cerr << *cf << endl;
+  
   return 0;
 };
