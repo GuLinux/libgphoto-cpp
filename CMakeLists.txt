@@ -1,4 +1,5 @@
 cmake_minimum_required(VERSION 2.4.7)
+set(CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
 find_package(GPHOTO2 REQUIRED)
 find_package(LibRaw REQUIRED)
 find_package(JPEG REQUIRED)
@@ -22,8 +23,8 @@ set(libgphoto++_SRCS
   ${gphoto_widgets_SRCS}
 )
 
-add_library(libgphoto++ STATIC ${libgphoto++_SRCS})
+add_library(gphoto++ STATIC ${libgphoto++_SRCS})
 if(GTest_FOUND)
   add_subdirectory(tests)
 endif(GTest_FOUND)
-set(libgphoto++_LIBRARIES libgphoto++  ${GPHOTO2_LIBRARY} ${GPHOTO2_PORT_LIBRARY} ${LIBRAW_LIBRARIES} ${JPEG_LIBRARIES} PARENT_SCOPE)
+set(libgphoto++_LIBRARIES gphoto++ ${GPHOTO2_LIBRARY} ${GPHOTO2_PORT_LIBRARY} ${LIBRAW_LIBRARIES} ${JPEG_LIBRARIES} PARENT_SCOPE)
