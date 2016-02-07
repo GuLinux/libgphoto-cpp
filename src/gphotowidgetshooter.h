@@ -67,6 +67,12 @@ public:
 EOSRemoteReleaseShutter(const CameraPtr& camera, const LoggerPtr& logger = {})
   : GPhotoWidgetShooter< GPhoto::Widget::RangeValue >(camera, "eosremoterelease", 2, 4) {}
 };
+ 
+class BulbSettingShutter : public GPhotoWidgetShooter<Widget::BoolValue> {
+public:
+BulbSettingShutter(const CameraPtr& camera, const LoggerPtr& logger = {})
+  : GPhotoWidgetShooter< GPhoto::Widget::BoolValue >(camera, "bulb", true, false) {}
+};
 }
 
 #endif // GPHOTO_EOSREMOTERELEASESHOOTER_H
