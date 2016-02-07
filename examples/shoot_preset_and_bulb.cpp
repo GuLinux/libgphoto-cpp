@@ -96,7 +96,7 @@ int main(int argc, char **argv) {
   
   static multimap<string, string> widget_names{{"shutter", "eosremoterelease"}, {"shutter", "bulb"}, {"customfunc", "customfuncex"}, {"exposure", "shutterspeed"}, {"exposure", "shutterspeed2"}, {"exposure", "eos-shutterspeed"}};
   multimap<string, WidgetPtr> widgets_init;
-  transform(begin(widget_names), end(widget_names), inserter(widgets_init, end(widgets_init)), [&](const pair<string,string> &p){ return pair<string,WidgetPtr>{p.first,  settings->child_by_name(p.second)};});
+  transform(begin(widget_names), end(widget_names), inserter(widgets_init, end(widgets_init)), [&](const pair<string,string> &p){ return make_pair(p.first,  settings->child_by_name(p.second));});
   map<string, WidgetPtr> widgets;
   copy_if(begin(widgets_init), end(widgets_init), inserter(widgets, end(widgets)), [](const pair<string,WidgetPtr> &p){ return static_cast<bool>(p.second);});
   cout << "Widgets found:\n";
