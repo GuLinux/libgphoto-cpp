@@ -99,7 +99,7 @@ int main(int argc, char **argv) {
   ShooterPtr shooter = make_shared<SerialShooter>("/dev/ttyUSB0");
   if(static_cast<bool>(settings->child_by_name("eosremoterelease")))
     shooter = make_shared<EOSRemoteReleaseShooter>(camera);
-  file = camera->shoot_bulb(45000, shooter);
+  file = camera->shoot_bulb(chrono::duration<double>(45), shooter);
   file.wait();
   cf = file.get();
   cerr << *cf << endl;

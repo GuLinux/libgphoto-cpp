@@ -24,6 +24,8 @@
 #include <functional>
 #include <future>
 #include <ostream>
+#include <chrono>
+#include <ratio>
 namespace GPhoto {
 
 class Camera
@@ -35,7 +37,7 @@ public:
     void save_settings();
     std::string summary() const;
     std::future<CameraFilePtr> shoot_preset() const;
-    std::future<CameraFilePtr> shoot_bulb(double exposure_msec, const ShooterPtr &shooter) const;
+    std::future<CameraFilePtr> shoot_bulb(const std::chrono::duration<double, std::milli> &exposure, const ShooterPtr &shooter) const;
 private:
   DPTR
 };

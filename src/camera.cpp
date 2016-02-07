@@ -74,16 +74,15 @@ string GPhoto::Camera::summary() const
 }
 
 
-future< CameraFilePtr > GPhoto::Camera::shoot_bulb(double exposure_msec, const ShooterPtr& shooter) const
+future< CameraFilePtr > GPhoto::Camera::shoot_bulb(const std::chrono::duration<double, milli> &exposure, const ShooterPtr& shooter) const
 {
   return async([=]{
     {
       lDebug(d->logger) << "Shooting with bulb mode...";
       auto shoot = shooter->shoot();
       auto start = steady_clock::now();
-      duration<double, milli> expected_duration{exposure_msec};
-      lDebug(d->logger) << "start: " << start.time_since_epoch().count() << ", duration: " << expected_duration.count();
-      while( duration<double, milli>{steady_clock::now() - start} < expected_duration) {
+      lDebug(d->logger) << "start: " << start.time_since_epoch().count() << ", duration: " << exposure.count();
+      while( duration<double, milli>{steady_clock::now() - start} < exposure) {
 	this_thread::sleep_for(nanoseconds(1));
       }
     }
@@ -94,13 +93,10 @@ future< CameraFilePtr > GPhoto::Camera::shoot_bulb(double exposure_msec, const S
 future< CameraFilePtr > GPhoto::Camera::shoot_preset() const
 {
   lDebug(d->logger) << "Shooting with preset mode...";
-  CameraFilePath camera_file_path;
   return async([=] {
+    CameraFilePath camera_file_path;
     lDebug(d->logger) << "Shooter thread";
     d->camera << CAM_RUN(this, &camera_file_path) { return gp_camera_capture(gp_cam, GP_CAPTURE_IMAGE, &camera_file_path, gp_ctx); };
-    
-    CameraEventType event_type;
-    void *event_data;
     return make_shared<GPhoto::CameraFile>(camera_file_path.folder, camera_file_path.name, d->camera);
   });
 }
@@ -123,11 +119,11 @@ CameraFilePtr GPhoto::Camera::Private::wait_for_file(int timeout)
 	lDebug(logger) << "Capture complete";
 	break;
       case GP_EVENT_FOLDER_ADDED:
-	camera_file = event_data;
+	camera_file = reinterpret_cast<CameraFilePath*>(event_data);
 	lDebug(logger) << "Wait for file: folder <" << camera_file->folder << "/" << camera_file->name << "> returned instead. Error?";
 	break;
       case GP_EVENT_FILE_ADDED:
-	camera_file = event_data;
+	camera_file = reinterpret_cast<CameraFilePath*>(event_data);
 	lDebug(logger) << "Wait for file: file <" << camera_file->folder << "/" << camera_file->name << "> added";
 	return make_shared<GPhoto::CameraFile>(camera_file->folder, camera_file->name, camera);
     }
