@@ -91,9 +91,22 @@ int main(int argc, char **argv) {
   cout << "Found camera: " << camera << endl;
   auto settings = camera->settings();
   ShooterPtr shooter = make_shared<SerialShooter>("/dev/ttyUSB0", logger);
+  
+  map<string, list<string>> widget_names{{"shutter", {"eosremoterelease", "bulb"}}, {"customfunc", {"customfuncex"}}, {"shutterspeed", {"shutterspeed"}}};
+  map<string, WidgetPtr> widgets;
+  
+//   transform(begin(widget_names), end(widget_names), inserter(widgets), [](const pair<string, list<string>> &p){
+//     return WidgetPtr{};
+//   });
+//   
   if(static_cast<bool>(settings->child_by_name("eosremoterelease"))) {
     shooter = make_shared<EOSRemoteReleaseShutter>(camera, logger);
     cerr << "Using eosremoterelease shooter" << endl;
+  }
+  
+  if(static_cast<bool>(settings->child_by_name("bulb"))) {
+    shooter = make_shared<BulbSettingShutter>(camera, logger);
+    cerr << "Using bulb-widget shooter" << endl;
   }
   
 
@@ -105,6 +118,7 @@ int main(int argc, char **argv) {
   for(auto setting: camera->settings()->all_children()) {
     cout << "** " << setting << ", value: " << value2string(setting) << endl;
   }
+  
   
   if(!settings->child_by_name("shutterspeed")) {
     cout << "Error! unable to find <shutterspeed> settings widget\n";
