@@ -60,6 +60,7 @@ public:
   
   template<typename V, typename C = V, typename Cs = C> class Value {
   public:
+    typedef V Type;
     typedef std::shared_ptr<Value<V, C, Cs>> ptr;
     typedef std::function<Cs(V &)> V2C;
     typedef std::function<V(C c)> C2V;

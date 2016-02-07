@@ -24,7 +24,7 @@
 #include <map>
 #include "camerafile.h"
 #include "serialshooter.h"
-#include <eosremotereleaseshooter.h>
+#include "gphotowidgetshooter.h"
 #include <list>
 #include <algorithm>
 using namespace std;
@@ -92,7 +92,7 @@ int main(int argc, char **argv) {
   auto settings = camera->settings();
   ShooterPtr shooter = make_shared<SerialShooter>("/dev/ttyUSB0", logger);
   if(static_cast<bool>(settings->child_by_name("eosremoterelease"))) {
-    shooter = make_shared<EOSRemoteReleaseShooter>(camera, logger);
+    shooter = make_shared<EOSRemoteReleaseShutter>(camera, logger);
     cerr << "Using eosremoterelease shooter" << endl;
   }
   
