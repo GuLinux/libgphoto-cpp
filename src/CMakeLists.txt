@@ -7,6 +7,7 @@ set(libgphoto++_SRCS
   camera.cpp
   logger.cpp
   serialshooter.cpp
+  eosremotereleaseshooter.cpp
   exceptions.cpp
   ${gphoto_widgets_SRCS}
 )

@@ -98,6 +98,9 @@ future< CameraFilePtr > GPhoto::Camera::shoot_preset() const
   return async([=] {
     lDebug(d->logger) << "Shooter thread";
     d->camera << CAM_RUN(this, &camera_file_path) { return gp_camera_capture(gp_cam, GP_CAPTURE_IMAGE, &camera_file_path, gp_ctx); };
+    
+    CameraEventType event_type;
+    void *event_data;
     return make_shared<GPhoto::CameraFile>(camera_file_path.folder, camera_file_path.name, d->camera);
   });
 }
@@ -131,9 +134,9 @@ CameraFilePtr GPhoto::Camera::Private::wait_for_file(int timeout)
   }
 }
 
-void GPhoto::Camera::set_settings(const WidgetPtr& settings)
+void GPhoto::Camera::save_settings()
 {
-  d->camera << CAM_RUN(this, &settings) { return gp_camera_set_config(gp_cam, *settings, gp_ctx); };
+  d->camera << CAM_RUN(this) { return gp_camera_set_config(gp_cam, *d->settings, gp_ctx); };
 }
 
 

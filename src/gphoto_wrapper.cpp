@@ -75,11 +75,13 @@ int GPhotoDriver::operator()(ContextRun run)
   return d->wrapper->operator()(GP2_RUN(this, run) { return run(d->context); });
 }
 
+#include <mutex>
 
 DPTR_CLASS(GPhotoCamera) {
 public:
   Private(::Camera* camera, const GPhotoDriverPtr& driver);
   ::Camera* camera;
+  mutex _mutex;
   GPhotoDriverPtr driver;
 };
 
@@ -98,6 +100,7 @@ GPhotoCamera::~GPhotoCamera()
 
 int GPhotoCamera::operator()(CameraRun run)
 {
+  unique_lock<mutex> lock(d->_mutex);
   return d->driver->operator()(CTX_RUN(this, run) { return run(gp_ctx, d->camera); } );
 }
 

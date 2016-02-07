@@ -24,6 +24,7 @@
 #include <map>
 #include "camerafile.h"
 #include "serialshooter.h"
+#include <eosremotereleaseshooter.h>
 using namespace std;
 using namespace GPhoto;
 
@@ -79,29 +80,29 @@ int main(int argc, char **argv) {
     return 1;
   }
   cout << "Found camera: " << camera << endl;
-  {
     auto settings = camera->settings();
     cout << "Widgets: " << endl;
     for(auto setting: camera->settings()->all_children()) {
       cout << "** " << setting << ", value: " << value2string(setting) << endl;
     }
     settings->child_by_name("shutterspeed")->get<Widget::MenuValue>()->set("1/125");
-    camera->set_settings(settings);
-  }
-  auto file = camera->shoot_preset();
+    camera->save_settings();
+
+    auto file = camera->shoot_preset();
   file.wait();
   CameraFilePtr cf = file.get();
   cerr << *cf << endl;
-  this_thread::sleep_for(chrono::milliseconds(5000)); // TODO: make code more robust, why a sleep is necessary? camera busy? and why no error reporting?
-  {
-    auto settings = camera->settings();
-    settings->child_by_name("shutterspeed")->get<Widget::MenuValue>()->set("Bulb");
-    camera->set_settings(settings);
-  }
-  auto shooter = make_shared<SerialShooter>("/dev/ttyUSB0");
+  
+  this_thread::sleep_for(chrono::seconds(2));
+  settings->child_by_name("shutterspeed")->get<Widget::MenuValue>()->set("Bulb");
+  camera->save_settings();
+  ShooterPtr shooter = make_shared<SerialShooter>("/dev/ttyUSB0");
+  if(static_cast<bool>(settings->child_by_name("eosremoterelease")))
+    shooter = make_shared<EOSRemoteReleaseShooter>(camera);
   file = camera->shoot_bulb(45000, shooter);
   file.wait();
   cf = file.get();
   cerr << *cf << endl;
+
   return 0;
 };
