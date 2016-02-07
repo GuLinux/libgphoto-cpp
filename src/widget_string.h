@@ -27,4 +27,7 @@ private:
 };
 }
 
+std::ostream &operator<<(std::ostream &o, const GPhoto::Widget::StringValue &w);
+inline std::ostream &operator<<(std::ostream &o, const std::shared_ptr<GPhoto::Widget::StringValue> &w) { return o << *w; }
+
 #endif

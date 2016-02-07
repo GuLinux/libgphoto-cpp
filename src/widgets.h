@@ -24,6 +24,6 @@
 #include "widget_range.h"
 #include "widget_menu.h"
 #include "widget_date.h"
-#include "widget_bool.h"
+#include "widget_toggle.h"
 
 #endif

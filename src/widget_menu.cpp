@@ -53,6 +53,22 @@ ostream& operator<<(ostream& s, const Widget::MenuValue::Choice& c)
   return s << c.text;
 }
 
+ostream& operator<<(ostream& o, const Widget::MenuValue& w)
+{
+   return o << w.get() << ", choices: " << w.choices();
+}
+
+ostream& operator<<(ostream& s, const vector< Widget::MenuValue::Choice >& c)
+{
+  string sep;
+  for(auto choice: c) {
+    s << sep << choice;
+    sep = ", ";
+  }
+  return s;
+}
+
+
 Widget::MenuValue::Choice::operator string() const
 {
   return text;

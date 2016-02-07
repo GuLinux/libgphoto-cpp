@@ -30,38 +30,6 @@
 using namespace std;
 using namespace GPhoto;
 
-string choices2str(const Widget::MenuValue::Choices &l) {
-  stringstream ss;
-  string sep;
-  for(auto c: l) {
-    ss << sep << c;
-    sep=", ";
-  }
-  return ss.str();
-}
-
-string value2string(const WidgetPtr &widget) {
-  stringstream ss;
-  switch(widget->type()) {
-    case Widget::Toggle:
-      ss << boolalpha << *widget->get<Widget::BoolValue>();
-      break;
-    case Widget::Widget::Date:
-      ss << *widget->get<Widget::DateValue>();
-      break;
-    case Widget::Widget::String:
-      ss << *widget->get<Widget::StringValue>();
-      break;
-    case Widget::Menu:
-      ss << *widget->get<Widget::MenuValue>() << ", choices: " << choices2str(widget->get<Widget::MenuValue>()->choices());
-      break;
-    case Widget::Range:
-      ss << *widget->get<Widget::RangeValue>();
-    default:
-      break;
-  }
-  return ss.str();
-}
 
 bool has_option(const list<string> &args, const string &option) {
   return find(begin(args), end(args), option) != end(args);
@@ -115,7 +83,7 @@ int main(int argc, char **argv) {
   cout << "Using mirror lock (option -m): " << boolalpha << static_cast<bool>(mirror_lock) << endl;
   cout << "Widgets: " << endl;
   for(auto setting: camera->settings()->all_children()) {
-    cout << "** " << setting << ", value: " << value2string(setting) << endl;
+    cout << "** " << setting << endl;
   }
   
   

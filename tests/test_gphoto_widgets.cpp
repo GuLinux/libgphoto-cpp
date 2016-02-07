@@ -71,7 +71,7 @@ TestGPhotoWidgets::TestGPhotoWidgets() : gphoto{new GPhotoWrapper}
 	 << GP2_RUN(this) { return gp_widget_append(top_window, date_widget); }
 	 << GP2_RUN(this) { time_t t{426118342}; return gp_widget_set_value(date_widget, &t); }
 	 
-	 << GP2_RUN(this) { return gp_widget_new(GP_WIDGET_DATE, "Bool Widget", &bool_widget); }
+	 << GP2_RUN(this) { return gp_widget_new(GP_WIDGET_TOGGLE, "Bool Widget", &bool_widget); }
 	 << GP2_RUN(this) { return gp_widget_set_name(bool_widget, "bool_window"); }
 	 << GP2_RUN(this) { return gp_widget_append(top_window, bool_widget); }
 	 << GP2_RUN(this) { bool b = true; return gp_widget_set_value(bool_widget, &b); }
@@ -175,14 +175,15 @@ TEST_F(TestGPhotoWidgets, testSetDate) {
 
 TEST_F(TestGPhotoWidgets, testGetBool) {
   auto widget = make_shared<Widget>(bool_widget, gphoto, LoggerPtr{});
-  bool value = *widget->get<Widget::BoolValue>();
+  bool value = *widget->get<Widget::ToggleValue>();
   ASSERT_TRUE(value);
 }
 
 TEST_F(TestGPhotoWidgets, testSetBool) {
   auto widget = make_shared<Widget>(bool_widget, gphoto, LoggerPtr{});
-  widget->get<Widget::BoolValue>()->set(false);
-  bool value = *widget->get<Widget::BoolValue>();
+  widget->get<Widget::ToggleValue>()->set(false);
+  ASSERT_EQ(Widget::Toggle, widget->type());
+  bool value = *widget->get<Widget::ToggleValue>();
   ASSERT_FALSE(value);
 }
 

@@ -16,15 +16,17 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef GPHOTO_WIDGET_BOOL_H
-#define GPHOTO_WIDGET_BOOL_H
-#include "widget.h"
-namespace GPhoto {
-class Widget::BoolValue : public Widget::Value<bool, int, std::shared_ptr<int>>{
-private:
-  friend class Widget;
-  BoolValue(Widget* widget);
-};
+#include "widgets.h"
+#include "widget_p.h"
+
+using namespace GPhoto;
+using namespace std;
+
+Widget::ToggleValue::ToggleValue(Widget* widget): Value< bool, int, shared_ptr<int>>(widget, [](bool &v) { auto vi = make_shared<int>(v?1:0); return vi; }, [](int v){ return v!=0; })
+{
 }
 
-#endif
+ostream& operator<<(ostream& o, const Widget::ToggleValue& w)
+{
+  return o << boolalpha << w.get();
+}

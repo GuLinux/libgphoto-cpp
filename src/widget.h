@@ -32,7 +32,7 @@ public:
   class StringValue;
   class RangeValue;
   class MenuValue;
-  class BoolValue;
+  class ToggleValue;
   class DateValue;
   enum Type {String, Range, Toggle, Button, Date, Window, Section, Menu};
   Widgets children() const;
@@ -96,7 +96,7 @@ private:
 };
 }
 
-std::ostream &operator<<(std::ostream &o, const GPhoto::Widget &w);
+std::ostream &operator<<(std::ostream& o, GPhoto::Widget& w);
 inline std::ostream &operator<<(std::ostream &o, const GPhoto::WidgetPtr &w) { return o << *w; }
 template<typename A, typename B, typename C> inline std::ostream &operator<<(std::ostream &o, const GPhoto::Widget::Value<A, B, C> &v) { return o << v.get(); }
 

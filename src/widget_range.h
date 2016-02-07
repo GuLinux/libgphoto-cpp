@@ -36,4 +36,7 @@ private:
 };
 }
 
+std::ostream &operator<<(std::ostream &o, const GPhoto::Widget::RangeValue &w);
+inline std::ostream &operator<<(std::ostream &o, const std::shared_ptr<GPhoto::Widget::RangeValue> &w) { return o << *w; }
+
 #endif

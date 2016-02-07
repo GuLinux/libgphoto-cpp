@@ -31,4 +31,7 @@ private:
 };
 }
 
+std::ostream &operator<<(std::ostream &o, const GPhoto::Widget::DateValue &w);
+inline std::ostream &operator<<(std::ostream &o, const std::shared_ptr<GPhoto::Widget::DateValue> &w) { return o << *w; }
+
 #endif

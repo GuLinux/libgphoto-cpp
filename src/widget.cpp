@@ -17,6 +17,8 @@
 */
 
 #include "widget_p.h"
+#include "widgets.h"
+#include <functional>
 
 using namespace GPhoto;
 using namespace std;
@@ -179,17 +181,25 @@ string Widget::path() const
   return s.str();
 }
 
-ostream& operator<<(ostream& o, const Widget& w)
+#define WidgetP(type) { #type, [](Widget &w, ostream &o) -> ostream&{ return o << w.get<Widget::type ## Value>(); } }
+ostream& operator<<(ostream& o, Widget& w)
 {
-  static map<Widget::Type, string> types {
-    { Widget::String, "String" },
-    { Widget::Range, "Range" },
-    { Widget::Toggle, "Toggle" },
-    { Widget::Button, "Button" },
-    { Widget::Date, "Date" },
-    { Widget::Window, "Window" },
-    { Widget::Section, "Section" },
-    { Widget::Menu, "Menu" },
+  typedef function<ostream&(Widget&, ostream &)> w2stream;
+  static map<Widget::Type, pair<string, w2stream>> types {
+    { Widget::String, WidgetP(String) },
+    { Widget::Range, WidgetP(Range) },
+    { Widget::Toggle, WidgetP(Toggle) },
+    { Widget::Button, {"Button", w2stream{}} },
+    { Widget::Date, WidgetP(Date) },
+    { Widget::Window, {"Window", w2stream{}} },
+    { Widget::Section, {"Section", w2stream{}} },
+    { Widget::Menu, WidgetP(Menu) },
   };
-  return o << w.path() << "{ " << types[w.type()] << ": " << w.name() << "}";
+  auto type = types[w.type()];
+  o << w.path() << "{ " << type.first << ": " << w.name();
+  if(type.second) {
+    o << ", value: ";
+    type.second(w,o);
+  }
+  return o << " }";
 }

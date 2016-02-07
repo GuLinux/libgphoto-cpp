@@ -40,3 +40,10 @@ Widget::DateValue::DateValue(Widget* widget)
 {
 
 }
+
+
+ostream& operator<<(ostream& o, const Widget::DateValue& w)
+{
+  time_t t = chrono::system_clock::to_time_t(w);
+  return o << ctime(&t);
+}

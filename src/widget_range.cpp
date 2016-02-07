@@ -42,3 +42,8 @@ Widget::RangeValue::operator Range() const
 {
   return _range;
 }
+
+ostream& operator<<(ostream& o, const Widget::RangeValue& w)
+{
+  return o << w.get() << ", range: " << w.range().min << "-" << w.range().max << ", step: " << w.range().increment;
+}

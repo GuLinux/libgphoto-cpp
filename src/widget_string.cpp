@@ -26,5 +26,10 @@ Widget::StringValue::StringValue(Widget* widget): Value< std::string, char*, cha
   return s.c_str();
 })
 {
-
 }
+
+ostream& operator<<(ostream& o, const Widget::StringValue& w)
+{
+  return o << w.get();
+}
+

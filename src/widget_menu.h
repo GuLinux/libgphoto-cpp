@@ -41,5 +41,7 @@ private:
 }
 
 std::ostream &operator<<(std::ostream &s, const GPhoto::Widget::MenuValue::Choice &c);
-
+std::ostream &operator<<(std::ostream &s, const std::vector<GPhoto::Widget::MenuValue::Choice> &c);
+std::ostream &operator<<(std::ostream &o, const GPhoto::Widget::MenuValue &w);
+inline std::ostream &operator<<(std::ostream &o, const std::shared_ptr<GPhoto::Widget::MenuValue> &w) { return o << *w; }
 #endif
