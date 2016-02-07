@@ -94,6 +94,15 @@ string GPhoto::CameraFile::path() const
   return d->folder + "/" + d->file;
 }
 
+string GPhoto::CameraFile::file() const
+{
+  return d->file;
+}
+string GPhoto::CameraFile::folder() const
+{
+  return d->folder;
+}
+
 
 ostream& operator<<(ostream& o, const GPhoto::CameraFile::Info& info)
 {

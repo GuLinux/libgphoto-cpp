@@ -37,6 +37,8 @@ public:
   void copy(std::vector<uint8_t> &data);
   std::vector<uint8_t> data();
   std::string path() const;
+  std::string folder() const;
+  std::string file() const;
   Info info() const;
   void delete_on_camera();
 private:

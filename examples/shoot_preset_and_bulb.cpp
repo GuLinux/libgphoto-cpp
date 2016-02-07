@@ -99,6 +99,8 @@ int main(int argc, char **argv) {
     file.wait();
     CameraFilePtr cf = file.get();
     cerr << *cf << endl;
+    if(has_option(args, "-s"))
+      cf->save(cf->file());
   };
  
   shoot("5", [&]{ return camera->shoot_preset(mirror_lock); });
