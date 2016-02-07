@@ -82,6 +82,9 @@ int main(int argc, char **argv) {
       return;
     cerr << "[" << setfill(' ') << setw(8) << levels[level] << "] " << message << endl;
   });
+
+  
+  
   GPhoto::Driver driver(logger);
   GPhoto::CameraPtr camera = driver.autodetect();
   if(!camera) {
@@ -90,43 +93,39 @@ int main(int argc, char **argv) {
   }
   cout << "Found camera: " << camera << endl;
   auto settings = camera->settings();
-  ShooterPtr shooter = make_shared<SerialShooter>("/dev/ttyUSB0", logger);
   
-  map<string, list<string>> widget_names{{"shutter", {"eosremoterelease", "bulb"}}, {"customfunc", {"customfuncex"}}, {"shutterspeed", {"shutterspeed"}}};
+  static multimap<string, string> widget_names{{"shutter", "eosremoterelease"}, {"shutter", "bulb"}, {"customfunc", "customfuncex"}, {"exposure", "shutterspeed"}, {"exposure", "shutterspeed2"}, {"exposure", "eos-shutterspeed"}};
+  multimap<string, WidgetPtr> widgets_init;
+  transform(begin(widget_names), end(widget_names), inserter(widgets_init, end(widgets_init)), [&](const pair<string,string> &p){ return pair<string,WidgetPtr>{p.first,  settings->child_by_name(p.second)};});
   map<string, WidgetPtr> widgets;
-  
-//   transform(begin(widget_names), end(widget_names), inserter(widgets), [](const pair<string, list<string>> &p){
-//     return WidgetPtr{};
-//   });
-//   
-  if(static_cast<bool>(settings->child_by_name("eosremoterelease"))) {
-    shooter = make_shared<EOSRemoteReleaseShutter>(camera, logger);
-    cerr << "Using eosremoterelease shooter" << endl;
-  }
-  
-  if(static_cast<bool>(settings->child_by_name("bulb"))) {
-    shooter = make_shared<BulbSettingShutter>(camera, logger);
-    cerr << "Using bulb-widget shooter" << endl;
-  }
-  
+  copy_if(begin(widgets_init), end(widgets_init), inserter(widgets, end(widgets)), [](const pair<string,WidgetPtr> &p){ return static_cast<bool>(p.second);});
+  cout << "Widgets found:\n";
+  for(auto w: widgets_init) { if(w.second) cout << w.first << ": " << w.second->name() << endl; }
+  cout << "Selected widgets:\n";
+  for(auto w: widgets) { cout << w.first << ": " << w.second->name() << endl; }
 
-  auto customfunc = settings->child_by_name("customfuncex");
-  cerr << "custom func widget: " << static_cast<bool>(customfunc) << endl;
+
+  ShooterPtr shooter = make_shared<SerialShooter>("/dev/ttyUSB0", logger);
+  if(widgets.count("shutter")) {
+    shooter = widgets["shutter"]->name() == "eosremoterelease" ? ShooterPtr{new EOSRemoteReleaseShutter{camera, logger}} : ShooterPtr{new BulbSettingShutter{camera, logger}};
+  }
   
   auto mirror_lock = has_option(args, "-m") ? GPhoto::Camera::MirrorLock{chrono::duration<double>(2), shooter} : GPhoto::Camera::MirrorLock{};
+  
+  cout << "Using mirror lock (option -m): " << boolalpha << static_cast<bool>(mirror_lock) << endl;
   cout << "Widgets: " << endl;
   for(auto setting: camera->settings()->all_children()) {
     cout << "** " << setting << ", value: " << value2string(setting) << endl;
   }
   
   
-  if(!settings->child_by_name("shutterspeed")) {
+  if(!widgets.count("exposure")) {
     cout << "Error! unable to find <shutterspeed> settings widget\n";
     return 1;
   }
   
   auto shoot = [&](const string &speed, function<future<CameraFilePtr>()> shoot_f){
-    settings->child_by_name("shutterspeed")->get<Widget::MenuValue>()->set(speed);
+    widgets["exposure"]->get<Widget::MenuValue>()->set(speed);
     camera->save_settings();
     auto file = shoot_f();
     file.wait();
