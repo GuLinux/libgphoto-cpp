@@ -106,6 +106,10 @@ int main(int argc, char **argv) {
     cout << "** " << setting << ", value: " << value2string(setting) << endl;
   }
   
+  if(!settings->child_by_name("shutterspeed")) {
+    cout << "Error! unable to find <shutterspeed> settings widget\n";
+    return 1;
+  }
   
   auto shoot = [&](const string &speed, function<future<CameraFilePtr>()> shoot_f){
     settings->child_by_name("shutterspeed")->get<Widget::MenuValue>()->set(speed);
