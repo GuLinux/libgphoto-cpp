@@ -6,6 +6,7 @@ SET(CMAKE_CXX_FLAGS "-Wall -std=c++11 -fpermissive" )
 SET(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -std=c++11 -fpermissive" )
 
 add_subdirectory(src)
+add_subdirectory(examples)
 if(GTest_FOUND)
   add_subdirectory(tests)
 endif(GTest_FOUND)

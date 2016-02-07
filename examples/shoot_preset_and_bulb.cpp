@@ -25,6 +25,8 @@
 #include "camerafile.h"
 #include "serialshooter.h"
 #include <eosremotereleaseshooter.h>
+#include <list>
+#include <algorithm>
 using namespace std;
 using namespace GPhoto;
 
@@ -61,7 +63,13 @@ string value2string(const WidgetPtr &widget) {
   return ss.str();
 }
 
+bool has_option(const list<string> &args, const string &option) {
+  return find(begin(args), end(args), option) != end(args);
+};
+
 int main(int argc, char **argv) {
+  list<string> args(argc-1);
+  copy(argv+1, argv+argc, begin(args));
   auto logger = make_shared<Logger>([](const string &message, Logger::Level level){
     static map<Logger::Level, string> levels {
       {Logger::DEBUG, "DEBUG"},
@@ -92,7 +100,7 @@ int main(int argc, char **argv) {
   auto customfunc = settings->child_by_name("customfuncex");
   cerr << "custom func widget: " << static_cast<bool>(customfunc) << endl;
   
-  GPhoto::Camera::MirrorLock mirror_lock{chrono::duration<double>(2), shooter};
+  auto mirror_lock = has_option(args, "-m") ? GPhoto::Camera::MirrorLock{chrono::duration<double>(2), shooter} : GPhoto::Camera::MirrorLock{};
   cout << "Widgets: " << endl;
   for(auto setting: camera->settings()->all_children()) {
     cout << "** " << setting << ", value: " << value2string(setting) << endl;
@@ -108,7 +116,7 @@ int main(int argc, char **argv) {
     cerr << *cf << endl;
   };
  
-  shoot("1/125", [&]{ return camera->shoot_preset(mirror_lock); });
+  shoot("5", [&]{ return camera->shoot_preset(mirror_lock); });
   this_thread::sleep_for(chrono::seconds(2));
   shoot("Bulb", [&]{ return camera->shoot_bulb(chrono::duration<double>(45), shooter, mirror_lock); });
   
