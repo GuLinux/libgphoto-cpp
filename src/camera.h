@@ -31,16 +31,24 @@ namespace GPhoto {
 class Camera
 {
 public:
+    struct MirrorLock {
+      std::chrono::duration<double, std::milli> duration;
+      ShooterPtr shooter;
+      MirrorLock(const std::chrono::duration<double, std::milli> &duration = {}, const ShooterPtr shooter = {});
+      operator bool() const;
+    };
     Camera(const GPhotoCameraPtr &camera, const LoggerPtr &logger = {});
     ~Camera();
     WidgetPtr settings() const;
     void save_settings();
     std::string summary() const;
-    std::future<CameraFilePtr> shoot_preset() const;
-    std::future<CameraFilePtr> shoot_bulb(const std::chrono::duration<double, std::milli> &exposure, const ShooterPtr &shooter) const;
+    std::future<CameraFilePtr> shoot_preset(const MirrorLock &mirror_lock = {}) const;
+    std::future<CameraFilePtr> shoot_bulb(const std::chrono::duration<double, std::milli> &exposure, const ShooterPtr &shooter, const MirrorLock &mirror_lock = {}) const;
 private:
   DPTR
 };
+
+
 }
 
 std::ostream &operator<<(std::ostream &o, const GPhoto::Camera &c);

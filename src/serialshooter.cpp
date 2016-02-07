@@ -18,14 +18,16 @@
 
 #include "serialshooter.h"
 #include <sstream>
+#include "logger.h"
 
 using namespace GPhoto;
 using namespace std;
 
 class SerialShooter::Private {
 public:
-  Private(const string &device_path, SerialShooter *q);
+  Private(const string &device_path, const LoggerPtr &logger, SerialShooter *q);
   string device_path;
+  LoggerPtr logger;
   class Shoot;
 private:
   SerialShooter *q;
@@ -33,18 +35,20 @@ private:
 
 class SerialShooter::Private::Shoot : public Shooter::Shoot {
 public:
-  Shoot(const string &device_path);
+  Shoot(const string &device_path, const LoggerPtr &logger = {});
   ~Shoot();
 private:
+  string device_path;
+  LoggerPtr logger;
   int bulb_fd;
 };
 
-SerialShooter::Private::Private(const string& device_path, SerialShooter* q) : device_path{device_path}, q{q}
+SerialShooter::Private::Private(const string& device_path, const LoggerPtr &logger, SerialShooter* q) : device_path{device_path}, logger{logger}, q{q}
 {
 }
 
-SerialShooter::SerialShooter(const string &device_path)
- : dptr(device_path, this)
+SerialShooter::SerialShooter(const string &device_path, const LoggerPtr &logger)
+ : dptr(device_path, logger, this)
 {
 }
 
@@ -54,7 +58,7 @@ SerialShooter::~SerialShooter()
 
 Shooter::ShootPtr SerialShooter::shoot() const
 {
-  return make_shared<Private::Shoot>(d->device_path);
+  return make_shared<Private::Shoot>(d->device_path, d->logger);
 }
 
 
@@ -73,7 +77,7 @@ SerialShooter::error::error(const string& message): runtime_error(message)
 #include <string.h>
 #include <unistd.h>
 
-SerialShooter::Private::Shoot::Shoot(const string& device_path)
+SerialShooter::Private::Shoot::Shoot(const string& device_path, const LoggerPtr& logger) : device_path{device_path}, logger{logger}
 {
     bulb_fd = open(device_path.c_str(), O_RDWR, O_NONBLOCK);
     if(bulb_fd == -1) {
@@ -81,12 +85,15 @@ SerialShooter::Private::Shoot::Shoot(const string& device_path)
       ss << "Error opening serial port " << device_path << ": " << strerror(bulb_fd);
       throw error(ss.str());
     }
+    lDebug(logger) << "Serial port " << device_path << " opened";
 }
 
 SerialShooter::Private::Shoot::~Shoot()
 {
-  if(bulb_fd > -1)
+  if(bulb_fd > -1) {
     close(bulb_fd);
+    lDebug(logger) << "Serial port " << device_path << " closed";
+  }
 }
 
 

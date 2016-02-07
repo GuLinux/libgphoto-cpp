@@ -34,6 +34,8 @@ DPTR_CLASS(GPhoto::Camera) {
 public:
   Private(const GPhotoCameraPtr &camera, const LoggerPtr &logger, Camera *q);
   CameraFilePtr wait_for_file(int timeout = 30000);
+  void try_mirror_lock(MirrorLock mirror_lock);
+  void wait_for(duration<double, milli> how_much);
   GPhotoCameraPtr camera;
   LoggerPtr logger;
   string summary;
@@ -74,30 +76,33 @@ string GPhoto::Camera::summary() const
 }
 
 
-future< CameraFilePtr > GPhoto::Camera::shoot_bulb(const std::chrono::duration<double, milli> &exposure, const ShooterPtr& shooter) const
+future< CameraFilePtr > GPhoto::Camera::shoot_bulb(const duration< double, milli >& exposure, const ShooterPtr& shooter, const GPhoto::Camera::MirrorLock& mirror_lock) const
 {
   return async([=]{
     {
-      lDebug(d->logger) << "Shooting with bulb mode...";
+      lDebug(d->logger) << "Shooting with bulb mode, duration: " << exposure.count();
+      d->try_mirror_lock(mirror_lock);
       auto shoot = shooter->shoot();
-      auto start = steady_clock::now();
-      lDebug(d->logger) << "start: " << start.time_since_epoch().count() << ", duration: " << exposure.count();
-      while( duration<double, milli>{steady_clock::now() - start} < exposure) {
-	this_thread::sleep_for(nanoseconds(1));
-      }
+      d->wait_for(exposure);
     }
     return d->wait_for_file();
   });
 }
 
-future< CameraFilePtr > GPhoto::Camera::shoot_preset() const
+future< CameraFilePtr > GPhoto::Camera::shoot_preset(const MirrorLock &mirror_lock) const
 {
-  lDebug(d->logger) << "Shooting with preset mode...";
   return async([=] {
+    lDebug(d->logger) << "Shooting with preset mode...";
+    d->try_mirror_lock(mirror_lock);
     CameraFilePath camera_file_path;
     lDebug(d->logger) << "Shooter thread";
-    d->camera << CAM_RUN(this, &camera_file_path) { return gp_camera_capture(gp_cam, GP_CAPTURE_IMAGE, &camera_file_path, gp_ctx); };
-    return make_shared<GPhoto::CameraFile>(camera_file_path.folder, camera_file_path.name, d->camera);
+    if(mirror_lock) {
+      mirror_lock.shooter->shoot();
+      return d->wait_for_file();
+    } else {
+      d->camera << CAM_RUN(this, &camera_file_path) { return gp_camera_capture(gp_cam, GP_CAPTURE_IMAGE, &camera_file_path, gp_ctx); };
+      return make_shared<GPhoto::CameraFile>(camera_file_path.folder, camera_file_path.name, d->camera);
+    }
   });
 }
 
@@ -130,13 +135,47 @@ CameraFilePtr GPhoto::Camera::Private::wait_for_file(int timeout)
   }
 }
 
+void GPhoto::Camera::Private::wait_for(duration< double, milli > how_much)
+{
+    auto start = steady_clock::now();
+    while( duration<double, milli>{steady_clock::now() - start} < how_much) {
+      this_thread::sleep_for(nanoseconds(1));
+    }
+}
+
+
+void GPhoto::Camera::Private::try_mirror_lock(GPhoto::Camera::MirrorLock mirror_lock)
+{
+  if(! mirror_lock) {
+    lDebug(logger) << "No mirror lock set, skipping";
+    return;
+  }
+  lDebug(logger) << "Starting mirror lock: " << mirror_lock.duration.count() << "ms";
+  {
+    auto shoot = mirror_lock.shooter->shoot();
+    this_thread::sleep_for(milliseconds{100});
+  }
+  wait_for(mirror_lock.duration);
+  lDebug(logger) << "Ending mirror lock";
+}
+
+
 void GPhoto::Camera::save_settings()
 {
   d->camera << CAM_RUN(this) { return gp_camera_set_config(gp_cam, *d->settings, gp_ctx); };
 }
 
+GPhoto::Camera::MirrorLock::MirrorLock(const chrono::duration< double, milli >& duration, const ShooterPtr shooter)
+  : duration{duration}, shooter{shooter}
+{
+
+}
 
 
+GPhoto::Camera::MirrorLock::operator bool() const
+{
+  return duration.count() > 0 && shooter;
+}
 
 
 

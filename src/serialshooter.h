@@ -29,7 +29,7 @@ public:
   public:
     error(const std::string& message);
   };
-  SerialShooter(const std::string &device_path);
+  SerialShooter(const std::string &device_path, const LoggerPtr &logger = {});
   ~SerialShooter();
   virtual ShootPtr shoot() const;
   void set_device_path(const std::string &device_path);

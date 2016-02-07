@@ -28,7 +28,7 @@ namespace GPhoto {
 class EOSRemoteReleaseShooter : public GPhoto::Shooter
 {
 public:
-    EOSRemoteReleaseShooter(const GPhoto::CameraPtr &camera);
+    EOSRemoteReleaseShooter(const GPhoto::CameraPtr &camera, const LoggerPtr &logger = {});
     ~EOSRemoteReleaseShooter();
     virtual GPhoto::Shooter::ShootPtr shoot() const;
 private:

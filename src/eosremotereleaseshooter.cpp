@@ -20,13 +20,15 @@
 #include "camera.h"
 #include "widget.h"
 #include "widget_range.h"
+#include "logger.h"
 using namespace GPhoto;
 using namespace std;
 
 DPTR_CLASS(EOSRemoteReleaseShooter) {
 public:
-  Private(const GPhoto::CameraPtr &camera, EOSRemoteReleaseShooter *q);
+  Private(const GPhoto::CameraPtr &camera, const LoggerPtr &logger, EOSRemoteReleaseShooter *q);
   GPhoto::CameraPtr camera;
+  LoggerPtr logger;
   class Shoot;
 private:
   EOSRemoteReleaseShooter *q;
@@ -34,34 +36,39 @@ private:
 
 class EOSRemoteReleaseShooter::Private::Shoot : public Shooter::Shoot {
 public:
-  Shoot(const WidgetPtr &eosremoterelease, const GPhoto::CameraPtr &camera);
+  Shoot(const WidgetPtr &eosremoterelease, const GPhoto::CameraPtr &camera, const LoggerPtr &logger);
   ~Shoot();
 private:
   WidgetPtr eosremoterelease;
   GPhoto::CameraPtr camera;
+  LoggerPtr logger;
 };
 
-EOSRemoteReleaseShooter::Private::Shoot::Shoot(const WidgetPtr& eosremoterelease, const GPhoto::CameraPtr& camera) : eosremoterelease{eosremoterelease}, camera{camera}
+EOSRemoteReleaseShooter::Private::Shoot::Shoot(const WidgetPtr& eosremoterelease, const GPhoto::CameraPtr& camera, const LoggerPtr& logger)
+  : eosremoterelease{eosremoterelease}, camera{camera}, logger{logger}
 {
   eosremoterelease->get<Widget::RangeValue>()->set(2);
   camera->save_settings();
+  lDebug(logger) << "eosremoterelease set to 2 (PRESS FULL)";
+  
 }
 
 EOSRemoteReleaseShooter::Private::Shoot::~Shoot()
 {
   eosremoterelease->get<Widget::RangeValue>()->set(4);
   camera->save_settings();
+  lDebug(logger) << "eosremoterelease set to 4 (RELEASE FULL)";
 }
 
 
 
-EOSRemoteReleaseShooter::Private::Private(const GPhoto::CameraPtr& camera, EOSRemoteReleaseShooter* q)
+EOSRemoteReleaseShooter::Private::Private(const GPhoto::CameraPtr& camera, const LoggerPtr& logger, EOSRemoteReleaseShooter* q) : camera{camera}, logger{logger}
 {
 
 }
 
 
-EOSRemoteReleaseShooter::EOSRemoteReleaseShooter(const GPhoto::CameraPtr &camera) : dptr(camera, this)
+EOSRemoteReleaseShooter::EOSRemoteReleaseShooter(const GPhoto::CameraPtr& camera, const LoggerPtr& logger) : dptr(camera, logger, this)
 {
 
 }
@@ -73,5 +80,5 @@ EOSRemoteReleaseShooter::~EOSRemoteReleaseShooter()
 
 GPhoto::Shooter::ShootPtr EOSRemoteReleaseShooter::shoot() const
 {
-  return make_shared<Private::Shoot>(d->camera->settings()->child_by_name("eosremoterelease"), d->camera);
+  return make_shared<Private::Shoot>(d->camera->settings()->child_by_name("eosremoterelease"), d->camera, d->logger);
 }

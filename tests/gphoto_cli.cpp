@@ -62,7 +62,7 @@ string value2string(const WidgetPtr &widget) {
 }
 
 int main(int argc, char **argv) {
-  GPhoto::Driver driver(make_shared<Logger>([](const string &message, Logger::Level level){
+  auto logger = make_shared<Logger>([](const string &message, Logger::Level level){
     static map<Logger::Level, string> levels {
       {Logger::DEBUG, "DEBUG"},
       {Logger::ERROR, "ERROR"},
@@ -73,36 +73,45 @@ int main(int argc, char **argv) {
     if(level == Logger::TRACE)
       return;
     cerr << "[" << setfill(' ') << setw(8) << levels[level] << "] " << message << endl;
-  }));
+  });
+  GPhoto::Driver driver(logger);
   GPhoto::CameraPtr camera = driver.autodetect();
   if(!camera) {
     cerr << "Error finding camera" << endl;
     return 1;
   }
   cout << "Found camera: " << camera << endl;
-    auto settings = camera->settings();
-    cout << "Widgets: " << endl;
-    for(auto setting: camera->settings()->all_children()) {
-      cout << "** " << setting << ", value: " << value2string(setting) << endl;
-    }
-    settings->child_by_name("shutterspeed")->get<Widget::MenuValue>()->set("1/125");
-    camera->save_settings();
-
-    auto file = camera->shoot_preset();
-  file.wait();
-  CameraFilePtr cf = file.get();
-  cerr << *cf << endl;
+  auto settings = camera->settings();
+  ShooterPtr shooter = make_shared<SerialShooter>("/dev/ttyUSB0", logger);
+  if(static_cast<bool>(settings->child_by_name("eosremoterelease"))) {
+    shooter = make_shared<EOSRemoteReleaseShooter>(camera, logger);
+    cerr << "Using eosremoterelease shooter" << endl;
+  }
   
+
+  auto customfunc = settings->child_by_name("customfuncex");
+  cerr << "custom func widget: " << static_cast<bool>(customfunc) << endl;
+  
+  GPhoto::Camera::MirrorLock mirror_lock{chrono::duration<double>(2), shooter};
+  cout << "Widgets: " << endl;
+  for(auto setting: camera->settings()->all_children()) {
+    cout << "** " << setting << ", value: " << value2string(setting) << endl;
+  }
+  
+  
+  auto shoot = [&](const string &speed, function<future<CameraFilePtr>()> shoot_f){
+    settings->child_by_name("shutterspeed")->get<Widget::MenuValue>()->set(speed);
+    camera->save_settings();
+    auto file = shoot_f();
+    file.wait();
+    CameraFilePtr cf = file.get();
+    cerr << *cf << endl;
+  };
+ 
+  shoot("1/125", [&]{ return camera->shoot_preset(mirror_lock); });
   this_thread::sleep_for(chrono::seconds(2));
-  settings->child_by_name("shutterspeed")->get<Widget::MenuValue>()->set("Bulb");
-  camera->save_settings();
-  ShooterPtr shooter = make_shared<SerialShooter>("/dev/ttyUSB0");
-  if(static_cast<bool>(settings->child_by_name("eosremoterelease")))
-    shooter = make_shared<EOSRemoteReleaseShooter>(camera);
-  file = camera->shoot_bulb(chrono::duration<double>(45), shooter);
-  file.wait();
-  cf = file.get();
-  cerr << *cf << endl;
+  shoot("Bulb", [&]{ return camera->shoot_bulb(chrono::duration<double>(45), shooter, mirror_lock); });
+  
 
   return 0;
 };
