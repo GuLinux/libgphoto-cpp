@@ -47,10 +47,10 @@ string value2string(const WidgetPtr &widget) {
       ss << boolalpha << *widget->get<Widget::BoolValue>();
       break;
     case Widget::Widget::Date:
-      ss << *widget->get<Widget::StringValue>();
+      ss << *widget->get<Widget::DateValue>();
       break;
     case Widget::Widget::String:
-      ss << widget->get<Widget::StringValue>()->get();
+      ss << *widget->get<Widget::StringValue>();
       break;
     case Widget::Menu:
       ss << *widget->get<Widget::MenuValue>() << ", choices: " << choices2str(widget->get<Widget::MenuValue>()->choices());
