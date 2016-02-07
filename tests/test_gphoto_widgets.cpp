@@ -220,6 +220,16 @@ TEST_F(TestGPhotoWidgets, testPath) {
   ASSERT_EQ("/top_window/section_window/section_window_item", sub_sub_item->path());
 }
 
+
+TEST_F(TestGPhotoWidgets, testEmptyString) {
+  gphoto << GP2_RUN(this) { return gp_widget_set_value(text_widget, ""); };
+  string text;
+  {
+    auto widget = make_shared<Widget>(text_widget, gphoto, LoggerPtr{});
+    text = *widget->get<Widget::StringValue>();
+  }
+  ASSERT_EQ("", text);
+}
 chrono::system_clock::time_point TestGPhotoWidgets::time(int year, int month, int day, int hour, int min, int sec) const
 {
   tm t;
