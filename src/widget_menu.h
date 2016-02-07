@@ -29,6 +29,7 @@ public:
     std::string text;
     bool operator==(const Choice &o) const;
     bool operator==(const std::string &s) const;
+    operator std::string() const;
   };
   typedef std::vector<Choice> Choices;
   Choices choices() const;

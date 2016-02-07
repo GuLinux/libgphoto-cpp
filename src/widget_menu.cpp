@@ -52,3 +52,9 @@ ostream& operator<<(ostream& s, const Widget::MenuValue::Choice& c)
 {
   return s << c.text;
 }
+
+Widget::MenuValue::Choice::operator string() const
+{
+  return text;
+}
+
