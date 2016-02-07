@@ -1,4 +1,11 @@
 cmake_minimum_required(VERSION 2.8)
+project(gphoto++)
+set(gphoto++_VERSION_MAJOR 0)
+set(gphoto++_VERSION_MINOR 1)
+set(gphoto++_VERSION_PATCH 0)
+set(gphoto++_VERSION_STRING ${gphoto++_VERSION_MAJOR}.${gphoto++_VERSION_MINOR}.${gphoto++_VERSION_PATCH})
+
+
 set(CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
 find_package(GPHOTO2 REQUIRED)
 find_package(GTest)
