@@ -42,6 +42,13 @@ public:
     WidgetPtr settings() const;
     void save_settings();
     std::string summary() const;
+    std::list<std::string> folders(const std::string &folder) const;
+    struct FileInfo {
+      std::string folder;
+      std::string name;
+      std::string path() const;
+    };
+    std::list<FileInfo> files(const std::string &folder) const;
     std::future<CameraFilePtr> shoot_preset(const MirrorLock &mirror_lock = {}) const;
     std::future<CameraFilePtr> shoot_bulb(const std::chrono::duration<double, std::milli> &exposure, const ShooterPtr &shooter, const MirrorLock &mirror_lock = {}) const;
 private:

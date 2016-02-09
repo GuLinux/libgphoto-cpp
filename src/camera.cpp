@@ -23,9 +23,11 @@
 #include <chrono>
 #include <thread>
 #include <list>
+#include <algorithm>
 #include "logger.h"
 #include "exceptions.h"
 #include "camerafile.h"
+#include "list.h"
 
 using namespace GPhoto;
 using namespace std;
@@ -191,3 +193,29 @@ ostream &operator<<(ostream &o, const GPhoto::Camera &c) {
   o << "GPhoto::Camera{ " << c.summary() << "}";
   return o;
 }
+
+list<string> GPhoto::Camera::folders(const string& folder) const
+{
+  List files_list{*d->camera};
+  d->camera << CAM_RUN(this, &files_list, &folder) { return gp_camera_folder_list_folders(gp_cam, folder.c_str(), files_list, gp_ctx); };
+  multimap<string,string> files_map = files_list;
+  list<string> folders(files_map.size());;
+  transform(begin(files_map), end(files_map), begin(folders), [&folder](const pair<string,string> &p){ return folder + "/" + p.first; });
+  return folders;
+}
+
+list<GPhoto::Camera::FileInfo> GPhoto::Camera::files(const string& folder) const
+{
+  List files_list{*d->camera};
+  d->camera << CAM_RUN(this, &files_list, &folder) { return gp_camera_folder_list_files(gp_cam, folder.c_str(), files_list, gp_ctx); };
+  multimap<string,string> files_map = files_list;
+  list<FileInfo> files(files_map.size());;
+  transform(begin(files_map), end(files_map), begin(files), [&folder](const pair<string,string> &p){ return FileInfo{folder, p.first}; });
+  return files;
+}
+
+string GPhoto::Camera::FileInfo::path() const
+{
+  return folder + "/" + name;
+}
+

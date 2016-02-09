@@ -15,30 +15,15 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-#include <iostream>
-#include "camera.h"
-#include "driver.h"
-#include "widgets.h"
-#include <sstream>
-#include <iomanip>
-#include <map>
-#include "camerafile.h"
-#include "serialshooter.h"
-#include "gphotowidgetshooter.h"
-#include <list>
-#include <algorithm>
+#include "commons.h"
+
 using namespace std;
 using namespace GPhoto;
 
 
-bool has_option(const vector<string> &args, const string &option) {
-  return find(begin(args), end(args), option) != end(args);
-};
-
 int main(int argc, char **argv) {
-  vector<string> args(argc-1);
-  copy(argv+1, argv+argc, begin(args));
-  if(has_option(args, "-h") || has_option(args, "--help")) {
+  init_options(argc, argv);
+  if(has_option("-h") || has_option("--help")) {
     cout << args[0] << " usage: " << endl
 	 << "\t-m: enable mirror lock (default: disabled)" << endl
 	 << "\t-s: download and save files to current directory (default: disabled)" << endl
@@ -47,28 +32,13 @@ int main(int argc, char **argv) {
 	 << endl;
     return 0;
   }
-  auto logger = make_shared<Logger>([](const string &message, Logger::Level level){
-    static map<Logger::Level, string> levels {
-      {Logger::DEBUG, "DEBUG"},
-      {Logger::ERROR, "ERROR"},
-      {Logger::INFO, "INFO"},
-      {Logger::TRACE, "TRACE"},
-      {Logger::WARNING, "WARNING"},
-    };
-    if(level == Logger::TRACE)
-      return;
-    cerr << "[" << setfill(' ') << setw(8) << levels[level] << "] " << message << endl;
-  });
 
+  auto logger = make_logger();
   
   
-  GPhoto::Driver driver(logger);
-  GPhoto::CameraPtr camera = driver.autodetect();
-  if(!camera) {
-    cerr << "Error finding camera" << endl;
+  auto camera = init_camera(logger);
+  if(!camera)
     return 1;
-  }
-  cout << "Found camera: " << camera << endl;
   auto settings = camera->settings();
   
   static multimap<string, string> widget_names{
@@ -90,9 +60,9 @@ int main(int argc, char **argv) {
 
   if(!widgets.count("format"))
     cerr << "WARNING: Unable to find image format config widget\n";
-  if(has_option(args, "-j") && widgets.count("format"))
+  if(has_option("-j") && widgets.count("format"))
     widgets["format"]->get<Widget::MenuValue>()->set("Large Fine JPEG"); // TODO: dynamic from menu entries
-  if(has_option(args, "-r") && widgets.count("format"))
+  if(has_option("-r") && widgets.count("format"))
     widgets["format"]->get<Widget::MenuValue>()->set("RAW");
     
 
@@ -101,7 +71,7 @@ int main(int argc, char **argv) {
     shooter = widgets["shutter"]->name() == "eosremoterelease" ? ShooterPtr{new EOSRemoteReleaseShutter{camera, logger}} : ShooterPtr{new BulbSettingShutter{camera, logger}};
   }
   
-  auto mirror_lock = has_option(args, "-m") ? GPhoto::Camera::MirrorLock{chrono::duration<double>(2), shooter} : GPhoto::Camera::MirrorLock{};
+  auto mirror_lock = has_option("-m") ? GPhoto::Camera::MirrorLock{chrono::duration<double>(2), shooter} : GPhoto::Camera::MirrorLock{};
   
   cout << "Using mirror lock (option -m): " << boolalpha << static_cast<bool>(mirror_lock) << endl;
   cout << "Widgets: " << endl;
@@ -122,7 +92,7 @@ int main(int argc, char **argv) {
     file.wait();
     CameraFilePtr cf = file.get();
     cerr << *cf << endl;
-    if(has_option(args, "-s"))
+    if(has_option("-s"))
       cf->save(cf->file());
   };
  

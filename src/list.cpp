@@ -62,7 +62,7 @@ List::operator multimap<string, string>() const
     const char *value;
     d->gphoto << GP2_RUN(this, &i, &key) { return gp_list_get_name(d->cameralist, i, &key); }
 	      << GP2_RUN(this, &i, &value) { return gp_list_get_value(d->cameralist, i, &value); };
-    ret.insert(make_pair(key, value));
+    ret.insert(make_pair(key?key:"", value?value:""));
   };
   return ret;
 }
