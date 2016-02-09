@@ -4,6 +4,7 @@ libgphoto++ - a modern c++11 wrapper for libgphoto2
 
 ## Build
 libgphoto++ requires only gphoto2 (ubuntu: sudo apt-get install libgphoto2-dev)
+
     cd libgphoto-cpp
     mkdir build
     cd build
