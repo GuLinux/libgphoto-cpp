@@ -14,32 +14,28 @@
  * 
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ * 
+ */
 
-#ifndef FORWARD_DECLARATIONS_H
-#define FORWARD_DECLARATIONS_H
-#include <list>
-#include "exceptions.h"
+#ifndef GPHOTO_LIST_H
+#define GPHOTO_LIST_H
+
 #include "dptr.h"
-extern "C" {
-typedef struct _GPContext GPContext;
-typedef struct _Camera Camera;
-typedef struct _CameraWidget CameraWidget;
-typedef struct _CameraList CameraList;
+#include "fwd.h"
+#include <map>
+
+namespace GPhoto {
+
+class List
+{
+public:
+  List(const GPhotoWrapperPtr &gphoto);
+  ~List();
+  operator CameraList *() const;
+  operator std::multimap<std::string, std::string>() const;
+private:
+  DPTR
+};
 }
 
-#define fwd_class(name) class name; typedef std::shared_ptr<name> name##Ptr;
-namespace GPhoto {
-  fwd_class(GPhotoWrapper)
-  fwd_class(GPhotoDriver)
-  fwd_class(GPhotoCamera)
-  fwd_class(CameraFile)
-  fwd_class(Widget)
-  fwd_class(Logger)
-  fwd_class(Driver)
-  fwd_class(Camera)
-  fwd_class(Shooter)
-  typedef std::list<WidgetPtr> Widgets;
-};
-
-#endif
+#endif // GPHOTO_LIST_H

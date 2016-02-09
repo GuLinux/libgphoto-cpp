@@ -9,6 +9,7 @@ set(libgphoto++_SRCS
   logger.cpp
   serialshooter.cpp
   exceptions.cpp
+  list.cpp
   ${gphoto_widgets_SRCS}
 )
 option(BUILD_SHARED "Build shared library" Off)
