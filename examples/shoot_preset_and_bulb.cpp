@@ -55,8 +55,8 @@ int main(int argc, char **argv) {
       {Logger::TRACE, "TRACE"},
       {Logger::WARNING, "WARNING"},
     };
-    if(level == Logger::TRACE)
-      return;
+//     if(level == Logger::TRACE)
+//       return;
     cerr << "[" << setfill(' ') << setw(8) << levels[level] << "] " << message << endl;
   });
 
@@ -126,9 +126,11 @@ int main(int argc, char **argv) {
       cf->save(cf->file());
   };
  
-  shoot("5", [&]{ return camera->shoot_preset(mirror_lock); });
+  shoot("1/5", [&]{ return camera->shoot_preset(mirror_lock); });
   this_thread::sleep_for(chrono::seconds(2));
-  shoot("Bulb", [&]{ return camera->shoot_bulb(chrono::duration<double>(45), shooter, mirror_lock); });
+  shoot("Bulb", [&]{ return camera->shoot_bulb(chrono::duration<double>(2), shooter, mirror_lock); });
+  this_thread::sleep_for(chrono::seconds(2));
+  shoot("Bulb", [&]{ return camera->shoot_bulb(chrono::duration<double>(5), shooter, mirror_lock); });
   
 
   return 0;

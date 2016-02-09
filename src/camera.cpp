@@ -22,6 +22,7 @@
 #include "shooter.h"
 #include <chrono>
 #include <thread>
+#include <list>
 #include "logger.h"
 #include "exceptions.h"
 #include "camerafile.h"
@@ -40,6 +41,7 @@ public:
   LoggerPtr logger;
   string summary;
   shared_ptr< Widget > settings;
+  list<string> downloaded_files;
 private:
   Camera *q;
 };
@@ -101,6 +103,7 @@ future< CameraFilePtr > GPhoto::Camera::shoot_preset(const MirrorLock &mirror_lo
       return d->wait_for_file();
     } else {
       d->camera << CAM_RUN(this, &camera_file_path) { return gp_camera_capture(gp_cam, GP_CAPTURE_IMAGE, &camera_file_path, gp_ctx); };
+      //return d->wait_for_file();
       return make_shared<GPhoto::CameraFile>(camera_file_path.folder, camera_file_path.name, d->camera);
     }
   });
@@ -108,17 +111,17 @@ future< CameraFilePtr > GPhoto::Camera::shoot_preset(const MirrorLock &mirror_lo
 
 CameraFilePtr GPhoto::Camera::Private::wait_for_file(int timeout)
 {
-  CameraEventType event_type;
-  void *event_data;
-  CameraFilePath *camera_file;
   lDebug(logger) << "Waiting for file with timeout: " << timeout;
   while(true) {
+    CameraEventType event_type;
+    void *event_data = nullptr;
+    CameraFilePath *camera_file;
     camera << CAM_RUN(this, &timeout, &event_type, &event_data) { return gp_camera_wait_for_event(gp_cam, timeout, &event_type, &event_data, gp_ctx); };
     switch(event_type) {
       case GP_EVENT_TIMEOUT:
 	throw TimeoutError("Timeout waiting for file capture");
       case GP_EVENT_UNKNOWN:
-	lDebug(logger) << "Unknown event received.";
+	lDebug(logger) << "Unknown event received: " << event_data  << static_cast<const char*>(event_data);
 	break;
       case GP_EVENT_CAPTURE_COMPLETE:
 	lDebug(logger) << "Capture complete";

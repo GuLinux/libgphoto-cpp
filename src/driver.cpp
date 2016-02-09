@@ -21,6 +21,7 @@
 #include "logger.h"
 #include "exceptions.h"
 #include "camera.h"
+#include <map>
 
 using namespace GPhoto;
 using namespace std;
@@ -40,9 +41,33 @@ Driver::Private::Private(const LoggerPtr &logger, Driver* q) : driver{make_share
 }
 
 
-Driver::Driver(const LoggerPtr &logger) : dptr(logger, this)
+Driver::Driver(const LoggerPtr &logger, LibGPhotoLogLevel libgphotoLogLevel) : dptr(logger, this)
 {
-
+//  GPLogLevel level, const char *domain, const char *str, void *data)
+  auto log_func = [](GPLogLevel level, const char *domain, const char *str, void *loggerp){
+    Logger *logger = reinterpret_cast<Logger*>(loggerp);
+    switch(level) {
+      case GP_LOG_ERROR:
+	lError(logger) << "gphoto2: " << domain << "-" << str;
+	break;
+      case GP_LOG_VERBOSE:
+	lDebug(logger) << "gphoto2: " << domain << "-" << str;
+	break;
+      case GP_LOG_DEBUG:
+	lTrace(logger) << "gphoto2: " << domain << "-" << str;
+	break;
+      default:
+	return;
+    }
+  };
+  map<LibGPhotoLogLevel, GPLogLevel> gphoto_levels {
+    {Error, GP_LOG_ERROR}, {Verbose, GP_LOG_VERBOSE}, {Debug, GP_LOG_DEBUG}
+  };
+  if(libgphotoLogLevel != None) {
+    d->driver << CTX_RUN(this, log_func, libgphotoLogLevel,gphoto_levels) {
+      return gp_log_add_func(gphoto_levels.at(libgphotoLogLevel), log_func, d->logger.get());
+    };
+  }
 }
 
 Driver::~Driver()

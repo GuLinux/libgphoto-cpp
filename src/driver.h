@@ -27,7 +27,8 @@ namespace GPhoto {
 class Driver
 {
 public:
-    Driver(const LoggerPtr &logger = {});
+  enum LibGPhotoLogLevel { None, Error, Verbose, Debug };
+    Driver(const LoggerPtr &logger = {}, LibGPhotoLogLevel libgphotoLogLevel = None);
     ~Driver();
     GPhoto::CameraPtr autodetect() const;
 private:
