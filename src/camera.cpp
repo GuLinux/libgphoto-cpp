@@ -102,8 +102,13 @@ future< CameraFilePtr > GPhoto::Camera::shoot_preset(const MirrorLock &mirror_lo
       mirror_lock.shooter->shoot();
       return d->wait_for_file();
     } else {
-      d->camera << CAM_RUN(this, &camera_file_path) { return gp_camera_capture(gp_cam, GP_CAPTURE_IMAGE, &camera_file_path, gp_ctx); };
-      //return d->wait_for_file();
+      CameraList *camera_list;
+      d->camera
+		<< CAM_RUN(this, &camera_file_path) { return gp_camera_capture(gp_cam, GP_CAPTURE_IMAGE, &camera_file_path, gp_ctx); }
+		<< CAM_RUN(&camera_list) { return gp_list_new(&camera_list); }
+		<< CAM_RUN(this, &camera_file_path, &camera_list) { return gp_camera_folder_list_files(gp_cam, camera_file_path.folder, camera_list, gp_ctx); }
+		<< CAM_RUN(&camera_list) { return gp_list_free(camera_list); }
+		;
       return make_shared<GPhoto::CameraFile>(camera_file_path.folder, camera_file_path.name, d->camera);
     }
   });

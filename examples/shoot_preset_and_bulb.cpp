@@ -55,8 +55,8 @@ int main(int argc, char **argv) {
       {Logger::TRACE, "TRACE"},
       {Logger::WARNING, "WARNING"},
     };
-//     if(level == Logger::TRACE)
-//       return;
+    if(level == Logger::TRACE)
+      return;
     cerr << "[" << setfill(' ') << setw(8) << levels[level] << "] " << message << endl;
   });
 
