@@ -31,13 +31,22 @@ using namespace std;
 using namespace GPhoto;
 
 
-bool has_option(const list<string> &args, const string &option) {
+bool has_option(const vector<string> &args, const string &option) {
   return find(begin(args), end(args), option) != end(args);
 };
 
 int main(int argc, char **argv) {
-  list<string> args(argc-1);
+  vector<string> args(argc-1);
   copy(argv+1, argv+argc, begin(args));
+  if(has_option(args, "-h") || has_option(args, "--help")) {
+    cout << args[0] << " usage: " << endl
+	 << "\t-m: enable mirror lock (default: disabled)" << endl
+	 << "\t-s: download and save files to current directory (default: disabled)" << endl
+	 << "\t-r: set raw format before shooting" << endl
+	 << "\t-j: set jpeg format before shooting" << endl
+	 << endl;
+    return 0;
+  }
   auto logger = make_shared<Logger>([](const string &message, Logger::Level level){
     static map<Logger::Level, string> levels {
       {Logger::DEBUG, "DEBUG"},
@@ -62,7 +71,14 @@ int main(int argc, char **argv) {
   cout << "Found camera: " << camera << endl;
   auto settings = camera->settings();
   
-  static multimap<string, string> widget_names{{"shutter", "eosremoterelease"}, {"shutter", "bulb"}, {"customfunc", "customfuncex"}, {"exposure", "shutterspeed"}, {"exposure", "shutterspeed2"}, {"exposure", "eos-shutterspeed"}};
+  static multimap<string, string> widget_names{
+    {"shutter", "eosremoterelease"}, 
+    {"shutter", "bulb"}, {"customfunc", "customfuncex"}, 
+    {"exposure", "shutterspeed"}, 
+    {"exposure", "shutterspeed2"}, 
+    {"exposure", "eos-shutterspeed"},
+    {"format", "imageformat"}
+  };
   multimap<string, WidgetPtr> widgets_init;
   transform(begin(widget_names), end(widget_names), inserter(widgets_init, end(widgets_init)), [&](const pair<string,string> &p){ return make_pair(p.first,  settings->child_by_name(p.second));});
   map<string, WidgetPtr> widgets;
@@ -72,6 +88,13 @@ int main(int argc, char **argv) {
   cout << "Selected widgets:\n";
   for(auto w: widgets) { cout << w.first << ": " << w.second->name() << endl; }
 
+  if(!widgets.count("format"))
+    cerr << "WARNING: Unable to find image format config widget\n";
+  if(has_option(args, "-j") && widgets.count("format"))
+    widgets["format"]->get<Widget::MenuValue>()->set("Large Fine JPEG"); // TODO: dynamic from menu entries
+  if(has_option(args, "-r") && widgets.count("format"))
+    widgets["format"]->get<Widget::MenuValue>()->set("RAW");
+    
 
   ShooterPtr shooter = make_shared<SerialShooter>("/dev/ttyUSB0", logger);
   if(widgets.count("shutter")) {
