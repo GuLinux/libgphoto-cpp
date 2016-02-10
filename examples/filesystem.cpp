@@ -19,6 +19,39 @@
 using namespace std;
 using namespace GPhoto;
 
+struct Command {
+  string name;
+  vector<string> args;
+  operator bool() const { return !name.empty(); }
+};
+
+Command get_cmd() {
+  string line;
+  getline(cin, line);
+  stringstream ss{line};
+  vector<string> tokens;
+  while(!ss.str().empty()) {
+    string token;
+    ss >> token;
+    if(token.empty())
+      break;
+    tokens.push_back(token);
+  }
+  Command command;
+  if(!tokens.empty()) {
+    command.name = *tokens.begin();
+    tokens.erase(tokens.begin());
+    command.args = tokens;
+  }
+  return command;
+}
+
+ostream &operator<<(ostream &o, const vector<string> &v) {
+  for (auto s: v)
+    o << s << ", ";
+  return o;
+}
+
 int main(int argc, char **argv) {
   init_options(argc, argv);
 //   if(has_option("-h") || has_option("--help")) {
@@ -38,6 +71,7 @@ int main(int argc, char **argv) {
   if(!camera)
     return 1;
   string folder = "/";
+  
   while(true) {
     auto folders = camera->folders(folder);
     auto files = camera->files(folder);
@@ -49,5 +83,12 @@ int main(int argc, char **argv) {
       cout << f.path() << "\t";
     cout << endl << "New folder to browse: ";
     cin >> folder;
+  }
+  
+  while(true) {
+    auto command = get_cmd();
+    if(!command)
+      continue;
+    cout << "Command: " << command.name << ", args: " << command.args << endl;
   }
 }
