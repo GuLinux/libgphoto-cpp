@@ -14,34 +14,41 @@
  * 
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ * 
+ */
 
-#ifndef FORWARD_DECLARATIONS_H
-#define FORWARD_DECLARATIONS_H
-#include <list>
-#include "backend/exceptions.h"
+#ifndef GPHOTO_CAMERA_FILESYSTEM_H
+#define GPHOTO_CAMERA_FILESYSTEM_H
+
+#include "fwd.h"
 #include "utils/dptr.h"
-extern "C" {
-typedef struct _GPContext GPContext;
-typedef struct _Camera Camera;
-typedef struct _CameraWidget CameraWidget;
-typedef struct _CameraList CameraList;
-}
 
-#define fwd_class(name) class name; typedef std::shared_ptr<name> name##Ptr;
 namespace GPhoto {
-  fwd_class(GPhotoWrapper)
-  fwd_class(GPhotoDriver)
-  fwd_class(GPhotoCamera)
-  fwd_class(CameraFile)
-  fwd_class(CameraFileInfo)
-  fwd_class(Widget)
-  fwd_class(Logger)
-  fwd_class(Driver)
-  fwd_class(Camera)
-  fwd_class(CameraFolder)
-  fwd_class(Shooter)
-  typedef std::list<WidgetPtr> Widgets;
+
+class CameraFolder : public std::enable_shared_from_this<CameraFolder>
+{
+public:
+  CameraFolder(const std::string &path, const GPhotoCameraPtr &gphoto_camera, const CameraFolderPtr &parent = {});
+  std::list<CameraFolderPtr> folders() const;
+  std::list<CameraFileInfoPtr> files() const;
+  std::string path() const;
+  CameraFolderPtr parent() const;
+  ~CameraFolder();
+
+private:
+    DPTR
 };
 
-#endif
+class CameraFileInfo {
+public:
+  CameraFileInfo(const std::string &name, const CameraFolderPtr &folder, const GPhotoCameraPtr &gphoto_camera);
+  CameraFolderPtr parent() const;
+  std::string path() const;
+  std::string name() const;
+  CameraFilePtr camera_file() const;
+private:
+  DPTR
+};
+}
+
+#endif // GPHOTO_CAMERAFOLDER_H

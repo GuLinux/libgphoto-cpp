@@ -7,6 +7,7 @@ set(libgphoto++_SRCS
   camerafile.cpp
   driver.cpp
   camera.cpp
+  camera_filesystem.cpp
   serialshooter.cpp
   $<TARGET_OBJECTS:gphoto_backend>
   $<TARGET_OBJECTS:gphoto_utils>

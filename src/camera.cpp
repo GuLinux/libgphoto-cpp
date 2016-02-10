@@ -28,6 +28,7 @@
 #include "backend/exceptions.h"
 #include "camerafile.h"
 #include "backend/list.h"
+#include "camera_filesystem.h"
 
 using namespace GPhoto;
 using namespace std;
@@ -219,3 +220,8 @@ string GPhoto::Camera::FileInfo::path() const
   return folder + "/" + name;
 }
 
+
+CameraFolderPtr GPhoto::Camera::root(const string& root_path)
+{
+  return make_shared<CameraFolder>(root_path, d->camera);
+}

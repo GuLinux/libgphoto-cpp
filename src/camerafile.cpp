@@ -31,7 +31,7 @@ public:
   string file;
   GPhotoCameraPtr camera;
   ::CameraFile *camera_file;
-  CameraFileInfo info;
+  ::CameraFileInfo info;
 private:
   GPhoto::CameraFile *q;
 };
