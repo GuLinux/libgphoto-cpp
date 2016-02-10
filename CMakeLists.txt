@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 2.8)
-project(gphoto++)
+PROJECT(gphoto++ CXX)
 set(gphoto++_VERSION_MAJOR 0)
 set(gphoto++_VERSION_MINOR 1)
 set(gphoto++_VERSION_PATCH 0)

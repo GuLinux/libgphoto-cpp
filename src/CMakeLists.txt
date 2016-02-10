@@ -1,6 +1,6 @@
-file(GLOB gphoto_widgets_SRCS widget*.cpp)
-file(GLOB headers_FILES *.h)
-PROJECT(libgphoto++ CXX)
+include_directories(${CMAKE_CURRENT_SOURCE_DIR})
+file(GLOB_RECURSE headers_FILES *.h)
+add_subdirectory(widgets)
 set(libgphoto++_SRCS 
   camerafile.cpp
   gphoto_wrapper.cpp
@@ -10,7 +10,7 @@ set(libgphoto++_SRCS
   serialshooter.cpp
   exceptions.cpp
   list.cpp
-  ${gphoto_widgets_SRCS}
+  $<TARGET_OBJECTS:gphoto_widgets>
 )
 option(BUILD_SHARED "Build shared library" Off)
 

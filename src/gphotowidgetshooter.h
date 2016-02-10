@@ -23,7 +23,7 @@
 #include "dptr.h"
 #include "shooter.h"
 #include "logger.h"
-#include "widgets.h"
+#include "widgets/widgets.h"
 #include "camera.h"
 
 namespace GPhoto {

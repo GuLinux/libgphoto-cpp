@@ -4,7 +4,7 @@
 #include <iostream>
 #include "camera.h"
 #include "driver.h"
-#include "widgets.h"
+#include "widgets/widgets.h"
 #include <sstream>
 #include <iomanip>
 #include <map>

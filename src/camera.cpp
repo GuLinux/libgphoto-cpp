@@ -18,7 +18,7 @@
 
 #include "camera.h"
 #include "gphoto_wrapper.h"
-#include "widget.h"
+#include "widgets/widget.h"
 #include "shooter.h"
 #include <chrono>
 #include <thread>
