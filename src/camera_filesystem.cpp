@@ -123,3 +123,8 @@ string GPhoto::CameraFileInfo::path() const
   return d->folder->path() + "/" + name();
 }
 
+void GPhoto::CameraFileInfo::remove()
+{
+  d->camera << CAM_RUN(this) { return gp_camera_file_delete(gp_cam, d->folder->path().c_str(), d->name.c_str(), gp_ctx); };
+}
+

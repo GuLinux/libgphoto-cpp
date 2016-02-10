@@ -45,6 +45,7 @@ public:
   CameraFolderPtr parent() const;
   std::string path() const;
   std::string name() const;
+  void remove();
   CameraFilePtr camera_file() const;
 private:
   DPTR
