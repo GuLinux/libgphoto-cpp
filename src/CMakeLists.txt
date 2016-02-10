@@ -1,15 +1,15 @@
 include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 file(GLOB_RECURSE headers_FILES *.h)
 add_subdirectory(widgets)
+add_subdirectory(backend)
+add_subdirectory(utils)
 set(libgphoto++_SRCS 
   camerafile.cpp
-  gphoto_wrapper.cpp
   driver.cpp
   camera.cpp
-  logger.cpp
   serialshooter.cpp
-  exceptions.cpp
-  list.cpp
+  $<TARGET_OBJECTS:gphoto_backend>
+  $<TARGET_OBJECTS:gphoto_utils>
   $<TARGET_OBJECTS:gphoto_widgets>
 )
 option(BUILD_SHARED "Build shared library" Off)

@@ -18,7 +18,7 @@
 
 #include "widget.h"
 #include "widget_string.h"
-#include "gphoto_wrapper.h"
+#include "backend/gphoto_wrapper.h"
 #include <gphoto2/gphoto2.h>
 #include <map>
 using namespace GPhoto;

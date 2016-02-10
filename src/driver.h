@@ -19,7 +19,7 @@
 #ifndef GPHOTO_DRIVER_H
 #define GPHOTO_DRIVER_H
 #include "fwd.h"
-#include "dptr.h"
+#include "utils/dptr.h"
 
 
 namespace GPhoto {

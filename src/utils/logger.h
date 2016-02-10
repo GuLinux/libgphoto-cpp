@@ -18,7 +18,7 @@
 
 #ifndef GPHOTO_LOGGER_H
 #define GPHOTO_LOGGER_H
-#include "dptr.h"
+#include "utils/dptr.h"
 #include <memory>
 #include <list>
 #include <string>

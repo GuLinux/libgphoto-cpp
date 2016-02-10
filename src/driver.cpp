@@ -17,9 +17,9 @@
 */
 
 #include "driver.h"
-#include "gphoto_wrapper.h"
-#include "logger.h"
-#include "exceptions.h"
+#include "backend/gphoto_wrapper.h"
+#include "utils/logger.h"
+#include "backend/exceptions.h"
 #include "camera.h"
 #include <map>
 

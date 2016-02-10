@@ -17,7 +17,7 @@
 */
 
 
-#include "exceptions.h"
+#include "backend/exceptions.h"
 #include <gphoto2/gphoto2.h>
 
 using namespace std;

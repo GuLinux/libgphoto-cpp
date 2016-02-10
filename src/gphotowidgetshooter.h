@@ -20,9 +20,9 @@
 #define GPHOTO_EOSREMOTERELEASESHOOTER_H
 
 #include "fwd.h"
-#include "dptr.h"
+#include "utils/dptr.h"
 #include "shooter.h"
-#include "logger.h"
+#include "utils/logger.h"
 #include "widgets/widgets.h"
 #include "camera.h"
 

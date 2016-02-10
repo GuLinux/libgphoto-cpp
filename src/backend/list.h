@@ -20,7 +20,7 @@
 #ifndef GPHOTO_LIST_H
 #define GPHOTO_LIST_H
 
-#include "dptr.h"
+#include "utils/dptr.h"
 #include "fwd.h"
 #include <map>
 

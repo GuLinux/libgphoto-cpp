@@ -17,8 +17,8 @@
  * 
  */
 
-#include "list.h"
-#include "gphoto_wrapper.h"
+#include "backend/list.h"
+#include "backend/gphoto_wrapper.h"
 #include <gphoto2/gphoto2.h>
 
 using namespace GPhoto;

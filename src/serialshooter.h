@@ -20,7 +20,7 @@
 #define GPHOTO_SERIALSHOOTER_H
 
 #include "shooter.h"
-#include "dptr.h"
+#include "utils/dptr.h"
 
 namespace GPhoto {
 class SerialShooter : public Shooter {

@@ -20,7 +20,7 @@
 #define GPHOTO_SHOOTER_H
 
 #include "fwd.h"
-#include "dptr.h"
+#include "utils/dptr.h"
 
 namespace GPhoto {
 

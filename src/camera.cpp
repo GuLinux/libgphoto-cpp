@@ -17,17 +17,17 @@
 */
 
 #include "camera.h"
-#include "gphoto_wrapper.h"
+#include "backend/gphoto_wrapper.h"
 #include "widgets/widget.h"
 #include "shooter.h"
 #include <chrono>
 #include <thread>
 #include <list>
 #include <algorithm>
-#include "logger.h"
-#include "exceptions.h"
+#include "utils/logger.h"
+#include "backend/exceptions.h"
 #include "camerafile.h"
-#include "list.h"
+#include "backend/list.h"
 
 using namespace GPhoto;
 using namespace std;

@@ -16,8 +16,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "gphoto_wrapper.h"
-#include "exceptions.h"
+#include "backend/gphoto_wrapper.h"
+#include "backend/exceptions.h"
 using namespace GPhoto;
 using namespace std;
 DPTR_CLASS(GPhotoWrapper) {

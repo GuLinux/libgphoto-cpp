@@ -16,7 +16,7 @@
  *
  */
 #include "gtest/gtest.h"
-#include "gphoto_wrapper.h"
+#include "backend/gphoto_wrapper.h"
 #include "widgets/widgets.h"
 #include <gphoto2/gphoto2.h>
 #include <ctime>

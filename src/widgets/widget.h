@@ -19,9 +19,9 @@
 #ifndef GPHOTO_WIDGET_H
 #define GPHOTO_WIDGET_H
 #include "fwd.h"
-#include "dptr.h"
+#include "utils/dptr.h"
 #include <list>
-#include "logger.h"
+#include "utils/logger.h"
 namespace GPhoto {
 
 class Widget : public std::enable_shared_from_this<Widget>

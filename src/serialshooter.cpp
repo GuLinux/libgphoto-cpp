@@ -18,7 +18,7 @@
 
 #include "serialshooter.h"
 #include <sstream>
-#include "logger.h"
+#include "utils/logger.h"
 
 using namespace GPhoto;
 using namespace std;

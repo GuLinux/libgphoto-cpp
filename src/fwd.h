@@ -19,8 +19,8 @@
 #ifndef FORWARD_DECLARATIONS_H
 #define FORWARD_DECLARATIONS_H
 #include <list>
-#include "exceptions.h"
-#include "dptr.h"
+#include "backend/exceptions.h"
+#include "utils/dptr.h"
 extern "C" {
 typedef struct _GPContext GPContext;
 typedef struct _Camera Camera;

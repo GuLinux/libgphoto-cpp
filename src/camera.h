@@ -20,7 +20,7 @@
 #define GPHOTO_CAMERA_H
 
 #include "fwd.h"
-#include "dptr.h"
+#include "utils/dptr.h"
 #include <functional>
 #include <future>
 #include <ostream>
