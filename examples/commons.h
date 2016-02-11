@@ -19,7 +19,7 @@ using namespace GPhoto;
 static vector<string> args;
 
 void init_options(int argc, char **argv) {
-  copy(argv+1, argv+argc, begin(args));
+  copy(argv+1, argv+argc, back_inserter(args));
 }
 
 bool has_option(const string &option) {
