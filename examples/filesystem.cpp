@@ -16,6 +16,7 @@
  *
  */
 #include "commons.h"
+#include <camera_filesystem.h>
 using namespace std;
 using namespace GPhoto;
 
@@ -52,6 +53,68 @@ ostream &operator<<(ostream &o, const vector<string> &v) {
   return o;
 }
 
+void cd(CameraFolderPtr &folder, const vector<string> &args) {
+  if(args.size()==0) {
+    cerr << "Wrong number of arguments\n";
+    return;
+  }
+  auto cd = args[0];
+  if(cd == "..") {
+    if(!folder->parent()) {
+      cerr << "Error! already on root directory\n";
+      return;
+    }
+    folder = folder->parent();
+    return;
+  }
+  auto folders = folder->folders();
+  auto new_folder = find_if(begin(folders), end(folders), [&](const CameraFolderPtr &f){ return f->path() == folder->path() + cd + "/"; });
+
+  if(new_folder != end(folders)) {
+    folder=*new_folder;
+    return;
+  }
+  cerr << "Folder not found\n";
+};
+
+void ls(CameraFolderPtr &folder, const vector<string> &args) {
+  for(auto f: folder->folders()) {
+    cout << f->path() << endl;
+  }
+  for(auto f: folder->files()) {
+    cout << f->path() << endl;
+  }
+};
+
+
+void download(CameraFolderPtr &folder, const vector<string> &args) {
+  if(args.size() < 1) {
+    cerr << "Wrong number of arguments\n";
+  }
+  for(auto file: folder->files()) {
+    if(count(begin(args), end(args), file->name()) > 0) {
+      cout << "Downloading " << file->path() << "...";
+      cout.flush();
+      file->camera_file()->save(file->name());
+      cout << "[OK]" << endl;
+    }
+  }
+}
+
+void rm(CameraFolderPtr &folder, const vector<string> &args) {
+  if(args.size() < 1) {
+    cerr << "Wrong number of arguments\n";
+  }
+  for(auto file: folder->files()) {
+    if(count(begin(args), end(args), file->name()) > 0) {
+      cout << "Removing " << file->path() << "...";
+      cout.flush();
+      file->remove();
+      cout << "[OK]" << endl;
+    }
+  }
+}
+
 int main(int argc, char **argv) {
   init_options(argc, argv);
 //   if(has_option("-h") || has_option("--help")) {
@@ -70,25 +133,28 @@ int main(int argc, char **argv) {
   auto camera = init_camera(logger);
   if(!camera)
     return 1;
-  string folder = "/";
-  
-  while(true) {
-    auto folders = camera->folders(folder);
-    auto files = camera->files(folder);
-    cout << "Folders: " << endl;
-    for(auto f: folders)
-      cout << f << "\t";
-    cout << endl << "Files: " << endl;
-    for(auto f: files)
-      cout << f.path() << "\t";
-    cout << endl << "New folder to browse: ";
-    cin >> folder;
-  }
-  
-  while(true) {
+  CameraFolderPtr folder = camera->root();
+  bool keepgoing = true;
+  auto quit = [&keepgoing](const Command &) { keepgoing = false; };
+  auto help = [](const Command &) {
+    cout << "Available commands:\n\tcd <directory>\n\tls\n\tquit\n\tget <files>\n\trm <files>\nPaths are always relative to current directory." << endl;
+  };
+  map<string, function<void(const Command&)>> commands {
+    {"cd", [&folder](const Command &c) { cd(folder, c.args); } },
+    {"ls", [&folder](const Command &c) { ls(folder, c.args); } },
+    {"quit", quit}, {"exit", quit},
+    {"get",[&folder](const Command &c) { download(folder, c.args); } },
+    {"rm",[&folder](const Command &c) { rm(folder, c.args); } },
+    {"help", help }, {"?", help },
+  };
+
+  while(keepgoing) {
+    cout << folder->path() << "$> ";
     auto command = get_cmd();
-    if(!command)
+    if(!command|| !commands.count(command.name)) {
+      cerr << "Command not recognized\n";
       continue;
-    cout << "Command: " << command.name << ", args: " << command.args << endl;
+    }
+    commands[command.name](command);
   }
 }
