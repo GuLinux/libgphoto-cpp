@@ -159,6 +159,17 @@ TEST_F(TestGPhotoWidgets, testMenuChoices) {
 }
 
 
+TEST_F(TestGPhotoWidgets, testSetMenuChoices) {
+  auto widget = make_shared<Widget>(menu_widget, gphoto, LoggerPtr{});
+  auto value = widget->get<Widget::MenuValue>();
+  ASSERT_EQ("Second Choice", widget->get<Widget::MenuValue>()->get());
+  widget->get<Widget::MenuValue>()->set("First Choice");
+  ASSERT_EQ("First Choice", widget->get<Widget::MenuValue>()->get());
+  widget->get<Widget::MenuValue>()->set(2);
+  ASSERT_EQ("Third Choice", widget->get<Widget::MenuValue>()->get());
+}
+
+
 TEST_F(TestGPhotoWidgets, testGetDate) {
   auto widget = make_shared<Widget>(date_widget, gphoto, LoggerPtr{});
   chrono::system_clock::time_point value = *widget->get<Widget::DateValue>();
