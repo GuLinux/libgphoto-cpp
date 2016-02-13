@@ -27,11 +27,10 @@
 #include "camera.h"
 
 namespace GPhoto {
-template<typename WidgetType>
+template<typename WidgetType, typename ValueType>
 class GPhotoWidgetShooter : public GPhoto::Shooter
 {
 public:
-    typedef typename WidgetType::Type ValueType;
     class Shoot : public GPhoto::Shooter::Shoot {
     public:
       Shoot(const WidgetPtr &widget, const GPhoto::CameraPtr &camera, const ValueType &on_value, const ValueType off_value, const LoggerPtr &logger) 
@@ -62,16 +61,16 @@ private:
   LoggerPtr logger;
 };
  
-class EOSRemoteReleaseShutter : public GPhotoWidgetShooter<Widget::RangeValue> {
+class EOSRemoteReleaseShutter : public GPhotoWidgetShooter<Widget::MenuValue, int> {
 public:
 EOSRemoteReleaseShutter(const CameraPtr& camera, const LoggerPtr& logger = {})
-  : GPhotoWidgetShooter< GPhoto::Widget::RangeValue >(camera, "eosremoterelease", 2, 4) {}
+  : GPhotoWidgetShooter< GPhoto::Widget::MenuValue, int>(camera, "eosremoterelease", 2, 4) {}
 };
  
-class BulbSettingShutter : public GPhotoWidgetShooter<Widget::ToggleValue> {
+class BulbSettingShutter : public GPhotoWidgetShooter<Widget::ToggleValue, Widget::ToggleValue::Type> {
 public:
 BulbSettingShutter(const CameraPtr& camera, const LoggerPtr& logger = {})
-  : GPhotoWidgetShooter< GPhoto::Widget::ToggleValue >(camera, "bulb", true, false) {}
+  : GPhotoWidgetShooter< GPhoto::Widget::ToggleValue, Widget::ToggleValue::Type>(camera, "bulb", true, false) {}
 };
 }
 

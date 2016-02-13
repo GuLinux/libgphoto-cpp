@@ -74,3 +74,13 @@ Widget::MenuValue::Choice::operator string() const
   return text;
 }
 
+void Widget::MenuValue::set(int choice_index)
+{
+  set(choices()[choice_index]);
+}
+
+void Widget::MenuValue::set(const string& choice_text)
+{
+  Widget::StringValue::set(choice_text);
+}
+

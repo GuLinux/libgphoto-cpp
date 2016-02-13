@@ -33,6 +33,8 @@ public:
   };
   typedef std::vector<Choice> Choices;
   Choices choices() const;
+  void set(int choice_index);
+  void set(const std::string &choice_text);
 private:
   friend class Widget;
   MenuValue(Widget* widget);
