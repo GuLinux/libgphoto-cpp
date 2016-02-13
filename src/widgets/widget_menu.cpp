@@ -84,3 +84,9 @@ void Widget::MenuValue::set(const string& choice_text)
   Widget::StringValue::set(choice_text);
 }
 
+
+void Widget::MenuValue::set(const Widget::MenuValue::Choice& choice)
+{
+  set(choice.text);
+}
+

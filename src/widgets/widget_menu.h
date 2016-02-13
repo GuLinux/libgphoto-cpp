@@ -35,6 +35,7 @@ public:
   Choices choices() const;
   void set(int choice_index);
   void set(const std::string &choice_text);
+  void set(const Choice &choice);
 private:
   friend class Widget;
   MenuValue(Widget* widget);
