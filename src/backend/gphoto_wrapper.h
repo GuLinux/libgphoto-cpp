@@ -23,10 +23,11 @@
 #include <gphoto2/gphoto2.h>
 
 namespace GPhoto {
+  typedef int GPhotoReturn;
   class GPhotoWrapper {
   public:
-    typedef std::function<int()> GPhotoRun;
-    int operator()(GPhotoRun run);
+    typedef std::function<GPhotoReturn()> GPhotoRun;
+    GPhotoReturn operator()(GPhotoRun run);
     GPhotoWrapper();
     ~GPhotoWrapper();
   private:
@@ -37,8 +38,8 @@ namespace GPhoto {
     GPhotoDriver();
     GPhotoDriver(::GPContext *context);
     ~GPhotoDriver();
-    typedef std::function<int(::GPContext*)> ContextRun;
-    int operator() (ContextRun run);
+    typedef std::function<GPhotoReturn(::GPContext*)> ContextRun;
+    GPhotoReturn operator() (ContextRun run);
     operator GPhotoWrapperPtr() const;
   private:
     DPTR
@@ -48,8 +49,8 @@ namespace GPhoto {
   public:
     GPhotoCamera(::Camera *camera, const GPhotoDriverPtr &driver);
     ~GPhotoCamera();
-    typedef std::function<int(::GPContext*, ::Camera*)> CameraRun;
-    int operator() (std::function< int(::GPContext*, ::Camera*)> run);
+    typedef std::function<GPhotoReturn(::GPContext*, ::Camera*)> CameraRun;
+    GPhotoReturn operator() (CameraRun run);
     operator GPhotoDriverPtr() const;
     operator GPhotoWrapperPtr() const;
   private:
@@ -61,8 +62,9 @@ GPhoto::GPhotoWrapperPtr operator<<(const GPhoto::GPhotoWrapperPtr &, GPhoto::GP
 GPhoto::GPhotoDriverPtr operator<<(const GPhoto::GPhotoDriverPtr &, GPhoto::GPhotoDriver::ContextRun);
 GPhoto::GPhotoCameraPtr operator<<(const GPhoto::GPhotoCameraPtr &, GPhoto::GPhotoCamera::CameraRun);
 
-#define GP2_RUN(...) [__VA_ARGS__]() -> int
-#define CTX_RUN(...) [__VA_ARGS__](::GPContext *gp_ctx) -> int
-#define CAM_RUN(...) [__VA_ARGS__](::GPContext *gp_ctx, ::Camera *gp_cam) -> int
+#define GPRET(f) return GPhotoReturn{f};
+#define GP2_RUN(...) [__VA_ARGS__]() -> GPhotoReturn
+#define CTX_RUN(...) [__VA_ARGS__](::GPContext *gp_ctx) -> GPhotoReturn
+#define CAM_RUN(...) [__VA_ARGS__](::GPContext *gp_ctx, ::Camera *gp_cam) -> GPhotoReturn
 
 #endif

@@ -22,7 +22,7 @@
 
 using namespace std;
 using namespace GPhoto;
-Exception::Exception(int error_code): runtime_error(gp_result_as_string(error_code))
+Exception::Exception(const GPhotoReturn &error_code): runtime_error(gp_result_as_string(error_code))
 {
 }
 

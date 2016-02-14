@@ -19,7 +19,6 @@
 #ifndef FORWARD_DECLARATIONS_H
 #define FORWARD_DECLARATIONS_H
 #include <list>
-#include "backend/exceptions.h"
 #include "utils/dptr.h"
 extern "C" {
 typedef struct _GPContext GPContext;

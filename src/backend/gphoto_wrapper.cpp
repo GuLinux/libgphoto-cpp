@@ -46,9 +46,9 @@ GPhotoDriver::Private::Private(GPContext* context) : wrapper{new GPhotoWrapper()
 {
 }
 
-int GPhotoWrapper::operator()(GPhotoRun run)
+GPhotoReturn GPhotoWrapper::operator()(GPhotoRun run)
 {
-  int result = run();
+  GPhotoReturn result = run();
   if(result < GP_OK)
     throw Exception{result};
   return result;
@@ -70,7 +70,7 @@ GPhotoDriver::~GPhotoDriver()
     gp_context_unref(d->context);
 }
 
-int GPhotoDriver::operator()(ContextRun run)
+GPhotoReturn GPhotoDriver::operator()(ContextRun run)
 {
   return d->wrapper->operator()(GP2_RUN(this, run) { return run(d->context); });
 }
@@ -98,7 +98,7 @@ GPhotoCamera::~GPhotoCamera()
 {
 }
 
-int GPhotoCamera::operator()(CameraRun run)
+GPhotoReturn GPhotoCamera::operator()(CameraRun run)
 {
   unique_lock<mutex> lock(d->_mutex);
   return d->driver->operator()(CTX_RUN(this, run) { return run(gp_ctx, d->camera); } );

@@ -19,6 +19,7 @@
 #include "widget_p.h"
 #include "widgets.h"
 #include <functional>
+#include "backend/exceptions.h"
 
 using namespace GPhoto;
 using namespace std;
