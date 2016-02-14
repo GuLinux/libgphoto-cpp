@@ -9,6 +9,7 @@ set(libgphoto++_SRCS
   camera.cpp
   camera_filesystem.cpp
   serialshooter.cpp
+  exposure.cpp
   $<TARGET_OBJECTS:gphoto_backend>
   $<TARGET_OBJECTS:gphoto_utils>
   $<TARGET_OBJECTS:gphoto_widgets>
