@@ -28,11 +28,12 @@ using namespace std;
 
 DPTR_CLASS(CameraFolder) {
 public:
-  Private(const string& path, const GPhotoCameraPtr& gphoto_camera, const CameraFolderPtr& parent, GPhoto::CameraFolder *q);
+  Private(const string& path, const GPhotoCameraPtr& gphoto_camera, const CameraFolderPtr& parent, const LoggerPtr &logger, GPhoto::CameraFolder *q);
   const string path;
   const GPhotoCameraPtr camera;
   const CameraFolderPtr parent;
   CameraFolderPtr shared_from_this() const;
+  const LoggerPtr logger;
 private:
   GPhoto::CameraFolder* q;
 };
@@ -43,13 +44,13 @@ CameraFolderPtr CameraFolder::Private::shared_from_this() const
 }
 
 
-CameraFolder::Private::Private(const string& path, const GPhotoCameraPtr& gphoto_camera, const CameraFolderPtr& parent, CameraFolder* q) 
-  : path{path}, camera{gphoto_camera}, parent{parent}, q{q}
+CameraFolder::Private::Private(const string& path, const GPhotoCameraPtr& gphoto_camera, const CameraFolderPtr& parent, const LoggerPtr& logger, CameraFolder* q) 
+  : path{path}, camera{gphoto_camera}, parent{parent}, logger{logger}, q{q}
 {
 }
 
-CameraFolder::CameraFolder(const string& path, const GPhotoCameraPtr& gphoto_camera, const CameraFolderPtr &parent)
- : dptr(path, gphoto_camera, parent, this)
+CameraFolder::CameraFolder(const string& path, const GPhotoCameraPtr& gphoto_camera, const LoggerPtr& logger, const CameraFolderPtr& parent)
+ : dptr(path, gphoto_camera, parent, logger, this)
 {
 }
 
@@ -63,7 +64,7 @@ list< CameraFolderPtr > CameraFolder::folders() const {
   multimap<string,string> files_map = files_list;
   list<CameraFolderPtr> folders(files_map.size());;
   transform(begin(files_map), end(files_map), begin(folders), [this](const pair<string,string> &p){
-    return make_shared<CameraFolder>( path() + p.first, d->camera, d->shared_from_this());
+    return make_shared<CameraFolder>( path() + p.first, d->camera, d->logger, d->shared_from_this());
   });
   return folders;
 }
@@ -75,7 +76,7 @@ list< CameraFileInfoPtr > CameraFolder::files() const
   multimap<string,string> files_map = files_list;
   list<CameraFileInfoPtr> files(files_map.size());;
   transform(begin(files_map), end(files_map), begin(files), [this](const pair<string,string> &p){
-    return make_shared<GPhoto::CameraFileInfo>(p.first, d->shared_from_this(), d->camera);
+    return make_shared<GPhoto::CameraFileInfo>(p.first, d->shared_from_this(), d->camera, d->logger);
   });
   return files;
 }
@@ -88,21 +89,22 @@ CameraFolderPtr CameraFolder::parent() const
 
 DPTR_CLASS(GPhoto::CameraFileInfo) {
 public:
-  Private(const string &name, const CameraFolderPtr &folder, const GPhotoCameraPtr &camera);
+  Private(const string& name, const CameraFolderPtr& folder, const GPhotoCameraPtr& camera, const LoggerPtr& logger);
   const string name;
   const CameraFolderPtr folder;
   const GPhotoCameraPtr camera;
+  const LoggerPtr logger;
 private:
 };
 
-GPhoto::CameraFileInfo::Private::Private(const string& name, const CameraFolderPtr& folder, const GPhotoCameraPtr& camera)
-  : name{name}, folder{folder}, camera{camera}
+GPhoto::CameraFileInfo::Private::Private(const string& name, const CameraFolderPtr& folder, const GPhotoCameraPtr& camera, const LoggerPtr &logger)
+  : name{name}, folder{folder}, camera{camera}, logger{logger}
 {
 }
 
 
-GPhoto::CameraFileInfo::CameraFileInfo(const string& name, const CameraFolderPtr& folder, const GPhotoCameraPtr& gphoto_camera)
-  : dptr(name, folder, gphoto_camera)
+GPhoto::CameraFileInfo::CameraFileInfo(const string& name, const CameraFolderPtr& folder, const GPhotoCameraPtr& gphoto_camera, const LoggerPtr& logger)
+  : dptr(name, folder, gphoto_camera, logger)
 {
 }
 
@@ -118,7 +120,7 @@ string CameraFolder::path() const
 
 CameraFilePtr GPhoto::CameraFileInfo::camera_file() const
 {
-  return make_shared<GPhoto::CameraFile>(d->folder->path(), name(), d->camera);
+  return make_shared<GPhoto::CameraFile>(d->folder->path(), name(), d->camera, d->logger);
 }
 
 string GPhoto::CameraFileInfo::name() const

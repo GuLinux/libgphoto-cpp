@@ -31,7 +31,7 @@ public:
   struct Info {
     size_t size, width, height;
   };
-  CameraFile(const std::string &folder, const std::string &file, const GPhotoCameraPtr &camera);
+  CameraFile(const std::string &folder, const std::string &file, const GPhotoCameraPtr &camera, const LoggerPtr &logger);
   ~CameraFile();
   void save(const std::string &path);
   void copy(std::vector<uint8_t> &data);

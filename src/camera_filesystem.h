@@ -28,7 +28,7 @@ namespace GPhoto {
 class CameraFolder : public std::enable_shared_from_this<CameraFolder>
 {
 public:
-  CameraFolder(const std::string &path, const GPhotoCameraPtr &gphoto_camera, const CameraFolderPtr &parent = {});
+  CameraFolder(const std::string &path, const GPhotoCameraPtr &gphoto_camera, const LoggerPtr &logger, const CameraFolderPtr &parent = {});
   std::list<CameraFolderPtr> folders() const;
   std::list<CameraFileInfoPtr> files() const;
   std::string path() const;
@@ -41,7 +41,7 @@ private:
 
 class CameraFileInfo {
 public:
-  CameraFileInfo(const std::string &name, const CameraFolderPtr &folder, const GPhotoCameraPtr &gphoto_camera);
+  CameraFileInfo(const std::string &name, const CameraFolderPtr &folder, const GPhotoCameraPtr &gphoto_camera, const LoggerPtr &logger);
   CameraFolderPtr parent() const;
   std::string path() const;
   std::string name() const;

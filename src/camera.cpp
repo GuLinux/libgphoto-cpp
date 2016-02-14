@@ -109,7 +109,7 @@ future< CameraFilePtr > GPhoto::Camera::shoot_preset(const MirrorLock &mirror_lo
       d->camera
 		<< CAM_RUN(this, &camera_file_path) { GPRET(gp_camera_capture(gp_cam, GP_CAPTURE_IMAGE, &camera_file_path, gp_ctx)) }
 		;
-      return make_shared<GPhoto::CameraFile>(camera_file_path.folder, camera_file_path.name, d->camera);
+      return make_shared<GPhoto::CameraFile>(camera_file_path.folder, camera_file_path.name, d->camera, d->logger);
     }
   });
 }
@@ -138,7 +138,7 @@ CameraFilePtr GPhoto::Camera::Private::wait_for_file(int timeout)
       case GP_EVENT_FILE_ADDED:
 	camera_file = reinterpret_cast<CameraFilePath*>(event_data);
 	lDebug(logger) << "Wait for file: file <" << camera_file->folder << "/" << camera_file->name << "> added";
-	return make_shared<GPhoto::CameraFile>(camera_file->folder, camera_file->name, camera);
+	return make_shared<GPhoto::CameraFile>(camera_file->folder, camera_file->name, camera, logger);
     }
   }
 }
@@ -220,5 +220,5 @@ string GPhoto::Camera::FileInfo::path() const
 
 CameraFolderPtr GPhoto::Camera::root(const string& root_path)
 {
-  return make_shared<CameraFolder>(root_path, d->camera);
+  return make_shared<CameraFolder>(root_path, d->camera, d->logger);
 }

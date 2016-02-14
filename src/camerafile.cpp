@@ -16,8 +16,10 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#include "utils/logger.h"
 #include "camerafile.h"
 #include "backend/gphoto_wrapper.h"
+#include "backend/exceptions.h"
 #include <gphoto2/gphoto2.h>
 #include <vector>
 
@@ -26,29 +28,28 @@ using namespace std;
 
 DPTR_CLASS(GPhoto::CameraFile) {
 public:
-  Private(const string& folder, const string& file, const GPhotoCameraPtr& camera, GPhoto::CameraFile* q);
+  Private(const string& folder, const string& file, const GPhotoCameraPtr& camera, const LoggerPtr &logger, GPhoto::CameraFile* q);
   string folder;
   string file;
   GPhotoCameraPtr camera;
   ::CameraFile *camera_file;
-  ::CameraFileInfo info;
+  const LoggerPtr logger;
 private:
   GPhoto::CameraFile *q;
 };
 
-GPhoto::CameraFile::Private::Private(const string &folder, const string &file, const GPhotoCameraPtr &camera, CameraFile* q)
-  : folder{folder}, file{file}, camera{camera}, q{q}
+GPhoto::CameraFile::Private::Private(const string &folder, const string &file, const GPhotoCameraPtr &camera, const LoggerPtr &logger, CameraFile* q)
+  : folder{folder}, file{file}, camera{camera}, logger{logger}, q{q}
 {
 }
 
 
 
-GPhoto::CameraFile::CameraFile(const string &folder, const string &file, const GPhotoCameraPtr &camera)
- : dptr(folder, file, camera, this)
+GPhoto::CameraFile::CameraFile(const string &folder, const string &file, const GPhotoCameraPtr &camera, const LoggerPtr &logger)
+ : dptr(folder, file, camera, logger, this)
 {
   d->camera << CAM_RUN(this) { GPRET(gp_file_new(&d->camera_file)) }
-	    << CAM_RUN(this,&file,&folder) { GPRET(gp_camera_file_get(gp_cam, folder.c_str(), file.c_str(), GP_FILE_TYPE_NORMAL, d->camera_file, gp_ctx) != GP_OK) }
-	    << CAM_RUN(this,&file,&folder) { GPRET(gp_camera_file_get_info (gp_cam, folder.c_str(), file.c_str(), &d->info, gp_ctx)) };
+	    << CAM_RUN(this,&file,&folder) { GPRET(gp_camera_file_get(gp_cam, folder.c_str(), file.c_str(), GP_FILE_TYPE_NORMAL, d->camera_file, gp_ctx) != GP_OK) };
 }
 
 GPhoto::CameraFile::~CameraFile()
@@ -81,7 +82,14 @@ vector< uint8_t > GPhoto::CameraFile::data()
 
 GPhoto::CameraFile::Info GPhoto::CameraFile::info() const
 {
-  return { d->info.file.size, d->info.file.width, d->info.file.height };
+  ::CameraFileInfo info;
+  try {
+    d->camera << CAM_RUN(this,&info) { GPRET(gp_camera_file_get_info (gp_cam, d->folder.c_str(), d->file.c_str(), &info, gp_ctx)) };
+  } catch(GPhoto::Exception &e) {
+    lWarning(d->logger) << "Unable to retrieve information for file " << d->folder << "/" << d->file << ": " << e.what();
+    return {};
+  }
+  return { info.file.size, info.file.width, info.file.height };
 }
 
 void GPhoto::CameraFile::delete_on_camera()
