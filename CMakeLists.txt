@@ -5,6 +5,7 @@ set(gphoto++_VERSION_MINOR 1)
 set(gphoto++_VERSION_PATCH 0)
 set(gphoto++_VERSION_STRING ${gphoto++_VERSION_MAJOR}.${gphoto++_VERSION_MINOR}.${gphoto++_VERSION_PATCH})
 
+add_definitions(-DSOURCES_ROOT="${CMAKE_SOURCE_DIR}")
 
 set(CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
 find_package(GPHOTO2 REQUIRED)

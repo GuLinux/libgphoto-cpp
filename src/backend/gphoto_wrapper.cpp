@@ -18,19 +18,39 @@
 
 #include "backend/gphoto_wrapper.h"
 #include "backend/exceptions.h"
+#include <sstream>
 using namespace GPhoto;
 using namespace std;
 DPTR_CLASS(GPhotoWrapper) {
 };
 
+string GPhotoReturn::describe() const
+{
+  stringstream s;
+  s << gp_result_as_string(result);
+  if(file) {
+    s << " at " << string{file}.replace(0, string{SOURCES_ROOT}.size() +1, "") << ":" << line;
+  }
+  return s.str();
+}
+
+GPhotoReturn::operator string() const
+{
+  return describe();
+}
+
+GPhotoReturn::operator int() const
+{
+  return result;
+}
+
+
 GPhotoWrapper::GPhotoWrapper() : dptr()
 {
-
 }
 
 GPhotoWrapper::~GPhotoWrapper()
 {
-
 }
 
 
