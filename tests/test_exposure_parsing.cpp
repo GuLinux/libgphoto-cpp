@@ -39,12 +39,14 @@ TestExposureParsing::TestExposureParsing() : gphoto{new GPhotoWrapper}
   gphoto << GP2_RUN(this) { GPRET(gp_widget_new(GP_WIDGET_WINDOW, "Top Window", &top_window)) }
 	 << GP2_RUN(this) { GPRET(gp_widget_set_name(top_window, "top_window")) }
 	 
-	 << GP2_RUN(this) { GPRET(gp_widget_new(GP_WIDGET_MENU, "Menu Widget", &menu_widget)) }
-	 << GP2_RUN(this) { GPRET(gp_widget_set_name(menu_widget, "menu_window")) }
-	 << GP2_RUN(this) { GPRET(gp_widget_add_choice(menu_widget, "First Choice")) }
-	 << GP2_RUN(this) { GPRET(gp_widget_add_choice(menu_widget, "Second Choice")) }
-	 << GP2_RUN(this) { GPRET(gp_widget_add_choice(menu_widget, "Third Choice")) }
-	 << GP2_RUN(this) { GPRET(gp_widget_set_value(menu_widget, "Second Choice")) }
+	 << GP2_RUN(this) { GPRET(gp_widget_new(GP_WIDGET_MENU, "Exposure", &menu_widget)) }
+	 << GP2_RUN(this) { GPRET(gp_widget_set_name(menu_widget, "exposure")) }
+	 << GP2_RUN(this) { GPRET(gp_widget_add_choice(menu_widget, "1/200")) }
+	 << GP2_RUN(this) { GPRET(gp_widget_add_choice(menu_widget, "3/2")) }
+	 << GP2_RUN(this) { GPRET(gp_widget_add_choice(menu_widget, "5")) }
+	 << GP2_RUN(this) { GPRET(gp_widget_add_choice(menu_widget, "bulb")) }
+	 << GP2_RUN(this) { GPRET(gp_widget_set_value(menu_widget, "Bulb")) }
+	 << GP2_RUN(this) { GPRET(gp_widget_set_value(menu_widget, "Bulb-Widget")) }
 	 << GP2_RUN(this) { GPRET(gp_widget_append(top_window, menu_widget)) }
 	    ;
 }
