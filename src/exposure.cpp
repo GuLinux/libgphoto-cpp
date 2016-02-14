@@ -58,7 +58,7 @@ bool Exposure::Value::bulb() const
 
 }
 
-std::chrono::duration< double > Exposure::Value::duration() const
+std::chrono::duration< double, milli > Exposure::Value::duration() const
 {
 
 }
