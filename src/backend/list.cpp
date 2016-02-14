@@ -40,12 +40,12 @@ List::Private::Private(const GPhotoWrapperPtr &gphoto, List* q) : gphoto{gphoto}
 List::List(const GPhotoWrapperPtr &gphoto)
  : dptr(gphoto, this)
 {
-  d->gphoto << GP2_RUN(this) { return gp_list_new(&d->cameralist); };
+  d->gphoto << GP2_RUN(this) { GPRET(gp_list_new(&d->cameralist)) };
 }
 
 List::~List()
 {
-  d->gphoto << GP2_RUN(this) { return gp_list_free(d->cameralist); };
+  d->gphoto << GP2_RUN(this) { GPRET(gp_list_free(d->cameralist)) };
 }
 
 List::operator CameraList*() const
@@ -55,13 +55,13 @@ List::operator CameraList*() const
 
 List::operator multimap<string, string>() const
 {
-  int size = (*d->gphoto)(GP2_RUN(this) { return gp_list_count(d->cameralist); });
+  int size = (*d->gphoto)(GP2_RUN(this) { GPRET(gp_list_count(d->cameralist)) });
   multimap<string, string> ret;
   for(int i=0; i<size; i++) {
     const char *key;
     const char *value;
-    d->gphoto << GP2_RUN(this, &i, &key) { return gp_list_get_name(d->cameralist, i, &key); }
-	      << GP2_RUN(this, &i, &value) { return gp_list_get_value(d->cameralist, i, &value); };
+    d->gphoto << GP2_RUN(this, &i, &key) { GPRET(gp_list_get_name(d->cameralist, i, &key)) }
+	      << GP2_RUN(this, &i, &value) { GPRET(gp_list_get_value(d->cameralist, i, &value)) };
     ret.insert(make_pair(key?key:"", value?value:""));
   };
   return ret;

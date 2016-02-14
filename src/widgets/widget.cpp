@@ -35,10 +35,10 @@ Widget::Widget(CameraWidget *widget, const GPhoto::GPhotoWrapperPtr &gphoto, con
   const char *c_name, *c_label;
   CameraWidgetType c_type;
   d->gphoto 
-    << GP2_RUN(this) { return gp_widget_get_id(d->widget, &d->id); }
-    << GP2_RUN(this, &c_name) { return gp_widget_get_name(d->widget, &c_name); }
-    << GP2_RUN(this, &c_label) { return gp_widget_get_label(d->widget, &c_label); }
-    << GP2_RUN(this, &c_type) { return gp_widget_get_type(d->widget, &c_type); }
+    << GP2_RUN(this) { GPRET(gp_widget_get_id(d->widget, &d->id)) }
+    << GP2_RUN(this, &c_name) { GPRET(gp_widget_get_name(d->widget, &c_name)) }
+    << GP2_RUN(this, &c_label) { GPRET(gp_widget_get_label(d->widget, &c_label)) }
+    << GP2_RUN(this, &c_type) { GPRET(gp_widget_get_type(d->widget, &c_type)) }
   ;
   d->name = {c_name};
   d->label = {c_label};
@@ -60,7 +60,7 @@ GPhoto::Widgets Widget::children() const
   Widgets widgets;
   for(int i=0; i<gp_widget_count_children(d->widget); i++) {
     CameraWidget *widget;
-    d->gphoto << GP2_RUN(this, &widget, i) { return gp_widget_get_child(d->widget, i, &widget);};
+    d->gphoto << GP2_RUN(this, &widget, i) { GPRET(gp_widget_get_child(d->widget, i, &widget)) };
     widgets.push_back(make_shared<Widget>(widget, d->gphoto, d->log));
   }
   return widgets;
@@ -93,12 +93,12 @@ WidgetPtr Widget::Private::find_by(function<int(::CameraWidget*&)> run, const st
 
 WidgetPtr Widget::child_by_label(const string& label) const
 {
-    return d->find_by([=](CameraWidget *&widget) { return gp_widget_get_child_by_label(d->widget, label.c_str(), &widget);}, "label");
+    return d->find_by([=](CameraWidget *&widget) { GPRET(gp_widget_get_child_by_label(d->widget, label.c_str(), &widget)) }, "label");
 }
 
 WidgetPtr Widget::child_by_name(const string& name) const
 {
-    return d->find_by([=](CameraWidget *&widget) { return gp_widget_get_child_by_name(d->widget, name.c_str(), &widget);}, "name");
+    return d->find_by([=](CameraWidget *&widget) { GPRET(gp_widget_get_child_by_name(d->widget, name.c_str(), &widget)) }, "name");
 }
 
 
@@ -130,18 +130,18 @@ Widget::Type Widget::type() const
 
 void Widget::get_value(void* value)
 {
-  d->gphoto << GP2_RUN(this, &value) { return gp_widget_get_value(d->widget, value); };
+  d->gphoto << GP2_RUN(this, &value) { GPRET(gp_widget_get_value(d->widget, value)) };
 }
 
 void Widget::set_value(void* value)
 {
-  d->gphoto << GP2_RUN(this, &value) { return gp_widget_set_value(d->widget, value); };
+  d->gphoto << GP2_RUN(this, &value) { GPRET(gp_widget_set_value(d->widget, value)) };
 }
 
 
 void Widget::set_value(const shared_ptr< void >& value)
 {
-  d->gphoto << GP2_RUN(this, &value) { return gp_widget_set_value(d->widget, value.get()); };
+  d->gphoto << GP2_RUN(this, &value) { GPRET(gp_widget_set_value(d->widget, value.get())) };
 }
 
 
@@ -160,7 +160,7 @@ WidgetPtr Widget::parent() const
 {
   CameraWidget *parent;
   try {
-    d->gphoto << GP2_RUN(this, &parent) { return gp_widget_get_parent(d->widget, &parent); };
+    d->gphoto << GP2_RUN(this, &parent) { GPRET(gp_widget_get_parent(d->widget, &parent)) };
     return make_shared<Widget>(parent, d->gphoto, d->log);
   } catch(GPhoto::Exception &e) {
     lTrace(d->log) << "Error getting widget " << name() << " parent: " << e.what();

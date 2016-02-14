@@ -46,20 +46,20 @@ GPhoto::CameraFile::Private::Private(const string &folder, const string &file, c
 GPhoto::CameraFile::CameraFile(const string &folder, const string &file, const GPhotoCameraPtr &camera)
  : dptr(folder, file, camera, this)
 {
-  d->camera << CAM_RUN(this) { return gp_file_new(&d->camera_file); }
-	    << CAM_RUN(this,&file,&folder) { return gp_camera_file_get(gp_cam, folder.c_str(), file.c_str(), GP_FILE_TYPE_NORMAL, d->camera_file, gp_ctx) != GP_OK; }
-	    << CAM_RUN(this,&file,&folder) { return gp_camera_file_get_info (gp_cam, folder.c_str(), file.c_str(), &d->info, gp_ctx); };
+  d->camera << CAM_RUN(this) { GPRET(gp_file_new(&d->camera_file)) }
+	    << CAM_RUN(this,&file,&folder) { GPRET(gp_camera_file_get(gp_cam, folder.c_str(), file.c_str(), GP_FILE_TYPE_NORMAL, d->camera_file, gp_ctx) != GP_OK) }
+	    << CAM_RUN(this,&file,&folder) { GPRET(gp_camera_file_get_info (gp_cam, folder.c_str(), file.c_str(), &d->info, gp_ctx)) };
 }
 
 GPhoto::CameraFile::~CameraFile()
 {
-  d->camera << CAM_RUN(this) { return gp_file_free(d->camera_file); };
+  d->camera << CAM_RUN(this) { GPRET(gp_file_free(d->camera_file)) };
 }
 
 
 void GPhoto::CameraFile::save(const string& path)
 {
-  d->camera << CAM_RUN(this, path) { return gp_file_save(d->camera_file, path.c_str()); };
+  d->camera << CAM_RUN(this, path) { GPRET(gp_file_save(d->camera_file, path.c_str())) };
 }
 
 
@@ -67,7 +67,7 @@ void GPhoto::CameraFile::copy(vector< uint8_t >& data)
 {
   size_t size;
   const char *cdata;
-  d->camera << CAM_RUN(this, &cdata, &size) { return gp_file_get_data_and_size(d->camera_file, &cdata, &size); };
+  d->camera << CAM_RUN(this, &cdata, &size) { GPRET(gp_file_get_data_and_size(d->camera_file, &cdata, &size)) };
   data.resize(size);
   std::copy(cdata, cdata + size, begin(data));
 }
@@ -86,7 +86,7 @@ GPhoto::CameraFile::Info GPhoto::CameraFile::info() const
 
 void GPhoto::CameraFile::delete_on_camera()
 {
-  d->camera << CAM_RUN(this) { return gp_camera_file_delete(gp_cam, d->folder.c_str(), d->file.c_str(), gp_ctx); };
+  d->camera << CAM_RUN(this) { GPRET(gp_camera_file_delete(gp_cam, d->folder.c_str(), d->file.c_str(), gp_ctx)) };
 }
 
 string GPhoto::CameraFile::path() const

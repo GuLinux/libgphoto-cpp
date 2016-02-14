@@ -58,10 +58,10 @@ GPhoto::Camera::Private::Private(const GPhotoCameraPtr& camera, const LoggerPtr&
 GPhoto::Camera::Camera(const GPhotoCameraPtr &camera, const LoggerPtr &logger) : dptr(camera, logger, this)
 {
   CameraText text;
-  d->camera << CAM_RUN(this, &text) { return gp_camera_get_summary(gp_cam, &text, gp_ctx); };
+  d->camera << CAM_RUN(this, &text) { GPRET(gp_camera_get_summary(gp_cam, &text, gp_ctx)) };
   d->summary = {text.text};
   CameraWidget *w;
-  d->camera << CAM_RUN(this, &w) { return gp_camera_get_config(gp_cam, &w, gp_ctx); };
+  d->camera << CAM_RUN(this, &w) { GPRET(gp_camera_get_config(gp_cam, &w, gp_ctx)) };
   d->settings = make_shared<Widget>(w, *d->camera, d->logger);
 }
 
@@ -107,10 +107,10 @@ future< CameraFilePtr > GPhoto::Camera::shoot_preset(const MirrorLock &mirror_lo
     } else {
       CameraList *camera_list;
       d->camera
-		<< CAM_RUN(this, &camera_file_path) { return gp_camera_capture(gp_cam, GP_CAPTURE_IMAGE, &camera_file_path, gp_ctx); }
-		<< CAM_RUN(&camera_list) { return gp_list_new(&camera_list); }
-		<< CAM_RUN(this, &camera_file_path, &camera_list) { return gp_camera_folder_list_files(gp_cam, camera_file_path.folder, camera_list, gp_ctx); }
-		<< CAM_RUN(&camera_list) { return gp_list_free(camera_list); }
+		<< CAM_RUN(this, &camera_file_path) { GPRET(gp_camera_capture(gp_cam, GP_CAPTURE_IMAGE, &camera_file_path, gp_ctx)) }
+		<< CAM_RUN(&camera_list) { GPRET(gp_list_new(&camera_list)) }
+		<< CAM_RUN(this, &camera_file_path, &camera_list) { GPRET(gp_camera_folder_list_files(gp_cam, camera_file_path.folder, camera_list, gp_ctx)) }
+		<< CAM_RUN(&camera_list) { GPRET(gp_list_free(camera_list)) }
 		;
       return make_shared<GPhoto::CameraFile>(camera_file_path.folder, camera_file_path.name, d->camera);
     }
@@ -124,7 +124,7 @@ CameraFilePtr GPhoto::Camera::Private::wait_for_file(int timeout)
     CameraEventType event_type;
     void *event_data = nullptr;
     CameraFilePath *camera_file;
-    camera << CAM_RUN(this, &timeout, &event_type, &event_data) { return gp_camera_wait_for_event(gp_cam, timeout, &event_type, &event_data, gp_ctx); };
+    camera << CAM_RUN(this, &timeout, &event_type, &event_data) { GPRET(gp_camera_wait_for_event(gp_cam, timeout, &event_type, &event_data, gp_ctx)) };
     switch(event_type) {
       case GP_EVENT_TIMEOUT:
 	throw TimeoutError("Timeout waiting for file capture");
@@ -173,7 +173,7 @@ void GPhoto::Camera::Private::try_mirror_lock(GPhoto::Camera::MirrorLock mirror_
 
 void GPhoto::Camera::save_settings()
 {
-  d->camera << CAM_RUN(this) { return gp_camera_set_config(gp_cam, *d->settings, gp_ctx); };
+  d->camera << CAM_RUN(this) { GPRET(gp_camera_set_config(gp_cam, *d->settings, gp_ctx)) };
 }
 
 GPhoto::Camera::MirrorLock::MirrorLock(const chrono::duration< double, milli >& duration, const ShooterPtr shooter)
@@ -198,7 +198,7 @@ ostream &operator<<(ostream &o, const GPhoto::Camera &c) {
 list<string> GPhoto::Camera::folders(const string& folder) const
 {
   List files_list{*d->camera};
-  d->camera << CAM_RUN(this, &files_list, &folder) { return gp_camera_folder_list_folders(gp_cam, folder.c_str(), files_list, gp_ctx); };
+  d->camera << CAM_RUN(this, &files_list, &folder) { GPRET(gp_camera_folder_list_folders(gp_cam, folder.c_str(), files_list, gp_ctx)) };
   multimap<string,string> files_map = files_list;
   list<string> folders(files_map.size());;
   transform(begin(files_map), end(files_map), begin(folders), [&folder](const pair<string,string> &p){ return folder + "/" + p.first; });
@@ -208,7 +208,7 @@ list<string> GPhoto::Camera::folders(const string& folder) const
 list<GPhoto::Camera::FileInfo> GPhoto::Camera::files(const string& folder) const
 {
   List files_list{*d->camera};
-  d->camera << CAM_RUN(this, &files_list, &folder) { return gp_camera_folder_list_files(gp_cam, folder.c_str(), files_list, gp_ctx); };
+  d->camera << CAM_RUN(this, &files_list, &folder) { GPRET(gp_camera_folder_list_files(gp_cam, folder.c_str(), files_list, gp_ctx)) };
   multimap<string,string> files_map = files_list;
   list<FileInfo> files(files_map.size());;
   transform(begin(files_map), end(files_map), begin(files), [&folder](const pair<string,string> &p){ return FileInfo{folder, p.first}; });

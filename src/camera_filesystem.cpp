@@ -59,7 +59,7 @@ CameraFolder::~CameraFolder()
 
 list< CameraFolderPtr > CameraFolder::folders() const {
   List files_list{*d->camera};
-  d->camera << CAM_RUN(this, &files_list) { return gp_camera_folder_list_folders(gp_cam, d->path.c_str(), files_list, gp_ctx); };
+  d->camera << CAM_RUN(this, &files_list) { GPRET(gp_camera_folder_list_folders(gp_cam, d->path.c_str(), files_list, gp_ctx)) };
   multimap<string,string> files_map = files_list;
   list<CameraFolderPtr> folders(files_map.size());;
   transform(begin(files_map), end(files_map), begin(folders), [this](const pair<string,string> &p){
@@ -71,7 +71,7 @@ list< CameraFolderPtr > CameraFolder::folders() const {
 list< CameraFileInfoPtr > CameraFolder::files() const
 {
   List files_list{*d->camera};
-  d->camera << CAM_RUN(this, &files_list) { return gp_camera_folder_list_files(gp_cam, d->path.c_str(), files_list, gp_ctx); };
+  d->camera << CAM_RUN(this, &files_list) { GPRET(gp_camera_folder_list_files(gp_cam, d->path.c_str(), files_list, gp_ctx)) };
   multimap<string,string> files_map = files_list;
   list<CameraFileInfoPtr> files(files_map.size());;
   transform(begin(files_map), end(files_map), begin(files), [this](const pair<string,string> &p){
@@ -133,7 +133,7 @@ string GPhoto::CameraFileInfo::path() const
 
 void GPhoto::CameraFileInfo::remove()
 {
-  d->camera << CAM_RUN(this) { return gp_camera_file_delete(gp_cam, d->folder->path().c_str(), d->name.c_str(), gp_ctx); };
+  d->camera << CAM_RUN(this) { GPRET(gp_camera_file_delete(gp_cam, d->folder->path().c_str(), d->name.c_str(), gp_ctx)) };
 }
 
 

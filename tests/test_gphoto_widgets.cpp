@@ -43,46 +43,46 @@ namespace {
 
 TestGPhotoWidgets::TestGPhotoWidgets() : gphoto{new GPhotoWrapper}
 {
-  gphoto << GP2_RUN(this) { return gp_widget_new(GP_WIDGET_WINDOW, "Top Window", &top_window); }
-	 << GP2_RUN(this) { return gp_widget_set_name(top_window, "top_window"); }
+  gphoto << GP2_RUN(this) { GPRET(gp_widget_new(GP_WIDGET_WINDOW, "Top Window", &top_window)) }
+	 << GP2_RUN(this) { GPRET(gp_widget_set_name(top_window, "top_window")) }
 	 
-	 << GP2_RUN(this) { return gp_widget_new(GP_WIDGET_TEXT, "Text Widget", &text_widget); }
-	 << GP2_RUN(this) { return gp_widget_set_name(text_widget, "text_window"); }
-	 << GP2_RUN(this) { return gp_widget_append(top_window, text_widget); }
-	 << GP2_RUN(this) { return gp_widget_set_value(text_widget, "hello world"); }
+	 << GP2_RUN(this) { GPRET(gp_widget_new(GP_WIDGET_TEXT, "Text Widget", &text_widget)) }
+	 << GP2_RUN(this) { GPRET(gp_widget_set_name(text_widget, "text_window")) }
+	 << GP2_RUN(this) { GPRET(gp_widget_append(top_window, text_widget)) }
+	 << GP2_RUN(this) { GPRET(gp_widget_set_value(text_widget, "hello world")) }
 	 
 	 
-	 << GP2_RUN(this) { return gp_widget_new(GP_WIDGET_MENU, "Menu Widget", &menu_widget); }
-	 << GP2_RUN(this) { return gp_widget_set_name(menu_widget, "menu_window"); }
-	 << GP2_RUN(this) { return gp_widget_add_choice(menu_widget, "First Choice"); }
-	 << GP2_RUN(this) { return gp_widget_add_choice(menu_widget, "Second Choice"); }
-	 << GP2_RUN(this) { return gp_widget_add_choice(menu_widget, "Third Choice"); }
-	 << GP2_RUN(this) { return gp_widget_set_value(menu_widget, "Second Choice"); }
-	 << GP2_RUN(this) { return gp_widget_append(top_window, menu_widget); }
+	 << GP2_RUN(this) { GPRET(gp_widget_new(GP_WIDGET_MENU, "Menu Widget", &menu_widget)) }
+	 << GP2_RUN(this) { GPRET(gp_widget_set_name(menu_widget, "menu_window")) }
+	 << GP2_RUN(this) { GPRET(gp_widget_add_choice(menu_widget, "First Choice")) }
+	 << GP2_RUN(this) { GPRET(gp_widget_add_choice(menu_widget, "Second Choice")) }
+	 << GP2_RUN(this) { GPRET(gp_widget_add_choice(menu_widget, "Third Choice")) }
+	 << GP2_RUN(this) { GPRET(gp_widget_set_value(menu_widget, "Second Choice")) }
+	 << GP2_RUN(this) { GPRET(gp_widget_append(top_window, menu_widget)) }
 	 
-	 << GP2_RUN(this) { return gp_widget_new(GP_WIDGET_RANGE, "Range Widget", &range_widget); }
-	 << GP2_RUN(this) { return gp_widget_set_name(range_widget, "range_window"); }
-	 << GP2_RUN(this) { return gp_widget_set_range(range_widget, 1.2, 3.3, 0.5); }
-	 << GP2_RUN(this) { return gp_widget_append(top_window, range_widget); }
-	 << GP2_RUN(this) { float v = 1.2; return gp_widget_set_value(range_widget, &v); }
+	 << GP2_RUN(this) { GPRET(gp_widget_new(GP_WIDGET_RANGE, "Range Widget", &range_widget)) }
+	 << GP2_RUN(this) { GPRET(gp_widget_set_name(range_widget, "range_window")) }
+	 << GP2_RUN(this) { GPRET(gp_widget_set_range(range_widget, 1.2, 3.3, 0.5)) }
+	 << GP2_RUN(this) { GPRET(gp_widget_append(top_window, range_widget)) }
+	 << GP2_RUN(this) { float v = 1.2; GPRET(gp_widget_set_value(range_widget, &v)) }
 	 
-	 << GP2_RUN(this) { return gp_widget_new(GP_WIDGET_DATE, "Date Widget", &date_widget); }
-	 << GP2_RUN(this) { return gp_widget_set_name(date_widget, "date_window"); }
-	 << GP2_RUN(this) { return gp_widget_append(top_window, date_widget); }
-	 << GP2_RUN(this) { time_t t{426118342}; return gp_widget_set_value(date_widget, &t); }
+	 << GP2_RUN(this) { GPRET(gp_widget_new(GP_WIDGET_DATE, "Date Widget", &date_widget)) }
+	 << GP2_RUN(this) { GPRET(gp_widget_set_name(date_widget, "date_window")) }
+	 << GP2_RUN(this) { GPRET(gp_widget_append(top_window, date_widget)) }
+	 << GP2_RUN(this) { time_t t{426118342}; GPRET(gp_widget_set_value(date_widget, &t)) }
 	 
-	 << GP2_RUN(this) { return gp_widget_new(GP_WIDGET_TOGGLE, "Bool Widget", &bool_widget); }
-	 << GP2_RUN(this) { return gp_widget_set_name(bool_widget, "bool_window"); }
-	 << GP2_RUN(this) { return gp_widget_append(top_window, bool_widget); }
-	 << GP2_RUN(this) { bool b = true; return gp_widget_set_value(bool_widget, &b); }
+	 << GP2_RUN(this) { GPRET(gp_widget_new(GP_WIDGET_TOGGLE, "Bool Widget", &bool_widget)) }
+	 << GP2_RUN(this) { GPRET(gp_widget_set_name(bool_widget, "bool_window")) }
+	 << GP2_RUN(this) { GPRET(gp_widget_append(top_window, bool_widget)) }
+	 << GP2_RUN(this) { bool b = true; GPRET(gp_widget_set_value(bool_widget, &b)) }
 	 
-	 << GP2_RUN(this) { return gp_widget_new(GP_WIDGET_SECTION, "Section Widget", &section_widget); }
-	 << GP2_RUN(this) { return gp_widget_set_name(section_widget, "section_window"); }
-	 << GP2_RUN(this) { return gp_widget_append(top_window, section_widget); }
+	 << GP2_RUN(this) { GPRET(gp_widget_new(GP_WIDGET_SECTION, "Section Widget", &section_widget)) }
+	 << GP2_RUN(this) { GPRET(gp_widget_set_name(section_widget, "section_window")) }
+	 << GP2_RUN(this) { GPRET(gp_widget_append(top_window, section_widget)) }
 	 
-	 << GP2_RUN(this) { return gp_widget_new(GP_WIDGET_TEXT, "Section Widget Item", &section_widget_item); }
-	 << GP2_RUN(this) { return gp_widget_set_name(section_widget_item, "section_window_item"); }
-	 << GP2_RUN(this) { return gp_widget_append(section_widget, section_widget_item); }
+	 << GP2_RUN(this) { GPRET(gp_widget_new(GP_WIDGET_TEXT, "Section Widget Item", &section_widget_item)) }
+	 << GP2_RUN(this) { GPRET(gp_widget_set_name(section_widget_item, "section_window_item")) }
+	 << GP2_RUN(this) { GPRET(gp_widget_append(section_widget, section_widget_item)) }
 	    ;
 }
 
@@ -123,7 +123,7 @@ TEST_F(TestGPhotoWidgets, testSetStringValue) {
   widget->get<Widget::StringValue>()->set("Foo Bla");
   
   char *new_value;
-  gphoto << GP2_RUN(this, &new_value) { return gp_widget_get_value(text_widget, &new_value); };
+  gphoto << GP2_RUN(this, &new_value) { GPRET(gp_widget_get_value(text_widget, &new_value)) };
   ASSERT_EQ(string{"Foo Bla"}, string{new_value});
 }
 
@@ -139,7 +139,7 @@ TEST_F(TestGPhotoWidgets, testSetRangeValue) {
   widget->get<Widget::RangeValue>()->set(2.9);
   
   float new_value;
-  gphoto << GP2_RUN(this, &new_value) { return gp_widget_get_value(range_widget, &new_value); };
+  gphoto << GP2_RUN(this, &new_value) { GPRET(gp_widget_get_value(range_widget, &new_value)) };
   ASSERT_EQ(2.9f, new_value);
 }
 
@@ -180,7 +180,7 @@ TEST_F(TestGPhotoWidgets, testSetDate) {
   auto widget = make_shared<Widget>(date_widget, gphoto, LoggerPtr{});
   widget->get<Widget::DateValue>()->set(chrono::system_clock::from_time_t(134567));
   time_t new_value;
-  gphoto << GP2_RUN(this, &new_value) { return gp_widget_get_value(date_widget, &new_value); };
+  gphoto << GP2_RUN(this, &new_value) { GPRET(gp_widget_get_value(date_widget, &new_value)) };
   ASSERT_EQ(134567, new_value);
 }
 
@@ -234,7 +234,7 @@ TEST_F(TestGPhotoWidgets, testPath) {
 
 
 TEST_F(TestGPhotoWidgets, testEmptyString) {
-  gphoto << GP2_RUN(this) { return gp_widget_set_value(text_widget, ""); };
+  gphoto << GP2_RUN(this) { GPRET(gp_widget_set_value(text_widget, "")) };
   string text;
   {
     auto widget = make_shared<Widget>(text_widget, gphoto, LoggerPtr{});

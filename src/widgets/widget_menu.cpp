@@ -24,10 +24,10 @@ using namespace std;
 
 Widget::MenuValue::MenuValue(Widget* widget): StringValue(widget)
 {
-  int choices = (*widget->d->gphoto)(GP2_RUN(this, &widget) { return gp_widget_count_choices(widget->d->widget); });
+  int choices = (*widget->d->gphoto)(GP2_RUN(this, &widget) { GPRET(gp_widget_count_choices(widget->d->widget)) });
   for(int i=0; i<choices; i++) {
     const char *choice;
-    widget->d->gphoto << GP2_RUN(this, &widget, &choice, &i) { return gp_widget_get_choice(widget->d->widget, i, &choice);};
+    widget->d->gphoto << GP2_RUN(this, &widget, &choice, &i) { GPRET(gp_widget_get_choice(widget->d->widget, i, &choice)) };
     _choices.push_back({string{choice}});
   }
 }

@@ -79,7 +79,7 @@ GPhoto::CameraPtr Driver::autodetect() const
 {
   ::Camera *camera;
   try {
-    d->driver << CTX_RUN(this, &camera){ return gp_camera_new(&camera); } << CTX_RUN(this, &camera) { return gp_camera_init(camera, gp_ctx); };
+    d->driver << CTX_RUN(this, &camera){ GPRET(gp_camera_new(&camera)) } << CTX_RUN(this, &camera) { GPRET(gp_camera_init(camera, gp_ctx)) };
     return make_shared<GPhoto::Camera>(make_shared<GPhotoCamera>(camera, d->driver), d->logger);
   } catch(GPhoto::Exception &e) {
     lWarning(d->logger) << "Unable to connect to gphoto2 camera: " << e.what();
