@@ -64,9 +64,7 @@ Driver::Driver(const LoggerPtr &logger, LibGPhotoLogLevel libgphotoLogLevel) : d
     {Error, GP_LOG_ERROR}, {Verbose, GP_LOG_VERBOSE}, {Debug, GP_LOG_DEBUG}
   };
   if(libgphotoLogLevel != None) {
-    d->driver << CTX_RUN(this, log_func, libgphotoLogLevel,gphoto_levels) {
-      return gp_log_add_func(gphoto_levels.at(libgphotoLogLevel), log_func, d->logger.get());
-    };
+    d->driver << CTX_RUN(this, log_func, libgphotoLogLevel,gphoto_levels) { GPRET(gp_log_add_func(gphoto_levels.at(libgphotoLogLevel), log_func, d->logger.get()) ) };
   }
 }
 

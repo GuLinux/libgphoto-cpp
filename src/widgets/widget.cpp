@@ -77,7 +77,7 @@ Widgets Widget::all_children() const
 }
 
 
-WidgetPtr Widget::Private::find_by(function<int(::CameraWidget*&)> run, const string &field_name) const
+WidgetPtr Widget::Private::find_by(function<GPhotoReturn(::CameraWidget*&)> run, const string &field_name) const
 {
     CameraWidget *widget;
     try {

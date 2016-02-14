@@ -23,7 +23,10 @@
 #include <gphoto2/gphoto2.h>
 
 namespace GPhoto {
-  typedef int GPhotoReturn;
+  struct GPhotoReturn {
+    int result;
+    operator int() const { return result; }
+  };
   class GPhotoWrapper {
   public:
     typedef std::function<GPhotoReturn()> GPhotoRun;

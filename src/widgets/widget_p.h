@@ -36,7 +36,7 @@ public:
   Type type;
   Logger::ptr log;
   
-  WidgetPtr find_by(function<int(::CameraWidget*&)> run, const string &field_name) const;
+  WidgetPtr find_by(function<GPhotoReturn(::CameraWidget*&)> run, const string &field_name) const;
   
   
 private:
