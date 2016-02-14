@@ -30,11 +30,16 @@ class Exposure
 public:
   struct Value {
     std::string text;
-    std::chrono::duration<double, std::milli> duration() const;
+    milliseconds duration() const;
     bool bulb() const;
   };
+  typedef std::list< Exposure::Value > Values;
   Exposure(const WidgetPtr &widget);
-  std::list< Exposure::Value > values() const;
+  Values values() const;
+  Value value() const;
+  void set_bulb();
+  void set(const milliseconds &duration, double tolerance = 0.25);
+  void set(const Value &value);
   ~Exposure();
 
 private:

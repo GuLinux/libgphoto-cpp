@@ -31,5 +31,10 @@ namespace GPhoto {
   public:
     TimeoutError(const std::string& __arg);
   };
+  
+  class ValueError : public Exception {
+  public:
+    ValueError(const std::string& __arg);
+  };
 }
 #endif

@@ -33,3 +33,8 @@ Exception::Exception(const string& __arg): runtime_error(__arg)
 TimeoutError::TimeoutError(const string& __arg): Exception(__arg)
 {
 }
+
+ValueError::ValueError(const string& __arg): Exception(__arg)
+{
+
+}

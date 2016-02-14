@@ -81,7 +81,7 @@ string GPhoto::Camera::summary() const
 }
 
 
-future< CameraFilePtr > GPhoto::Camera::shoot_bulb(const duration< double, milli >& exposure, const ShooterPtr& shooter, const GPhoto::Camera::MirrorLock& mirror_lock) const
+future< CameraFilePtr > GPhoto::Camera::shoot_bulb(const milliseconds& exposure, const ShooterPtr& shooter, const GPhoto::Camera::MirrorLock& mirror_lock) const
 {
   return async([=]{
     {
@@ -173,7 +173,7 @@ void GPhoto::Camera::save_settings()
   d->camera << CAM_RUN(this) { GPRET(gp_camera_set_config(gp_cam, *d->settings, gp_ctx)) };
 }
 
-GPhoto::Camera::MirrorLock::MirrorLock(const chrono::duration< double, milli >& duration, const ShooterPtr shooter)
+GPhoto::Camera::MirrorLock::MirrorLock(const milliseconds& duration, const ShooterPtr shooter)
   : duration{duration}, shooter{shooter}
 {
 

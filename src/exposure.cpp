@@ -20,6 +20,7 @@
 #include "exposure.h"
 #include <algorithm>
 #include "widgets/widgets.h"
+#include "backend/exceptions.h"
 
 using namespace GPhoto;
 using namespace std;
@@ -48,19 +49,65 @@ Exposure::~Exposure()
 {
 }
 
-list< Exposure::Value > Exposure::values() const
+Exposure::Values Exposure::values() const
 {
   return d->values;
 }
 
 bool Exposure::Value::bulb() const
 {
-
+  string s;
+  transform(begin(text), end(text), back_inserter(s), ::tolower);
+  return s.find("bulb") != string::npos;
 }
 
-std::chrono::duration< double, milli > Exposure::Value::duration() const
+milliseconds Exposure::Value::duration() const
 {
-
+  if(bulb())
+    return milliseconds{-1};
+  stringstream ss{text};
+  if(text.find('/') != string::npos) {
+    double num, den;
+    char sep;
+    ss >> num >> sep >> den;
+    return milliseconds{num*1000./den};
+  };
+  double d;
+  ss >> d;
+  return milliseconds{d*1000.};
 }
 
+Exposure::Value Exposure::value() const
+{
+  return Value{ *d->widget->get<Widget::MenuValue>() };
+}
+
+void Exposure::set(const Exposure::Value& value)
+{
+  d->widget->get<Widget::MenuValue>()->set(value.text);
+}
+
+void Exposure::set_bulb()
+{
+  auto value = find_if(begin(d->values), end(d->values), [&](const Value &v){ return v.bulb(); });
+  if(value == end(d->values))
+    throw ValueError{"Unable to find bulb exposure"};
+  set(*value);
+}
+
+
+void Exposure::set(const milliseconds& duration, double tolerance)
+{
+  vector<Value> values;
+  copy_if(begin(d->values), end(d->values), back_inserter(values), [](const Value &v){ return !v.bulb(); });
+  auto difference = [](const milliseconds &a, const milliseconds &b) -> double { return abs(a.count()-b.count()); };
+  sort(begin(values), end(values), [&](const Value &a, const Value &b) { return difference(a.duration(), duration) < difference(b.duration(), duration); });
+  auto tolerance_value = duration.count()* tolerance;
+  if(difference(values[0].duration(), duration) > tolerance_value) {
+    stringstream ss;
+    ss << "Unable to find a widget for exposure of " << duration.count() << " milliseconds (" << tolerance_value << "ms of tolerance)";
+    throw ValueError{ss.str()};
+  }
+  set(values[0]);
+}
 

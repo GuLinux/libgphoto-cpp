@@ -16,6 +16,7 @@
  *
  */
 #include "commons.h"
+#include <exposure.h>
 
 using namespace std;
 using namespace GPhoto;
@@ -84,9 +85,9 @@ int main(int argc, char **argv) {
     cout << "Error! unable to find <shutterspeed> settings widget\n";
     return 1;
   }
+  Exposure exposure{widgets["exposure"]};
   
-  auto shoot = [&](const string &speed, function<future<CameraFilePtr>()> shoot_f){
-    widgets["exposure"]->get<Widget::MenuValue>()->set(speed);
+  auto shoot = [&](function<future<CameraFilePtr>()> shoot_f){
     camera->save_settings();
     auto file = shoot_f();
     file.wait();
@@ -95,12 +96,14 @@ int main(int argc, char **argv) {
     if(has_option("-s"))
       cf->save(cf->file());
   };
- 
-  shoot("1/5", [&]{ return camera->shoot_preset(mirror_lock); });
+  
+  exposure.set(seconds{0.1});
+  shoot([&]{ return camera->shoot_preset(mirror_lock); });
   this_thread::sleep_for(chrono::seconds(2));
-  shoot("Bulb", [&]{ return camera->shoot_bulb(chrono::duration<double>(2), shooter, mirror_lock); });
+  exposure.set_bulb();
+  shoot([&]{ return camera->shoot_bulb(chrono::duration<double>(2), shooter, mirror_lock); });
   this_thread::sleep_for(chrono::seconds(2));
-  shoot("Bulb", [&]{ return camera->shoot_bulb(chrono::duration<double>(5), shooter, mirror_lock); });
+  shoot([&]{ return camera->shoot_bulb(chrono::duration<double>(5), shooter, mirror_lock); });
   
 
   return 0;

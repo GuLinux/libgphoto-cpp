@@ -71,8 +71,8 @@ GPhoto::GPhotoDriverPtr operator<<(const GPhoto::GPhotoDriverPtr &, GPhoto::GPho
 GPhoto::GPhotoCameraPtr operator<<(const GPhoto::GPhotoCameraPtr &, GPhoto::GPhotoCamera::CameraRun);
 
 #define GPRET(f) return GPhotoReturn{f, __FILE__, __LINE__, __PRETTY_FUNCTION__};
-#define GP2_RUN(...) [__VA_ARGS__]() -> GPhotoReturn
-#define CTX_RUN(...) [__VA_ARGS__](::GPContext *gp_ctx) -> GPhotoReturn
-#define CAM_RUN(...) [__VA_ARGS__](::GPContext *gp_ctx, ::Camera *gp_cam) -> GPhotoReturn
+#define GP2_RUN(...) [ __VA_ARGS__ ]() -> GPhotoReturn
+#define CTX_RUN(...) [ __VA_ARGS__ ](::GPContext *gp_ctx) -> GPhotoReturn
+#define CAM_RUN(...) [ __VA_ARGS__ ](::GPContext *gp_ctx, ::Camera *gp_cam) -> GPhotoReturn
 
 #endif

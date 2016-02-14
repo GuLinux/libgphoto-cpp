@@ -19,6 +19,8 @@
 #ifndef FORWARD_DECLARATIONS_H
 #define FORWARD_DECLARATIONS_H
 #include <list>
+#include <chrono>
+#include <ratio>
 #include "utils/dptr.h"
 extern "C" {
 typedef struct _GPContext GPContext;
@@ -29,6 +31,8 @@ typedef struct _CameraList CameraList;
 
 #define fwd_class(name) class name; typedef std::shared_ptr<name> name##Ptr;
 namespace GPhoto {
+  typedef std::chrono::duration<double> seconds;
+  typedef std::chrono::duration<double, std::milli> milliseconds;
   fwd_class(GPhotoWrapper)
   fwd_class(GPhotoDriver)
   fwd_class(GPhotoCamera)
@@ -40,6 +44,7 @@ namespace GPhoto {
   fwd_class(Camera)
   fwd_class(CameraFolder)
   fwd_class(Shooter)
+  fwd_class(Exposure)
   typedef std::list<WidgetPtr> Widgets;
 };
 

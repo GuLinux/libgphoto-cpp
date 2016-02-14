@@ -32,9 +32,9 @@ class Camera
 {
 public:
     struct MirrorLock {
-      std::chrono::duration<double, std::milli> duration;
+      milliseconds duration;
       ShooterPtr shooter;
-      MirrorLock(const std::chrono::duration<double, std::milli> &duration = {}, const ShooterPtr shooter = {});
+      MirrorLock(const milliseconds &duration = {}, const ShooterPtr shooter = {});
       operator bool() const;
     };
     Camera(const GPhotoCameraPtr &camera, const LoggerPtr &logger = {});
@@ -52,7 +52,7 @@ public:
     
     CameraFolderPtr root(const std::string &root_path="/");
     std::future<CameraFilePtr> shoot_preset(const MirrorLock &mirror_lock = {}) const;
-    std::future<CameraFilePtr> shoot_bulb(const std::chrono::duration<double, std::milli> &exposure, const ShooterPtr &shooter, const MirrorLock &mirror_lock = {}) const;
+    std::future<CameraFilePtr> shoot_bulb(const milliseconds &exposure, const ShooterPtr &shooter, const MirrorLock &mirror_lock = {}) const;
 private:
   DPTR
 };
