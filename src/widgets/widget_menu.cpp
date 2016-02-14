@@ -18,6 +18,7 @@
 
 #include "widgets.h"
 #include "widget_p.h"
+#include <algorithm>
 
 using namespace GPhoto;
 using namespace std;
@@ -88,5 +89,24 @@ void Widget::MenuValue::set(const string& choice_text)
 void Widget::MenuValue::set(const Widget::MenuValue::Choice& choice)
 {
   set(choice.text);
+}
+
+
+Widget::MenuValue::Choices Widget::MenuValue::filter_choices(const string& text, bool case_sensitive, bool partial) const
+{
+  Choices filtered;
+  auto case_check = [&](const string &s) {
+    if(case_sensitive)
+      return s;
+    string cs;
+    transform(begin(s), end(s), back_inserter(cs), ::tolower);
+    return cs;
+  };
+  auto matcher = [&](const string &a, const string &b){
+    return partial ? a.find(b) != string::npos : a == b;
+  };
+ auto filter = [&](const Choice &choice){ return matcher(case_check(choice.text), case_check(text)); };
+ copy_if(begin(_choices), end(_choices), back_inserter(filtered), filter);
+ return filtered;
 }
 

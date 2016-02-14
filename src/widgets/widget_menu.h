@@ -36,6 +36,7 @@ public:
   void set(int choice_index);
   void set(const std::string &choice_text);
   void set(const Choice &choice);
+  Choices filter_choices(const std::string &text, bool case_sensitive=false, bool partial=false) const;
 private:
   friend class Widget;
   MenuValue(Widget* widget);
