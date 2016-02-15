@@ -52,9 +52,9 @@ private:
 
 class GPhoto::Camera::Shot::Private {
 public:
-  Private();
-  chrono::time_point<chrono::steady_clock> started;
+  Private(const milliseconds &exposure);
   milliseconds exposure;
+  chrono::time_point<chrono::steady_clock> started;
   chrono::time_point<chrono::steady_clock> finished;
   CameraFileFuture result;
   std::atomic_bool is_finished;
@@ -67,7 +67,7 @@ public:
   };
   std::shared_ptr<measure> start();
 };
-GPhoto::Camera::Shot::Private::Private() : is_finished(false)
+GPhoto::Camera::Shot::Private::Private(const milliseconds& exposure) : exposure{exposure}, is_finished{false}
 {
 }
 
@@ -89,7 +89,7 @@ GPhoto::Camera::Shot::Private::measure::~measure()
 }
 
 
-GPhoto::Camera::Shot::Shot() : dptr()
+GPhoto::Camera::Shot::Shot(const milliseconds &exposure) : dptr(exposure)
 {
 }
 
@@ -151,7 +151,7 @@ string GPhoto::Camera::summary() const
 
 GPhoto::Camera::ShotPtr GPhoto::Camera::shoot_bulb(const milliseconds& exposure, const ShooterPtr& shooter, const GPhoto::Camera::MirrorLock& mirror_lock) const
 {
-  shared_ptr<Shot> shot{new Shot};
+  shared_ptr<Shot> shot{new Shot{exposure}};
   shot->d->result = async([=]{
     {
       lDebug(d->logger) << "Shooting with bulb mode, duration: " << exposure.count();
@@ -169,7 +169,7 @@ GPhoto::Camera::ShotPtr GPhoto::Camera::shoot_bulb(const milliseconds& exposure,
 
 GPhoto::Camera::ShotPtr GPhoto::Camera::shoot_preset(const GPhoto::Camera::MirrorLock& mirror_lock) const
 {
-  shared_ptr<Shot> shot{new Shot};
+  shared_ptr<Shot> shot{new Shot{{}}};
   shot->d->result = async([=] {
     lDebug(d->logger) << "Shooting with preset mode...";
     d->try_mirror_lock(mirror_lock);

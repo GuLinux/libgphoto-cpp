@@ -66,7 +66,7 @@ public:
   milliseconds elapsed() const;
   milliseconds duration() const;
 private:
-  Shot();
+  Shot(const milliseconds &duration);
   friend class Camera;
   friend class Camera::Private;
   DPTR
