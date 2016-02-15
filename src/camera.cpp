@@ -58,10 +58,10 @@ GPhoto::Camera::Private::Private(const GPhotoCameraPtr& camera, const LoggerPtr&
 GPhoto::Camera::Camera(const GPhotoCameraPtr &camera, const LoggerPtr &logger) : dptr(camera, logger, this)
 {
   CameraText text;
-  d->camera << CAM_RUN(this, &text) { GPRET(gp_camera_get_summary(gp_cam, &text, gp_ctx)) };
+  d->camera << CAM_RUN(&) { GPRET(gp_camera_get_summary(gp_cam, &text, gp_ctx)) };
   d->summary = {text.text};
   CameraWidget *w;
-  d->camera << CAM_RUN(this, &w) { GPRET(gp_camera_get_config(gp_cam, &w, gp_ctx)) };
+  d->camera << CAM_RUN(&) { GPRET(gp_camera_get_config(gp_cam, &w, gp_ctx)) };
   d->settings = make_shared<Widget>(w, *d->camera, d->logger);
 }
 
@@ -105,9 +105,7 @@ future< CameraFilePtr > GPhoto::Camera::shoot_preset(const MirrorLock &mirror_lo
       mirror_lock.shooter->shoot();
       return d->wait_for_file();
     } else {
-      d->camera
-		<< CAM_RUN(this, &camera_file_path) { GPRET(gp_camera_capture(gp_cam, GP_CAPTURE_IMAGE, &camera_file_path, gp_ctx)) }
-		;
+      d->camera << CAM_RUN(&) { GPRET(gp_camera_capture(gp_cam, GP_CAPTURE_IMAGE, &camera_file_path, gp_ctx)) };
       return make_shared<GPhoto::CameraFile>(camera_file_path.folder, camera_file_path.name, d->camera, d->logger);
     }
   });
@@ -197,7 +195,7 @@ ostream &operator<<(ostream &o, const GPhoto::Camera &c) {
 list<string> GPhoto::Camera::folders(const string& folder) const
 {
   List files_list{*d->camera};
-  d->camera << CAM_RUN(this, &files_list, &folder) { GPRET(gp_camera_folder_list_folders(gp_cam, folder.c_str(), files_list, gp_ctx)) };
+  d->camera << CAM_RUN(&) { GPRET(gp_camera_folder_list_folders(gp_cam, folder.c_str(), files_list, gp_ctx)) };
   multimap<string,string> files_map = files_list;
   list<string> folders(files_map.size());;
   transform(begin(files_map), end(files_map), begin(folders), [&folder](const pair<string,string> &p){ return folder + "/" + p.first; });
@@ -207,7 +205,7 @@ list<string> GPhoto::Camera::folders(const string& folder) const
 list<GPhoto::Camera::FileInfo> GPhoto::Camera::files(const string& folder) const
 {
   List files_list{*d->camera};
-  d->camera << CAM_RUN(this, &files_list, &folder) { GPRET(gp_camera_folder_list_files(gp_cam, folder.c_str(), files_list, gp_ctx)) };
+  d->camera << CAM_RUN(&) { GPRET(gp_camera_folder_list_files(gp_cam, folder.c_str(), files_list, gp_ctx)) };
   multimap<string,string> files_map = files_list;
   list<FileInfo> files(files_map.size());;
   transform(begin(files_map), end(files_map), begin(files), [&folder](const pair<string,string> &p){ return FileInfo{folder, p.first}; });
