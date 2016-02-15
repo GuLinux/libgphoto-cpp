@@ -19,6 +19,7 @@
 
 #include "exposure.h"
 #include <algorithm>
+#include <map>
 #include "widgets/widgets.h"
 #include "backend/exceptions.h"
 
@@ -89,10 +90,13 @@ void Exposure::set(const Exposure::Value& value)
 
 void Exposure::set_bulb()
 {
-  auto value = find_if(begin(d->values), end(d->values), [&](const Value &v){ return v.bulb(); });
-  if(value == end(d->values))
+  vector<Value> bulb_choices;
+  copy_if(begin(d->values), end(d->values), back_inserter(bulb_choices), [&](const Value &v){ return v.bulb(); });
+  if(bulb_choices.size() == 0)
     throw ValueError{"Unable to find bulb exposure"};
-  set(*value);
+  static map<string, int> ordering{{"bulb", 10}, {"Bulb", 9}};
+  sort(begin(bulb_choices), end(bulb_choices), [&](const Value &v1, const Value &v2){ return ordering[v1.text] > ordering[v2.text]; });
+  set(bulb_choices[0]);
 }
 
 

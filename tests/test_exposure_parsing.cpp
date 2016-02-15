@@ -29,14 +29,19 @@ using namespace GPhoto;
 namespace {
   class TestExposureParsing : public ::testing::Test {
   public:
-    TestExposureParsing();
-    ExposurePtr exposure;
     struct Parsed {
       milliseconds duration;
       bool bulb;
-      string text;                                                          
+      string text;
       bool operator==(const Parsed &o) const { return duration == o.duration && bulb == o.bulb && text == o.text; }
     };
+    TestExposureParsing();
+    CameraWidget *top_window;
+    CameraWidget *menu_widget;
+    void create_widget(const vector< string >& choices, int value_index = 0);
+    ExposurePtr exposure;
+    GPhotoWrapperPtr gphoto;
+    WidgetPtr widget;
   };
 }
 
@@ -46,24 +51,25 @@ ostream &operator<<(ostream &o, const TestExposureParsing::Parsed &p) {
 
 TestExposureParsing::TestExposureParsing()
 {
-  auto gphoto = make_shared<GPhotoWrapper>();
-  CameraWidget *top_window;
-  CameraWidget *menu_widget;
+  gphoto = make_shared<GPhotoWrapper>();
   gphoto << GP2_RUN(&) { GPRET(gp_widget_new(GP_WIDGET_WINDOW, "Top Window", &top_window)) }
 	 << GP2_RUN(&) { GPRET(gp_widget_set_name(top_window, "top_window")) }
-	 
+  ;
+  create_widget({"1/200","3/2", "5", "bulb", "Bulb", "Bulb-Widget"});
+}
+
+void TestExposureParsing::create_widget(const vector< string >& choices, int value_index)
+{
+  gphoto
 	 << GP2_RUN(&) { GPRET(gp_widget_new(GP_WIDGET_MENU, "Exposure", &menu_widget)) }
 	 << GP2_RUN(&) { GPRET(gp_widget_set_name(menu_widget, "exposure")) }
-	 << GP2_RUN(&) { GPRET(gp_widget_add_choice(menu_widget, "1/200")) }
-	 << GP2_RUN(&) { GPRET(gp_widget_add_choice(menu_widget, "3/2")) }
-	 << GP2_RUN(&) { GPRET(gp_widget_add_choice(menu_widget, "5")) }
-	 << GP2_RUN(&) { GPRET(gp_widget_add_choice(menu_widget, "bulb")) }
-	 << GP2_RUN(&) { GPRET(gp_widget_add_choice(menu_widget, "Bulb")) }
-	 << GP2_RUN(&) { GPRET(gp_widget_add_choice(menu_widget, "Bulb-Widget")) }
-	 << GP2_RUN(&) { GPRET(gp_widget_set_value(menu_widget, "1/200")) }
 	 << GP2_RUN(&) { GPRET(gp_widget_append(top_window, menu_widget)) }
 	    ;
-  auto widget = make_shared<Widget>(menu_widget, gphoto, LoggerPtr{});
+  for(auto choice: choices) {
+    gphoto << GP2_RUN(&) { GPRET(gp_widget_add_choice(menu_widget, choice.c_str()))};
+  }
+  gphoto << GP2_RUN(&) { GPRET(gp_widget_set_value(menu_widget, choices[value_index].c_str())) };
+  widget = make_shared<Widget>(menu_widget, gphoto, LoggerPtr{});
   exposure = make_shared<Exposure>(widget);
 }
 
@@ -99,4 +105,13 @@ TEST_F(TestExposureParsing, findClosestDuration) {
   exposure->set(milliseconds{6});
   ASSERT_EQ("1/200", exposure->value().text);
   ASSERT_THROW( exposure->set(milliseconds{6}, 0.01), GPhoto::ValueError);
+}
+
+TEST_F(TestExposureParsing, customBulbTextOrder) {
+  create_widget({"Bulb","bulb"});
+  exposure->set_bulb();
+  ASSERT_EQ("bulb", exposure->value().text);
+  create_widget({"BulbAAA", "Bulb","bulb"});
+  exposure->set_bulb();
+  ASSERT_EQ("bulb", exposure->value().text);
 }
