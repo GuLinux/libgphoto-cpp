@@ -37,6 +37,8 @@ public:
       MirrorLock(const milliseconds &duration = {}, const ShooterPtr shooter = {});
       operator bool() const;
     };
+    class Shot;
+    typedef std::shared_ptr<Shot> ShotPtr;
     Camera(const GPhotoCameraPtr &camera, const LoggerPtr &logger = {});
     ~Camera();
     WidgetPtr settings() const;
@@ -51,12 +53,24 @@ public:
     std::list<FileInfo> files(const std::string &folder) const;
     
     CameraFolderPtr root(const std::string &root_path="/");
-    std::future<CameraFilePtr> shoot_preset(const MirrorLock &mirror_lock = {}) const;
-    std::future<CameraFilePtr> shoot_bulb(const milliseconds &exposure, const ShooterPtr &shooter, const MirrorLock &mirror_lock = {}) const;
+    ShotPtr shoot_preset(const MirrorLock &mirror_lock = {}) const;
+    ShotPtr shoot_bulb(const milliseconds &exposure, const ShooterPtr &shooter, const MirrorLock &mirror_lock = {}) const;
 private:
   DPTR
 };
 
+class Camera::Shot {
+public:
+  CameraFileFuture& camera_file() const;
+  CameraFileFuture &operator*() const;
+  milliseconds elapsed() const;
+  milliseconds duration() const;
+private:
+  Shot();
+  friend class Camera;
+  friend class Camera::Private;
+  DPTR
+};
 
 }
 

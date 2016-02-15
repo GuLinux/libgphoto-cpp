@@ -87,11 +87,12 @@ int main(int argc, char **argv) {
   }
   Exposure exposure{widgets["exposure"]};
   
-  auto shoot = [&](function<future<CameraFilePtr>()> shoot_f){
+  auto shoot = [&](function<GPhoto::Camera::ShotPtr()> shoot_f){
     camera->save_settings();
-    auto file = shoot_f();
-    file.wait();
-    CameraFilePtr cf = file.get();
+    GPhoto::Camera::ShotPtr result = shoot_f();
+    (**result).wait();
+    cerr << "Shot finished: duration=" << result->duration().count() << ", elapsed: " << result->elapsed().count() << endl;
+    CameraFilePtr cf = (**result).get();
     cerr << *cf << endl;
     if(has_option("-s"))
       cf->save(cf->file());

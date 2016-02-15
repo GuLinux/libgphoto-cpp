@@ -21,6 +21,7 @@
 #include <list>
 #include <chrono>
 #include <ratio>
+#include <future>
 #include "utils/dptr.h"
 extern "C" {
 typedef struct _GPContext GPContext;
@@ -45,6 +46,7 @@ namespace GPhoto {
   fwd_class(CameraFolder)
   fwd_class(Shooter)
   fwd_class(Exposure)
+  typedef std::future<CameraFilePtr> CameraFileFuture;
   typedef std::list<WidgetPtr> Widgets;
 };
 
