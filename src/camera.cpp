@@ -37,9 +37,9 @@ using namespace std::chrono;
 DPTR_CLASS(GPhoto::Camera) {
 public:
   Private(const GPhotoCameraPtr &camera, const LoggerPtr &logger, Camera *q);
-  CameraFilePtr wait_for_file(int timeout = 30000);
+  CameraFilePtr wait_for_file(milliseconds timeout = seconds{120});
   void try_mirror_lock(MirrorLock mirror_lock);
-  void wait_for(duration<double, milli> how_much);
+  void wait_for(milliseconds how_much);
   GPhotoCameraPtr camera;
   LoggerPtr logger;
   string summary;
@@ -105,7 +105,6 @@ future< CameraFilePtr > GPhoto::Camera::shoot_preset(const MirrorLock &mirror_lo
       mirror_lock.shooter->shoot();
       return d->wait_for_file();
     } else {
-      CameraList *camera_list;
       d->camera
 		<< CAM_RUN(this, &camera_file_path) { GPRET(gp_camera_capture(gp_cam, GP_CAPTURE_IMAGE, &camera_file_path, gp_ctx)) }
 		;
@@ -114,17 +113,19 @@ future< CameraFilePtr > GPhoto::Camera::shoot_preset(const MirrorLock &mirror_lo
   });
 }
 
-CameraFilePtr GPhoto::Camera::Private::wait_for_file(int timeout)
+CameraFilePtr GPhoto::Camera::Private::wait_for_file(milliseconds timeout)
 {
-  lDebug(logger) << "Waiting for file with timeout: " << timeout;
-  while(true) {
+  lDebug(logger) << "Waiting for file with timeout: " << timeout.count() << " milliseconds";
+  auto start = chrono::steady_clock::now();
+  while(chrono::steady_clock::now() - start < timeout) {
     CameraEventType event_type;
     void *event_data = nullptr;
     CameraFilePath *camera_file;
-    camera << CAM_RUN(this, &timeout, &event_type, &event_data) { GPRET(gp_camera_wait_for_event(gp_cam, timeout, &event_type, &event_data, gp_ctx)) };
+    camera << CAM_RUN(&) { GPRET(gp_camera_wait_for_event(gp_cam, 100, &event_type, &event_data, gp_ctx)) };
     switch(event_type) {
       case GP_EVENT_TIMEOUT:
-	throw TimeoutError("Timeout waiting for file capture");
+	break;
+// 	throw TimeoutError("Timeout waiting for file capture");
       case GP_EVENT_UNKNOWN:
 	lDebug(logger) << "Unknown event received: " << event_data  << static_cast<const char*>(event_data);
 	break;
@@ -141,12 +142,13 @@ CameraFilePtr GPhoto::Camera::Private::wait_for_file(int timeout)
 	return make_shared<GPhoto::CameraFile>(camera_file->folder, camera_file->name, camera, logger);
     }
   }
+  throw TimeoutError("Timeout waiting for file capture");
 }
 
-void GPhoto::Camera::Private::wait_for(duration< double, milli > how_much)
+void GPhoto::Camera::Private::wait_for(milliseconds how_much)
 {
     auto start = steady_clock::now();
-    while( duration<double, milli>{steady_clock::now() - start} < how_much) {
+    while( milliseconds{steady_clock::now() - start} < how_much) {
       this_thread::sleep_for(nanoseconds(1));
     }
 }

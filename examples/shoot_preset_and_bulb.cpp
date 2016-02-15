@@ -72,7 +72,7 @@ int main(int argc, char **argv) {
     shooter = widgets["shutter"]->name() == "eosremoterelease" ? ShooterPtr{new EOSRemoteReleaseShutter{camera, logger}} : ShooterPtr{new BulbSettingShutter{camera, logger}};
   }
   
-  auto mirror_lock = has_option("-m") ? GPhoto::Camera::MirrorLock{chrono::duration<double>(2), shooter} : GPhoto::Camera::MirrorLock{};
+  auto mirror_lock = has_option("-m") ? GPhoto::Camera::MirrorLock{seconds(2), shooter} : GPhoto::Camera::MirrorLock{};
   
   cout << "Using mirror lock (option -m): " << boolalpha << static_cast<bool>(mirror_lock) << endl;
   cout << "Widgets: " << endl;
@@ -99,11 +99,11 @@ int main(int argc, char **argv) {
   
   exposure.set(seconds{0.1});
   shoot([&]{ return camera->shoot_preset(mirror_lock); });
-  this_thread::sleep_for(chrono::seconds(2));
+  this_thread::sleep_for(seconds(2));
   exposure.set_bulb();
-  shoot([&]{ return camera->shoot_bulb(chrono::duration<double>(2), shooter, mirror_lock); });
-  this_thread::sleep_for(chrono::seconds(2));
-  shoot([&]{ return camera->shoot_bulb(chrono::duration<double>(5), shooter, mirror_lock); });
+  shoot([&]{ return camera->shoot_bulb(seconds(2), shooter, mirror_lock); });
+  this_thread::sleep_for(seconds(2));
+  shoot([&]{ return camera->shoot_bulb(seconds(5), shooter, mirror_lock); });
   
 
   return 0;
