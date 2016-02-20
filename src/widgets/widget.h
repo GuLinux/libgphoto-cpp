@@ -45,6 +45,8 @@ public:
   int id() const;
   std::string label() const;
   Type type() const;
+  enum Access { ReadOnly, ReadWrite };
+  Access access() const;
   
   bool operator==(const Widget &other) const;
   inline bool operator==(const WidgetPtr &other) const { return *other == *this; }

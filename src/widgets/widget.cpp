@@ -34,14 +34,17 @@ Widget::Widget(CameraWidget *widget, const GPhoto::GPhotoWrapperPtr &gphoto, con
 {
   const char *c_name, *c_label;
   CameraWidgetType c_type;
+  int access;
   d->gphoto 
-    << GP2_RUN(this) { GPRET(gp_widget_get_id(d->widget, &d->id)) }
-    << GP2_RUN(this, &c_name) { GPRET(gp_widget_get_name(d->widget, &c_name)) }
-    << GP2_RUN(this, &c_label) { GPRET(gp_widget_get_label(d->widget, &c_label)) }
-    << GP2_RUN(this, &c_type) { GPRET(gp_widget_get_type(d->widget, &c_type)) }
+    << GP2_RUN(&) { GPRET(gp_widget_get_id(d->widget, &d->id)) }
+    << GP2_RUN(&) { GPRET(gp_widget_get_name(d->widget, &c_name)) }
+    << GP2_RUN(&) { GPRET(gp_widget_get_label(d->widget, &c_label)) }
+    << GP2_RUN(&) { GPRET(gp_widget_get_type(d->widget, &c_type)) }
+    << GP2_RUN(&) { GPRET(gp_widget_get_readonly(d->widget, &access)) }
   ;
   d->name = {c_name};
   d->label = {c_label};
+  d->access = access == 0 ? ReadWrite : ReadOnly;
   
   static map<CameraWidgetType, Type> types{
     {GP_WIDGET_WINDOW, Window}, {GP_WIDGET_SECTION, Section}, {GP_WIDGET_TEXT, String}, {GP_WIDGET_RANGE, Range},
@@ -204,3 +207,9 @@ ostream& operator<<(ostream& o, Widget& w)
   }
   return o << " }";
 }
+
+Widget::Access Widget::access() const
+{
+  return d->access;
+}
+

@@ -37,6 +37,7 @@ namespace {
     CameraWidget *bool_widget;
     CameraWidget *section_widget;
     CameraWidget *section_widget_item;
+    CameraWidget *readonly_widget;
     chrono::system_clock::time_point time(int year, int month, int day, int hour, int min, int sec) const;
   };
 }
@@ -45,11 +46,13 @@ TestGPhotoWidgets::TestGPhotoWidgets() : gphoto{new GPhotoWrapper}
 {
   gphoto << GP2_RUN(this) { GPRET(gp_widget_new(GP_WIDGET_WINDOW, "Top Window", &top_window)) }
 	 << GP2_RUN(this) { GPRET(gp_widget_set_name(top_window, "top_window")) }
+	 << GP2_RUN(this) { GPRET(gp_widget_set_readonly(top_window, 0)) }
 	 
 	 << GP2_RUN(this) { GPRET(gp_widget_new(GP_WIDGET_TEXT, "Text Widget", &text_widget)) }
 	 << GP2_RUN(this) { GPRET(gp_widget_set_name(text_widget, "text_window")) }
 	 << GP2_RUN(this) { GPRET(gp_widget_append(top_window, text_widget)) }
 	 << GP2_RUN(this) { GPRET(gp_widget_set_value(text_widget, "hello world")) }
+	 << GP2_RUN(this) { GPRET(gp_widget_set_readonly(text_widget, 0)) }
 	 
 	 
 	 << GP2_RUN(this) { GPRET(gp_widget_new(GP_WIDGET_MENU, "Menu Widget", &menu_widget)) }
@@ -59,30 +62,42 @@ TestGPhotoWidgets::TestGPhotoWidgets() : gphoto{new GPhotoWrapper}
 	 << GP2_RUN(this) { GPRET(gp_widget_add_choice(menu_widget, "Third Choice")) }
 	 << GP2_RUN(this) { GPRET(gp_widget_set_value(menu_widget, "Second Choice")) }
 	 << GP2_RUN(this) { GPRET(gp_widget_append(top_window, menu_widget)) }
+	 << GP2_RUN(this) { GPRET(gp_widget_set_readonly(menu_widget, 0)) }
 	 
 	 << GP2_RUN(this) { GPRET(gp_widget_new(GP_WIDGET_RANGE, "Range Widget", &range_widget)) }
 	 << GP2_RUN(this) { GPRET(gp_widget_set_name(range_widget, "range_window")) }
 	 << GP2_RUN(this) { GPRET(gp_widget_set_range(range_widget, 1.2, 3.3, 0.5)) }
 	 << GP2_RUN(this) { GPRET(gp_widget_append(top_window, range_widget)) }
 	 << GP2_RUN(this) { float v = 1.2; GPRET(gp_widget_set_value(range_widget, &v)) }
+	 << GP2_RUN(this) { GPRET(gp_widget_set_readonly(range_widget, 0)) }
 	 
 	 << GP2_RUN(this) { GPRET(gp_widget_new(GP_WIDGET_DATE, "Date Widget", &date_widget)) }
 	 << GP2_RUN(this) { GPRET(gp_widget_set_name(date_widget, "date_window")) }
 	 << GP2_RUN(this) { GPRET(gp_widget_append(top_window, date_widget)) }
 	 << GP2_RUN(this) { time_t t{426118342}; GPRET(gp_widget_set_value(date_widget, &t)) }
+	 << GP2_RUN(this) { GPRET(gp_widget_set_readonly(date_widget, 0)) }
 	 
 	 << GP2_RUN(this) { GPRET(gp_widget_new(GP_WIDGET_TOGGLE, "Bool Widget", &bool_widget)) }
 	 << GP2_RUN(this) { GPRET(gp_widget_set_name(bool_widget, "bool_window")) }
 	 << GP2_RUN(this) { GPRET(gp_widget_append(top_window, bool_widget)) }
 	 << GP2_RUN(this) { bool b = true; GPRET(gp_widget_set_value(bool_widget, &b)) }
+	 << GP2_RUN(this) { GPRET(gp_widget_set_readonly(bool_widget, 0)) }
 	 
 	 << GP2_RUN(this) { GPRET(gp_widget_new(GP_WIDGET_SECTION, "Section Widget", &section_widget)) }
 	 << GP2_RUN(this) { GPRET(gp_widget_set_name(section_widget, "section_window")) }
 	 << GP2_RUN(this) { GPRET(gp_widget_append(top_window, section_widget)) }
+	 << GP2_RUN(this) { GPRET(gp_widget_set_readonly(section_widget, 0)) }
 	 
 	 << GP2_RUN(this) { GPRET(gp_widget_new(GP_WIDGET_TEXT, "Section Widget Item", &section_widget_item)) }
 	 << GP2_RUN(this) { GPRET(gp_widget_set_name(section_widget_item, "section_window_item")) }
 	 << GP2_RUN(this) { GPRET(gp_widget_append(section_widget, section_widget_item)) }
+	 << GP2_RUN(this) { GPRET(gp_widget_set_readonly(section_widget_item, 0)) }
+	 
+	 << GP2_RUN(this) { GPRET(gp_widget_new(GP_WIDGET_TEXT, "ReadOnly Widget", &readonly_widget)) }
+	 << GP2_RUN(this) { GPRET(gp_widget_set_name(readonly_widget, "readonly widget")) }
+	 << GP2_RUN(this) { GPRET(gp_widget_append(top_window, readonly_widget)) }
+	 << GP2_RUN(this) { GPRET(gp_widget_set_value(readonly_widget, "read only value")) }
+	 << GP2_RUN(this) { GPRET(gp_widget_set_readonly(readonly_widget, 1)) }
 	    ;
 }
 
@@ -96,8 +111,10 @@ TEST_F(TestGPhotoWidgets, testTopWindowCreation) {
 TEST_F(TestGPhotoWidgets, testAllChildren) {
   auto widget = make_shared<Widget>(top_window, gphoto, LoggerPtr{});
   auto children = widget->children();
-  ASSERT_EQ(6, children.size());
+  ASSERT_EQ(7, children.size());
   ASSERT_EQ("text_window", (*children.begin())->name());
+  for(auto widget: children)
+    ASSERT_EQ(widget->name() == "readonly widget" ? Widget::ReadOnly : Widget::ReadWrite, widget->access());
 }
 
 TEST_F(TestGPhotoWidgets, testFindChild) {
