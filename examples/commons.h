@@ -1,6 +1,4 @@
-#ifndef SAMPLES_COMMONS_H
-#define SAMPLES_COMMONS_H
-
+#pragma once
 #include <iostream>
 #include "camera.h"
 #include "driver.h"
@@ -51,4 +49,3 @@ CameraPtr init_camera(const LoggerPtr &logger) {
   cout << "Found camera: " << camera << endl;
   return camera;
 }
-#endif

@@ -1,3 +1,4 @@
+#pragma once
 /*
  * libgphoto++ - modern c++ wrapper library for gphoto2
  * Copyright (C) 2016 Marco Gulino <marco AT gulinux.net>
@@ -16,8 +17,6 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef GPHOTO_WIDGET_STRING_H
-#define GPHOTO_WIDGET_STRING_H
 #include "widget.h"
 namespace GPhotoCPP {
 class Widget::StringValue : public Widget::Value<std::string, char*, char*>{
@@ -30,4 +29,3 @@ private:
 std::ostream &operator<<(std::ostream &o, const GPhotoCPP::Widget::StringValue &w);
 inline std::ostream &operator<<(std::ostream &o, const std::shared_ptr<GPhotoCPP::Widget::StringValue> &w) { return o << *w; }
 
-#endif

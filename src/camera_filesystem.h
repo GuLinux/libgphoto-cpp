@@ -1,3 +1,4 @@
+#pragma once
 /*
  * libgphoto++ - modern c++ wrapper library for gphoto2
  * Copyright (C) 2016 Marco Gulino <marco AT gulinux.net>
@@ -17,8 +18,6 @@
  * 
  */
 
-#ifndef GPHOTO_CAMERA_FILESYSTEM_H
-#define GPHOTO_CAMERA_FILESYSTEM_H
 
 #include "fwd.h"
 #include "utils/dptr.h"
@@ -52,4 +51,3 @@ private:
 };
 }
 
-#endif // GPHOTO_CAMERAFOLDER_H

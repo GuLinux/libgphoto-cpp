@@ -1,3 +1,4 @@
+#pragma once
 /*
  * libgphoto++ - modern c++ wrapper library for gphoto2
  * Copyright (C) 2016 Marco Gulino <marco AT gulinux.net>
@@ -16,8 +17,6 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef GPHOTO_CAMERA_H
-#define GPHOTO_CAMERA_H
 
 #include "fwd.h"
 #include "utils/dptr.h"
@@ -77,4 +76,3 @@ private:
 std::ostream &operator<<(std::ostream &o, const GPhotoCPP::Camera &c);
 inline std::ostream &operator<<(std::ostream &o, const GPhotoCPP::CameraPtr &c) { return o << *c; }
 
-#endif // GPHOTO_CAMERA_H

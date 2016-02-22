@@ -1,3 +1,4 @@
+#pragma once
 /*
  * libgphoto++ - modern c++ wrapper library for gphoto2
  * Copyright (C) 2016 Marco Gulino <marco AT gulinux.net>
@@ -16,8 +17,6 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef GPHOTO_SERIALSHOOTER_H
-#define GPHOTO_SERIALSHOOTER_H
 
 #include "shooter.h"
 #include "utils/dptr.h"
@@ -37,5 +36,3 @@ private:
     DPTR
 };
 }
-
-#endif // GPHOTO_SERIALSHOOTER_H

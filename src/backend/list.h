@@ -1,3 +1,4 @@
+#pragma once
 /*
  * libgphoto++ - modern c++ wrapper library for gphoto2
  * Copyright (C) 2016 Marco Gulino <marco AT gulinux.net>
@@ -17,8 +18,6 @@
  * 
  */
 
-#ifndef GPHOTO_LIST_H
-#define GPHOTO_LIST_H
 
 #include "utils/dptr.h"
 #include "fwd.h"
@@ -37,5 +36,3 @@ private:
   DPTR
 };
 }
-
-#endif // GPHOTO_LIST_H

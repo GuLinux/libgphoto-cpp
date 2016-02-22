@@ -1,3 +1,4 @@
+#pragma once
 /*
  * libgphoto++ - modern c++ wrapper library for gphoto2
  * Copyright (C) 2016 Marco Gulino <marco AT gulinux.net>
@@ -16,8 +17,6 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef GPHOTO_EXCEPTIONS_H
-#define GPHOTO_EXCEPTIONS_H
 #include <stdexcept>
 #include "gphoto_wrapper.h"
 namespace GPhotoCPP {
@@ -37,4 +36,3 @@ namespace GPhotoCPP {
     ValueError(const std::string& __arg);
   };
 }
-#endif

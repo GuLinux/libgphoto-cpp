@@ -1,3 +1,4 @@
+#pragma once
 /*
  * libgphoto++ - modern c++ wrapper library for gphoto2
  * Copyright (C) 2016 Marco Gulino <marco AT gulinux.net>
@@ -16,10 +17,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef D_PTR_H
-#define D_PTR_H
 #include <memory>
 #define DPTR class Private; friend class Private; const std::unique_ptr<Private> d;
 #define dptr(...) d{new Private{__VA_ARGS__}}
 #define DPTR_CLASS(name) class name::Private
-#endif

@@ -1,3 +1,4 @@
+#pragma once
 /*
  * Copyright (C) 2016  Marco Gulino <marco@gulinux.net>
  *
@@ -16,14 +17,9 @@
  *
  */
 
-#ifndef GPHOTO_WIDGETS_H
-#define GPHOTO_WIDGETS_H
-
 #include "widget.h"
 #include "widget_string.h"
 #include "widget_range.h"
 #include "widget_menu.h"
 #include "widget_date.h"
 #include "widget_toggle.h"
-
-#endif

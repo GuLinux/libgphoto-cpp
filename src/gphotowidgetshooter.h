@@ -1,3 +1,4 @@
+#pragma once
 /*
  * libgphoto++ - modern c++ wrapper library for gphoto2
  * Copyright (C) 2016 Marco Gulino <marco AT gulinux.net>
@@ -15,9 +16,6 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
-#ifndef GPHOTO_EOSREMOTERELEASESHOOTER_H
-#define GPHOTO_EOSREMOTERELEASESHOOTER_H
 
 #include "fwd.h"
 #include "utils/dptr.h"
@@ -73,5 +71,3 @@ BulbSettingShutter(const CameraPtr& camera, const LoggerPtr& logger = {})
   : GPhotoWidgetShooter< GPhotoCPP::Widget::ToggleValue, Widget::ToggleValue::Type>(camera, "bulb", true, false) {}
 };
 }
-
-#endif // GPHOTO_EOSREMOTERELEASESHOOTER_H

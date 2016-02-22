@@ -1,3 +1,4 @@
+#pragma once
 /*
  * libgphoto++ - modern c++ wrapper library for gphoto2
  * Copyright (C) 2016 Marco Gulino <marco AT gulinux.net>
@@ -16,8 +17,6 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef FORWARD_DECLARATIONS_H
-#define FORWARD_DECLARATIONS_H
 #include <list>
 #include <chrono>
 #include <ratio>
@@ -49,5 +48,3 @@ namespace GPhotoCPP {
   typedef std::future<CameraFilePtr> CameraFileFuture;
   typedef std::list<WidgetPtr> Widgets;
 };
-
-#endif

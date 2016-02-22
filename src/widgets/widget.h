@@ -1,3 +1,4 @@
+#pragma once
 /*
  * libgphoto++ - modern c++ wrapper library for gphoto2
  * Copyright (C) 2016 Marco Gulino <marco AT gulinux.net>
@@ -16,8 +17,6 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef GPHOTO_WIDGET_H
-#define GPHOTO_WIDGET_H
 #include "fwd.h"
 #include "utils/dptr.h"
 #include <list>
@@ -102,4 +101,3 @@ std::ostream &operator<<(std::ostream& o, GPhotoCPP::Widget& w);
 inline std::ostream &operator<<(std::ostream &o, const GPhotoCPP::WidgetPtr &w) { return o << *w; }
 template<typename A, typename B, typename C> inline std::ostream &operator<<(std::ostream &o, const GPhotoCPP::Widget::Value<A, B, C> &v) { return o << v.get(); }
 
-#endif // GPHOTO_WIDGET_H

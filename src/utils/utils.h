@@ -1,3 +1,4 @@
+#pragma once
 /*
  * libgphoto++ - modern c++ wrapper library for gphoto2
  * Copyright (C) 2016 Marco Gulino <marco AT gulinux.net>
@@ -15,8 +16,6 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-#ifndef INDI_GPHOTO_UTILS_H
-#define INDI_GPHOTO_UTILS_H
 #include <functional>
 #include <chrono>
 namespace GPhotoCPP {
@@ -40,4 +39,3 @@ private:
 };
 
 }
-#endif

@@ -1,3 +1,4 @@
+#pragma once
 /*
  * libgphoto++ - modern c++ wrapper library for gphoto2
  * Copyright (C) 2016 Marco Gulino <marco AT gulinux.net>
@@ -17,8 +18,6 @@
  * 
  */
 
-#ifndef GPHOTO_EXPOSURE_H
-#define GPHOTO_EXPOSURE_H
 #include "fwd.h"
 #include <chrono>
 #include <ratio>
@@ -47,4 +46,3 @@ private:
 };
 }
 
-#endif // GPHOTO_EXPOSURE_H
