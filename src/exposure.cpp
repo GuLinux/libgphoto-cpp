@@ -23,7 +23,7 @@
 #include "widgets/widgets.h"
 #include "backend/exceptions.h"
 
-using namespace GPhoto;
+using namespace GPhotoCPP;
 using namespace std;
 
 class Exposure::Private {

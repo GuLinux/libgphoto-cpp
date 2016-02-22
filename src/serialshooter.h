@@ -22,7 +22,7 @@
 #include "shooter.h"
 #include "utils/dptr.h"
 
-namespace GPhoto {
+namespace GPhotoCPP {
 class SerialShooter : public Shooter {
 public:
   class error : public std::runtime_error {

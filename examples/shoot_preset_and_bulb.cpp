@@ -19,7 +19,7 @@
 #include <exposure.h>
 
 using namespace std;
-using namespace GPhoto;
+using namespace GPhotoCPP;
 
 
 int main(int argc, char **argv) {
@@ -72,7 +72,7 @@ int main(int argc, char **argv) {
     shooter = widgets["shutter"]->name() == "eosremoterelease" ? ShooterPtr{new EOSRemoteReleaseShutter{camera, logger}} : ShooterPtr{new BulbSettingShutter{camera, logger}};
   }
   
-  auto mirror_lock = has_option("-m") ? GPhoto::Camera::MirrorLock{seconds(2), shooter} : GPhoto::Camera::MirrorLock{};
+  auto mirror_lock = has_option("-m") ? GPhotoCPP::Camera::MirrorLock{seconds(2), shooter} : GPhotoCPP::Camera::MirrorLock{};
   
   cout << "Using mirror lock (option -m): " << boolalpha << static_cast<bool>(mirror_lock) << endl;
   cout << "Widgets: " << endl;
@@ -87,9 +87,9 @@ int main(int argc, char **argv) {
   }
   Exposure exposure{widgets["exposure"]};
   
-  auto shoot = [&](function<GPhoto::Camera::ShotPtr()> shoot_f){
+  auto shoot = [&](function<GPhotoCPP::Camera::ShotPtr()> shoot_f){
     camera->save_settings();
-    GPhoto::Camera::ShotPtr result = shoot_f();
+    GPhotoCPP::Camera::ShotPtr result = shoot_f();
     (**result).wait();
     cerr << "Shot finished: duration=" << result->duration().count() << ", elapsed: " << result->elapsed().count() << endl;
     CameraFilePtr cf = (**result).get();

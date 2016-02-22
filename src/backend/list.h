@@ -24,7 +24,7 @@
 #include "fwd.h"
 #include <map>
 
-namespace GPhoto {
+namespace GPhotoCPP {
 
 class List
 {

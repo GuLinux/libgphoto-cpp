@@ -23,7 +23,7 @@
 #include <algorithm>
 
 using namespace std;
-using namespace GPhoto;
+using namespace GPhotoCPP;
 namespace {
   class TestGPhotoWidgets : public ::testing::Test {
   public:

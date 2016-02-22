@@ -22,7 +22,7 @@
 #include "utils/dptr.h"
 
 
-namespace GPhoto {
+namespace GPhotoCPP {
 
 class Driver
 {
@@ -30,7 +30,7 @@ public:
   enum LibGPhotoLogLevel { None, Error, Verbose, Debug };
     Driver(const LoggerPtr &logger = {}, LibGPhotoLogLevel libgphotoLogLevel = None);
     ~Driver();
-    GPhoto::CameraPtr autodetect() const;
+    GPhotoCPP::CameraPtr autodetect() const;
     class CameraFactory {
     public:
       virtual std::string name() const = 0;

@@ -23,7 +23,7 @@
 #include "camera.h"
 #include <map>
 
-using namespace GPhoto;
+using namespace GPhotoCPP;
 using namespace std;
 
 DPTR_CLASS(Driver) {
@@ -83,13 +83,13 @@ Driver::~Driver()
 
 }
 
-GPhoto::CameraPtr Driver::autodetect() const
+GPhotoCPP::CameraPtr Driver::autodetect() const
 {
   ::Camera *camera;
   try {
     d->driver << CTX_RUN(&){ GPRET(gp_camera_new(&camera)) } << CTX_RUN(this, &camera) { GPRET(gp_camera_init(camera, gp_ctx)) };
-    return make_shared<GPhoto::Camera>(make_shared<GPhotoCamera>(camera, d->driver), d->logger);
-  } catch(GPhoto::Exception &e) {
+    return make_shared<GPhotoCPP::Camera>(make_shared<GPhotoCamera>(camera, d->driver), d->logger);
+  } catch(GPhotoCPP::Exception &e) {
     lWarning(d->logger) << "Unable to connect to gphoto2 camera: " << e.what();
     return {};
   }
@@ -110,7 +110,7 @@ list< Driver::CameraFactory::ptr > Driver::cameras()
       d->driver << CTX_RUN(&) { GPRET(gp_list_get_value(cameras, i, &port)) };
       cameras_factories.push_back(make_shared<Private::CameraFactoryImpl>(name, port, d->driver, d->logger));
     }
-  } catch(GPhoto::Exception &e) {
+  } catch(GPhotoCPP::Exception &e) {
     lWarning(d->logger) << "Unable to find gphoto cameras: " << e.what();
     return {};
   }
@@ -129,7 +129,7 @@ string Driver::Private::CameraFactoryImpl::name() const
 
 Driver::Private::CameraFactoryImpl::operator CameraPtr() const
 {
-  // TODO: move to GPhoto::Camera?
+  // TODO: move to GPhotoCPP::Camera?
   ::Camera *camera;
   CameraAbilitiesList *abilities_list = nullptr;
   CameraAbilities abilities;
@@ -150,8 +150,8 @@ Driver::Private::CameraFactoryImpl::operator CameraPtr() const
     driver << CTX_RUN(&) { GPRET(gp_port_info_list_get_info(portInfoList, index, &portInfo))  };
     driver << CTX_RUN(&) { GPRET(gp_camera_set_port_info(camera, portInfo)) };
     
-    return make_shared<GPhoto::Camera>(make_shared<GPhotoCamera>(camera, driver), logger);
-  } catch(GPhoto::Exception &e) {
+    return make_shared<GPhotoCPP::Camera>(make_shared<GPhotoCamera>(camera, driver), logger);
+  } catch(GPhotoCPP::Exception &e) {
     lWarning(logger) << "Unable to connect to camera " << m_name << " on port " << m_port << ": " << e.what();
     return {};
   }

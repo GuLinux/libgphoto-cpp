@@ -22,7 +22,7 @@
 #include "fwd.h"
 #include "utils/dptr.h"
 
-namespace GPhoto {
+namespace GPhotoCPP {
 
 class Shooter {
 public:

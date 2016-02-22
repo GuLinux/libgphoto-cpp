@@ -19,7 +19,7 @@
 #ifndef GPHOTO_WIDGET_BOOL_H
 #define GPHOTO_WIDGET_BOOL_H
 #include "widget.h"
-namespace GPhoto {
+namespace GPhotoCPP {
 class Widget::ToggleValue : public Widget::Value<bool, int, std::shared_ptr<int>>{
 private:
   friend class Widget;
@@ -27,6 +27,6 @@ private:
 };
 }
 
-std::ostream &operator<<(std::ostream &o, const GPhoto::Widget::ToggleValue &w);
-inline std::ostream &operator<<(std::ostream &o, const std::shared_ptr<GPhoto::Widget::ToggleValue> &w) { return o << *w; }
+std::ostream &operator<<(std::ostream &o, const GPhotoCPP::Widget::ToggleValue &w);
+inline std::ostream &operator<<(std::ostream &o, const std::shared_ptr<GPhotoCPP::Widget::ToggleValue> &w) { return o << *w; }
 #endif

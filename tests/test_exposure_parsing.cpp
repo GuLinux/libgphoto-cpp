@@ -25,7 +25,7 @@
 #include <iomanip>
 #include "backend/exceptions.h"
 using namespace std;
-using namespace GPhoto;
+using namespace GPhotoCPP;
 namespace {
   class TestExposureParsing : public ::testing::Test {
   public:
@@ -104,7 +104,7 @@ TEST_F(TestExposureParsing, findClosestDuration) {
   ASSERT_EQ("1/200", exposure->value().text);
   exposure->set(milliseconds{6});
   ASSERT_EQ("1/200", exposure->value().text);
-  ASSERT_THROW( exposure->set(milliseconds{6}, 0.01), GPhoto::ValueError);
+  ASSERT_THROW( exposure->set(milliseconds{6}, 0.01), GPhotoCPP::ValueError);
 }
 
 TEST_F(TestExposureParsing, customBulbTextOrder) {

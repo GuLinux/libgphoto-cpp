@@ -23,7 +23,7 @@
 #include "fwd.h"
 #include "utils/dptr.h"
 
-namespace GPhoto {
+namespace GPhotoCPP {
 
 class CameraFolder : public std::enable_shared_from_this<CameraFolder>
 {

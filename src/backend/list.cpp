@@ -21,7 +21,7 @@
 #include "backend/gphoto_wrapper.h"
 #include <gphoto2/gphoto2.h>
 
-using namespace GPhoto;
+using namespace GPhotoCPP;
 using namespace std;
 
 class List::Private {

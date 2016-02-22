@@ -23,7 +23,7 @@
 #include <chrono>
 #include <ratio>
 #include <list>
-namespace GPhoto {
+namespace GPhotoCPP {
 
 class Exposure
 {

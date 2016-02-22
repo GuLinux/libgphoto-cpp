@@ -14,7 +14,7 @@
 #include <list>
 #include <algorithm>
 using namespace std;
-using namespace GPhoto;
+using namespace GPhotoCPP;
 
 static vector<string> args;
 
@@ -42,8 +42,8 @@ LoggerPtr make_logger(Logger::Level max_level = Logger::DEBUG) {
 }
 
 CameraPtr init_camera(const LoggerPtr &logger) {
-  GPhoto::Driver driver(logger);
-  GPhoto::CameraPtr camera = driver.autodetect();
+  GPhotoCPP::Driver driver(logger);
+  GPhotoCPP::CameraPtr camera = driver.autodetect();
   if(!camera) {
     cerr << "Error finding camera" << endl;
     return {};

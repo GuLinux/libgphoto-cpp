@@ -21,13 +21,13 @@
 #include "backend/gphoto_wrapper.h"
 #include <gphoto2/gphoto2.h>
 #include <map>
-using namespace GPhoto;
+using namespace GPhotoCPP;
 using namespace std;
 
 
 class Widget::Private {
 public:
-  Private(CameraWidget* widget, const GPhoto::GPhotoWrapperPtr& gphoto, const Logger::ptr &log, Widget* q);
+  Private(CameraWidget* widget, const GPhotoCPP::GPhotoWrapperPtr& gphoto, const Logger::ptr &log, Widget* q);
   CameraWidget* widget;
   GPhotoWrapperPtr gphoto;
   std::string name;

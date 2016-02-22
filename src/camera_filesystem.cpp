@@ -23,19 +23,19 @@
 #include "camerafile.h"
 #include "backend/gphoto_wrapper.h"
 
-using namespace GPhoto;
+using namespace GPhotoCPP;
 using namespace std;
 
 DPTR_CLASS(CameraFolder) {
 public:
-  Private(const string& path, const GPhotoCameraPtr& gphoto_camera, const CameraFolderPtr& parent, const LoggerPtr &logger, GPhoto::CameraFolder *q);
+  Private(const string& path, const GPhotoCameraPtr& gphoto_camera, const CameraFolderPtr& parent, const LoggerPtr &logger, GPhotoCPP::CameraFolder *q);
   const string path;
   const GPhotoCameraPtr camera;
   const CameraFolderPtr parent;
   CameraFolderPtr shared_from_this() const;
   const LoggerPtr logger;
 private:
-  GPhoto::CameraFolder* q;
+  GPhotoCPP::CameraFolder* q;
 };
 
 CameraFolderPtr CameraFolder::Private::shared_from_this() const
@@ -76,7 +76,7 @@ list< CameraFileInfoPtr > CameraFolder::files() const
   multimap<string,string> files_map = files_list;
   list<CameraFileInfoPtr> files(files_map.size());;
   transform(begin(files_map), end(files_map), begin(files), [this](const pair<string,string> &p){
-    return make_shared<GPhoto::CameraFileInfo>(p.first, d->shared_from_this(), d->camera, d->logger);
+    return make_shared<GPhotoCPP::CameraFileInfo>(p.first, d->shared_from_this(), d->camera, d->logger);
   });
   return files;
 }
@@ -87,7 +87,7 @@ CameraFolderPtr CameraFolder::parent() const
 }
 
 
-DPTR_CLASS(GPhoto::CameraFileInfo) {
+DPTR_CLASS(GPhotoCPP::CameraFileInfo) {
 public:
   Private(const string& name, const CameraFolderPtr& folder, const GPhotoCameraPtr& camera, const LoggerPtr& logger);
   const string name;
@@ -97,18 +97,18 @@ public:
 private:
 };
 
-GPhoto::CameraFileInfo::Private::Private(const string& name, const CameraFolderPtr& folder, const GPhotoCameraPtr& camera, const LoggerPtr &logger)
+GPhotoCPP::CameraFileInfo::Private::Private(const string& name, const CameraFolderPtr& folder, const GPhotoCameraPtr& camera, const LoggerPtr &logger)
   : name{name}, folder{folder}, camera{camera}, logger{logger}
 {
 }
 
 
-GPhoto::CameraFileInfo::CameraFileInfo(const string& name, const CameraFolderPtr& folder, const GPhotoCameraPtr& gphoto_camera, const LoggerPtr& logger)
+GPhotoCPP::CameraFileInfo::CameraFileInfo(const string& name, const CameraFolderPtr& folder, const GPhotoCameraPtr& gphoto_camera, const LoggerPtr& logger)
   : dptr(name, folder, gphoto_camera, logger)
 {
 }
 
-CameraFolderPtr GPhoto::CameraFileInfo::parent() const
+CameraFolderPtr GPhotoCPP::CameraFileInfo::parent() const
 {
   return d->folder;
 }
@@ -118,22 +118,22 @@ string CameraFolder::path() const
   return d->path[d->path.size()-1] == '/' ? d->path : d->path + "/";
 }
 
-CameraFilePtr GPhoto::CameraFileInfo::camera_file() const
+CameraFilePtr GPhotoCPP::CameraFileInfo::camera_file() const
 {
-  return make_shared<GPhoto::CameraFile>(d->folder->path(), name(), d->camera, d->logger);
+  return make_shared<GPhotoCPP::CameraFile>(d->folder->path(), name(), d->camera, d->logger);
 }
 
-string GPhoto::CameraFileInfo::name() const
+string GPhotoCPP::CameraFileInfo::name() const
 {
   return d->name;
 }
 
-string GPhoto::CameraFileInfo::path() const
+string GPhotoCPP::CameraFileInfo::path() const
 {
   return d->folder->path() + name();
 }
 
-void GPhoto::CameraFileInfo::remove()
+void GPhotoCPP::CameraFileInfo::remove()
 {
   d->camera << CAM_RUN(this) { GPRET(gp_camera_file_delete(gp_cam, d->folder->path().c_str(), d->name.c_str(), gp_ctx)) };
 }

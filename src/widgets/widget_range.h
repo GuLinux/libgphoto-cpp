@@ -20,7 +20,7 @@
 #define WIDGET_RANGE_H
 
 #include "widget.h"
-namespace GPhoto {
+namespace GPhotoCPP {
 class Widget::RangeValue : public Widget::Value<float, float, float*> {
 public:
   struct Range {
@@ -36,7 +36,7 @@ private:
 };
 }
 
-std::ostream &operator<<(std::ostream &o, const GPhoto::Widget::RangeValue &w);
-inline std::ostream &operator<<(std::ostream &o, const std::shared_ptr<GPhoto::Widget::RangeValue> &w) { return o << *w; }
+std::ostream &operator<<(std::ostream &o, const GPhotoCPP::Widget::RangeValue &w);
+inline std::ostream &operator<<(std::ostream &o, const std::shared_ptr<GPhotoCPP::Widget::RangeValue> &w) { return o << *w; }
 
 #endif

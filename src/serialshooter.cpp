@@ -20,7 +20,7 @@
 #include <sstream>
 #include "utils/logger.h"
 
-using namespace GPhoto;
+using namespace GPhotoCPP;
 using namespace std;
 
 class SerialShooter::Private {

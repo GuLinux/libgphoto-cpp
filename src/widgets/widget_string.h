@@ -19,7 +19,7 @@
 #ifndef GPHOTO_WIDGET_STRING_H
 #define GPHOTO_WIDGET_STRING_H
 #include "widget.h"
-namespace GPhoto {
+namespace GPhotoCPP {
 class Widget::StringValue : public Widget::Value<std::string, char*, char*>{
 private:
   friend class Widget;
@@ -27,7 +27,7 @@ private:
 };
 }
 
-std::ostream &operator<<(std::ostream &o, const GPhoto::Widget::StringValue &w);
-inline std::ostream &operator<<(std::ostream &o, const std::shared_ptr<GPhoto::Widget::StringValue> &w) { return o << *w; }
+std::ostream &operator<<(std::ostream &o, const GPhotoCPP::Widget::StringValue &w);
+inline std::ostream &operator<<(std::ostream &o, const std::shared_ptr<GPhotoCPP::Widget::StringValue> &w) { return o << *w; }
 
 #endif

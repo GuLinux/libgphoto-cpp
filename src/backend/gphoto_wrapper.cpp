@@ -19,7 +19,7 @@
 #include "backend/gphoto_wrapper.h"
 #include "backend/exceptions.h"
 #include <sstream>
-using namespace GPhoto;
+using namespace GPhotoCPP;
 using namespace std;
 DPTR_CLASS(GPhotoWrapper) {
 };
@@ -125,21 +125,21 @@ GPhotoReturn GPhotoCamera::operator()(CameraRun run)
 }
 
 
-GPhoto::GPhotoWrapperPtr operator<<(const GPhoto::GPhotoWrapperPtr&c, GPhoto::GPhotoWrapper::GPhotoRun r)
+GPhotoCPP::GPhotoWrapperPtr operator<<(const GPhotoCPP::GPhotoWrapperPtr&c, GPhotoCPP::GPhotoWrapper::GPhotoRun r)
 {
   c->operator()(r);
   return c;
 }
 
 
-GPhoto::GPhotoDriverPtr operator<<(const GPhoto::GPhotoDriverPtr &c, GPhoto::GPhotoDriver::ContextRun r)
+GPhotoCPP::GPhotoDriverPtr operator<<(const GPhotoCPP::GPhotoDriverPtr &c, GPhotoCPP::GPhotoDriver::ContextRun r)
 {
   c->operator()(r);
   return c;
 }
 
 
-GPhoto::GPhotoCameraPtr operator<<(const GPhoto::GPhotoCameraPtr &c, GPhoto::GPhotoCamera::CameraRun f)
+GPhotoCPP::GPhotoCameraPtr operator<<(const GPhotoCPP::GPhotoCameraPtr &c, GPhotoCPP::GPhotoCamera::CameraRun f)
 {
   c->operator()(f);
   return c;

@@ -18,7 +18,7 @@
 
 #include "widgets.h"
 #include "widget_p.h"
-using namespace GPhoto;
+using namespace GPhotoCPP;
 using namespace std;
 
 Widget::RangeValue::RangeValue(Widget* widget): Value< float, float, float* >(widget, [](float &f) {return &f; })

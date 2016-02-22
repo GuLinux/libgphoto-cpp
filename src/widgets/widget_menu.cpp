@@ -20,7 +20,7 @@
 #include "widget_p.h"
 #include <algorithm>
 
-using namespace GPhoto;
+using namespace GPhotoCPP;
 using namespace std;
 
 Widget::MenuValue::MenuValue(Widget* widget): StringValue(widget)

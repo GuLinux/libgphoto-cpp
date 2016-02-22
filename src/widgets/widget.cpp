@@ -21,7 +21,7 @@
 #include <functional>
 #include "backend/exceptions.h"
 
-using namespace GPhoto;
+using namespace GPhotoCPP;
 using namespace std;
 
 
@@ -29,7 +29,7 @@ Widget::Private::Private(CameraWidget* widget, const GPhotoWrapperPtr& gphoto, c
 {
 }
 
-Widget::Widget(CameraWidget *widget, const GPhoto::GPhotoWrapperPtr &gphoto, const Logger::ptr &log)
+Widget::Widget(CameraWidget *widget, const GPhotoCPP::GPhotoWrapperPtr &gphoto, const Logger::ptr &log)
  : dptr(widget, gphoto, log, this)
 {
   const char *c_name, *c_label;
@@ -58,7 +58,7 @@ Widget::~Widget()
   // TODO: call gp_widget_free? when? only in parent, or in child too?
 }
 
-GPhoto::Widgets Widget::children() const
+GPhotoCPP::Widgets Widget::children() const
 {
   Widgets widgets;
   for(int i=0; i<gp_widget_count_children(d->widget); i++) {
@@ -86,7 +86,7 @@ WidgetPtr Widget::Private::find_by(function<GPhotoReturn(::CameraWidget*&)> run,
     try {
       gphoto << GP2_RUN(this, &widget, run){ return run(widget); };
     return make_shared<Widget>(widget, gphoto, log);
-    } catch(GPhoto::Exception &e) {
+    } catch(GPhotoCPP::Exception &e) {
       lDebug(log) << "unable to find widget by " << field_name << " " << label << ": " << e.what();
       return {};
     }
@@ -165,7 +165,7 @@ WidgetPtr Widget::parent() const
   try {
     d->gphoto << GP2_RUN(this, &parent) { GPRET(gp_widget_get_parent(d->widget, &parent)) };
     return make_shared<Widget>(parent, d->gphoto, d->log);
-  } catch(GPhoto::Exception &e) {
+  } catch(GPhotoCPP::Exception &e) {
     lTrace(d->log) << "Error getting widget " << name() << " parent: " << e.what();
     return {};
   }

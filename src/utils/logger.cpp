@@ -17,7 +17,7 @@
 */
 
 #include "utils/logger.h"
-using namespace GPhoto;
+using namespace GPhotoCPP;
 DPTR_CLASS(Logger) {
 public:
   Private(const Logger::Printer &printer, Logger *q);
@@ -32,7 +32,7 @@ Logger::Private::Private(const Logger::Printer &printer, Logger* q) : print{prin
 }
 
 
-GPhoto::Logger::Logger(const Printer &printer) : dptr(printer, this)
+GPhotoCPP::Logger::Logger(const Printer &printer) : dptr(printer, this)
 {
 }
 
@@ -54,7 +54,7 @@ Logger::Out::Private::Private(Logger& logger, Logger::Level level) : logger{logg
 }
 
 
-GPhoto::Logger::Out::~Out()
+GPhotoCPP::Logger::Out::~Out()
 {
   std::stringstream s;
   for(auto entry: d->entries)
@@ -63,17 +63,17 @@ GPhoto::Logger::Out::~Out()
 }
 
 
-GPhoto::Logger::Out::Out(GPhoto::Logger& logger, GPhoto::Logger::Level level) : dptr(logger, level) {
+GPhotoCPP::Logger::Out::Out(GPhotoCPP::Logger& logger, GPhotoCPP::Logger::Level level) : dptr(logger, level) {
 }
 
-std::shared_ptr< GPhoto::Logger::Out > GPhoto::Logger::out(GPhoto::Logger::Level level)
+std::shared_ptr< GPhotoCPP::Logger::Out > GPhotoCPP::Logger::out(GPhotoCPP::Logger::Level level)
 {
   return std::shared_ptr<Out>(new Out{*this, level});
 }
 
 
 
-GPhoto::Logger::Out& operator<<(GPhoto::Logger::Out& out, const std::string& s)
+GPhotoCPP::Logger::Out& operator<<(GPhotoCPP::Logger::Out& out, const std::string& s)
 {
   out.d->entries.push_back(s);
   return out;

@@ -22,7 +22,7 @@
 #include <vector>
 #include <ostream>
 
-namespace GPhoto {
+namespace GPhotoCPP {
 class Widget::MenuValue : public Widget::StringValue {
 public:
   struct Choice {
@@ -44,8 +44,8 @@ private:
 };
 }
 
-std::ostream &operator<<(std::ostream &s, const GPhoto::Widget::MenuValue::Choice &c);
-std::ostream &operator<<(std::ostream &s, const std::vector<GPhoto::Widget::MenuValue::Choice> &c);
-std::ostream &operator<<(std::ostream &o, const GPhoto::Widget::MenuValue &w);
-inline std::ostream &operator<<(std::ostream &o, const std::shared_ptr<GPhoto::Widget::MenuValue> &w) { return o << *w; }
+std::ostream &operator<<(std::ostream &s, const GPhotoCPP::Widget::MenuValue::Choice &c);
+std::ostream &operator<<(std::ostream &s, const std::vector<GPhotoCPP::Widget::MenuValue::Choice> &c);
+std::ostream &operator<<(std::ostream &o, const GPhotoCPP::Widget::MenuValue &w);
+inline std::ostream &operator<<(std::ostream &o, const std::shared_ptr<GPhotoCPP::Widget::MenuValue> &w) { return o << *w; }
 #endif

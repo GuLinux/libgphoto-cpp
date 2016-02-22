@@ -26,14 +26,14 @@
 #include "widgets/widgets.h"
 #include "camera.h"
 
-namespace GPhoto {
+namespace GPhotoCPP {
 template<typename WidgetType, typename ValueType>
-class GPhotoWidgetShooter : public GPhoto::Shooter
+class GPhotoWidgetShooter : public GPhotoCPP::Shooter
 {
 public:
-    class Shoot : public GPhoto::Shooter::Shoot {
+    class Shoot : public GPhotoCPP::Shooter::Shoot {
     public:
-      Shoot(const WidgetPtr &widget, const GPhoto::CameraPtr &camera, const ValueType &on_value, const ValueType off_value, const LoggerPtr &logger) 
+      Shoot(const WidgetPtr &widget, const GPhotoCPP::CameraPtr &camera, const ValueType &on_value, const ValueType off_value, const LoggerPtr &logger) 
       : widget{widget}, camera{camera}, off_value{off_value}, logger{logger} {
 	widget->get<WidgetType>()->set(on_value);
 	camera->save_settings();
@@ -49,7 +49,7 @@ public:
     GPhotoWidgetShooter(const CameraPtr &camera, const std::string &widget_name, const ValueType &on_value, const ValueType &off_value, const LoggerPtr &logger = {})
       : camera{camera}, widget_name{widget_name}, on_value{on_value}, off_value{off_value}, logger{logger} {
       }
-    virtual GPhoto::Shooter::ShootPtr shoot() const {
+    virtual GPhotoCPP::Shooter::ShootPtr shoot() const {
       WidgetPtr widget = camera->settings()->child_by_name(widget_name);
       return std::make_shared<GPhotoWidgetShooter::Shoot>(widget, camera, on_value, off_value, logger);
     }
@@ -64,13 +64,13 @@ private:
 class EOSRemoteReleaseShutter : public GPhotoWidgetShooter<Widget::MenuValue, int> {
 public:
 EOSRemoteReleaseShutter(const CameraPtr& camera, const LoggerPtr& logger = {})
-  : GPhotoWidgetShooter< GPhoto::Widget::MenuValue, int>(camera, "eosremoterelease", 2, 4) {}
+  : GPhotoWidgetShooter< GPhotoCPP::Widget::MenuValue, int>(camera, "eosremoterelease", 2, 4) {}
 };
  
 class BulbSettingShutter : public GPhotoWidgetShooter<Widget::ToggleValue, Widget::ToggleValue::Type> {
 public:
 BulbSettingShutter(const CameraPtr& camera, const LoggerPtr& logger = {})
-  : GPhotoWidgetShooter< GPhoto::Widget::ToggleValue, Widget::ToggleValue::Type>(camera, "bulb", true, false) {}
+  : GPhotoWidgetShooter< GPhotoCPP::Widget::ToggleValue, Widget::ToggleValue::Type>(camera, "bulb", true, false) {}
 };
 }
 

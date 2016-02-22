@@ -23,7 +23,7 @@
 #include <vector>
 #include <ostream>
 
-namespace GPhoto {
+namespace GPhotoCPP {
 
 class CameraFile
 {
@@ -46,7 +46,7 @@ private:
 };
 }
 
-std::ostream &operator<<(std::ostream &o, const GPhoto::CameraFile::Info &info);
-std::ostream &operator<<(std::ostream &o, const GPhoto::CameraFile &camera_file);
+std::ostream &operator<<(std::ostream &o, const GPhotoCPP::CameraFile::Info &info);
+std::ostream &operator<<(std::ostream &o, const GPhotoCPP::CameraFile &camera_file);
 
 #endif // GPHOTO_CAMERAFILE_H

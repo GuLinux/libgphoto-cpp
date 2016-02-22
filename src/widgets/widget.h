@@ -22,12 +22,12 @@
 #include "utils/dptr.h"
 #include <list>
 #include "utils/logger.h"
-namespace GPhoto {
+namespace GPhotoCPP {
 
 class Widget : public std::enable_shared_from_this<Widget>
 {
 public:
-  Widget(CameraWidget *widget, const GPhoto::GPhotoWrapperPtr &gphoto, const Logger::ptr &log);
+  Widget(CameraWidget *widget, const GPhotoCPP::GPhotoWrapperPtr &gphoto, const Logger::ptr &log);
   ~Widget();
   class StringValue;
   class RangeValue;
@@ -98,8 +98,8 @@ private:
 };
 }
 
-std::ostream &operator<<(std::ostream& o, GPhoto::Widget& w);
-inline std::ostream &operator<<(std::ostream &o, const GPhoto::WidgetPtr &w) { return o << *w; }
-template<typename A, typename B, typename C> inline std::ostream &operator<<(std::ostream &o, const GPhoto::Widget::Value<A, B, C> &v) { return o << v.get(); }
+std::ostream &operator<<(std::ostream& o, GPhotoCPP::Widget& w);
+inline std::ostream &operator<<(std::ostream &o, const GPhotoCPP::WidgetPtr &w) { return o << *w; }
+template<typename A, typename B, typename C> inline std::ostream &operator<<(std::ostream &o, const GPhotoCPP::Widget::Value<A, B, C> &v) { return o << v.get(); }
 
 #endif // GPHOTO_WIDGET_H

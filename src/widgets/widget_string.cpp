@@ -19,7 +19,7 @@
 #include "widgets.h"
 #include "widget_p.h"
 
-using namespace GPhoto;
+using namespace GPhotoCPP;
 using namespace std;
 
 Widget::StringValue::StringValue(Widget* widget): Value< std::string, char*, char* >(widget, [](string &s) -> char*{

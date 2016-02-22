@@ -19,7 +19,7 @@
 #define INDI_GPHOTO_UTILS_H
 #include <functional>
 #include <chrono>
-namespace GPhoto {
+namespace GPhotoCPP {
 struct Scope {
   std::function<void()> on_exit;
   ~Scope() { on_exit(); }

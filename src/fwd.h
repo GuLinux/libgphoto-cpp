@@ -31,7 +31,7 @@ typedef struct _CameraList CameraList;
 }
 
 #define fwd_class(name) class name; typedef std::shared_ptr<name> name##Ptr;
-namespace GPhoto {
+namespace GPhotoCPP {
   typedef std::chrono::duration<double> seconds;
   typedef std::chrono::duration<double, std::milli> milliseconds;
   fwd_class(GPhotoWrapper)

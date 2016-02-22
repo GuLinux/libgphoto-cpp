@@ -18,7 +18,7 @@
 #include "commons.h"
 #include <camera_filesystem.h>
 using namespace std;
-using namespace GPhoto;
+using namespace GPhotoCPP;
 
 struct Command {
   string name;

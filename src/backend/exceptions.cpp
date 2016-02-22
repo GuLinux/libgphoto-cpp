@@ -21,7 +21,7 @@
 #include <gphoto2/gphoto2.h>
 
 using namespace std;
-using namespace GPhoto;
+using namespace GPhotoCPP;
 Exception::Exception(const GPhotoReturn &error_code): runtime_error(error_code.describe())
 {
 }

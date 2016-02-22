@@ -19,7 +19,7 @@
 #include "widgets.h"
 #include "widget_p.h"
 
-using namespace GPhoto;
+using namespace GPhotoCPP;
 using namespace std;
 
 DPTR_CLASS(Widget::DateValue) {

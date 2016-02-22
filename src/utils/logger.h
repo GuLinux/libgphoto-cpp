@@ -28,7 +28,7 @@
 
 
 
-namespace GPhoto {
+namespace GPhotoCPP {
 class Logger {
 public:
   typedef std::shared_ptr<Logger> ptr;
@@ -44,9 +44,9 @@ private:
 };
 }
 
-GPhoto::Logger::Out& operator<<(GPhoto::Logger::Out& out, const std::string& s);
+GPhotoCPP::Logger::Out& operator<<(GPhotoCPP::Logger::Out& out, const std::string& s);
 
-namespace GPhoto {
+namespace GPhotoCPP {
   class Logger::Out {
   public:
     typedef std::shared_ptr<Out> ptr;
@@ -60,11 +60,11 @@ namespace GPhoto {
 };
 
 #include <iostream>
-template<typename T> GPhoto::Logger::Out::ptr operator<<(const GPhoto::Logger::Out::ptr &p, const T &t) {
+template<typename T> GPhotoCPP::Logger::Out::ptr operator<<(const GPhotoCPP::Logger::Out::ptr &p, const T &t) {
   *p << t;
   return p;
 }
-template<typename T> GPhoto::Logger::Out& operator<<(GPhoto::Logger::Out& out, const T& t)
+template<typename T> GPhotoCPP::Logger::Out& operator<<(GPhotoCPP::Logger::Out& out, const T& t)
 {
   std::stringstream s;
   s << t;
@@ -76,7 +76,7 @@ inline std::ostream &operator<<(std::ostream &o, const std::chrono::time_point<s
   return o << std::ctime(&tt);
 }
 
-#define lLog(level, logger) if(logger) logger->out(GPhoto::Logger::level)
+#define lLog(level, logger) if(logger) logger->out(GPhotoCPP::Logger::level)
 #define lTrace(logger) lLog(TRACE, logger)
 #define lDebug(logger) lLog(DEBUG, logger)
 #define lInfo(logger) lLog(INFO, logger)

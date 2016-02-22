@@ -22,7 +22,7 @@
 #include <functional>
 #include <gphoto2/gphoto2.h>
 
-namespace GPhoto {
+namespace GPhotoCPP {
   struct GPhotoReturn {
     int result;
     const char *file;
@@ -66,9 +66,9 @@ namespace GPhoto {
   };
 };
 
-GPhoto::GPhotoWrapperPtr operator<<(const GPhoto::GPhotoWrapperPtr &, GPhoto::GPhotoWrapper::GPhotoRun);
-GPhoto::GPhotoDriverPtr operator<<(const GPhoto::GPhotoDriverPtr &, GPhoto::GPhotoDriver::ContextRun);
-GPhoto::GPhotoCameraPtr operator<<(const GPhoto::GPhotoCameraPtr &, GPhoto::GPhotoCamera::CameraRun);
+GPhotoCPP::GPhotoWrapperPtr operator<<(const GPhotoCPP::GPhotoWrapperPtr &, GPhotoCPP::GPhotoWrapper::GPhotoRun);
+GPhotoCPP::GPhotoDriverPtr operator<<(const GPhotoCPP::GPhotoDriverPtr &, GPhotoCPP::GPhotoDriver::ContextRun);
+GPhotoCPP::GPhotoCameraPtr operator<<(const GPhotoCPP::GPhotoCameraPtr &, GPhotoCPP::GPhotoCamera::CameraRun);
 
 #define GPRET(f) return GPhotoReturn{f, __FILE__, __LINE__, __PRETTY_FUNCTION__};
 #define GP2_RUN(...) [ __VA_ARGS__ ]() -> GPhotoReturn

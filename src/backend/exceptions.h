@@ -20,11 +20,11 @@
 #define GPHOTO_EXCEPTIONS_H
 #include <stdexcept>
 #include "gphoto_wrapper.h"
-namespace GPhoto {
+namespace GPhotoCPP {
   class Exception : public std::runtime_error {
   public:
     Exception(const std::string& __arg);
-    Exception(const GPhoto::GPhotoReturn &error_code);
+    Exception(const GPhotoCPP::GPhotoReturn &error_code);
   };
   
   class TimeoutError : public Exception {

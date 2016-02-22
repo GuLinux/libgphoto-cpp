@@ -26,7 +26,7 @@
 #include <ostream>
 #include <chrono>
 #include <ratio>
-namespace GPhoto {
+namespace GPhotoCPP {
 
 class Camera
 {
@@ -74,7 +74,7 @@ private:
 
 }
 
-std::ostream &operator<<(std::ostream &o, const GPhoto::Camera &c);
-inline std::ostream &operator<<(std::ostream &o, const GPhoto::CameraPtr &c) { return o << *c; }
+std::ostream &operator<<(std::ostream &o, const GPhotoCPP::Camera &c);
+inline std::ostream &operator<<(std::ostream &o, const GPhotoCPP::CameraPtr &c) { return o << *c; }
 
 #endif // GPHOTO_CAMERA_H
