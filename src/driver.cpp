@@ -31,6 +31,16 @@ public:
   Private(const LoggerPtr &logger, Driver *q);
   GPhotoDriverPtr driver;
   LoggerPtr logger;
+  class CameraFactoryImpl : public CameraFactory {
+  public:
+    CameraFactoryImpl(const string &name, const string &port, const GPhotoDriverPtr &driver, const LoggerPtr &logger);
+    virtual string name() const;
+    virtual operator CameraPtr() const;
+  private:
+    const string m_name, m_port;
+    const GPhotoDriverPtr driver;
+    const LoggerPtr logger;
+  };
 private:
   Driver *q;
 };
@@ -77,10 +87,76 @@ GPhoto::CameraPtr Driver::autodetect() const
 {
   ::Camera *camera;
   try {
-    d->driver << CTX_RUN(this, &camera){ GPRET(gp_camera_new(&camera)) } << CTX_RUN(this, &camera) { GPRET(gp_camera_init(camera, gp_ctx)) };
+    d->driver << CTX_RUN(&){ GPRET(gp_camera_new(&camera)) } << CTX_RUN(this, &camera) { GPRET(gp_camera_init(camera, gp_ctx)) };
     return make_shared<GPhoto::Camera>(make_shared<GPhotoCamera>(camera, d->driver), d->logger);
   } catch(GPhoto::Exception &e) {
     lWarning(d->logger) << "Unable to connect to gphoto2 camera: " << e.what();
     return {};
   }
 }
+
+list< Driver::CameraFactory::ptr > Driver::cameras()
+{
+  CameraList *cameras;
+  int cameras_size;
+  list< Driver::CameraFactory::ptr > cameras_factories;
+  try {
+    d->driver << CTX_RUN(&) { GPRET(gp_list_new(&cameras)) };
+    d->driver << CTX_RUN(&) { GPRET(gp_camera_autodetect(cameras, gp_ctx)) };
+    d->driver << CTX_RUN(&) { cameras_size = gp_list_count(cameras); GPRET(cameras_size) };
+    for(int i=0; i<cameras_size; i++) {
+      const char *name, *port;
+      d->driver << CTX_RUN(&) { GPRET(gp_list_get_name(cameras, i, &name)) };
+      d->driver << CTX_RUN(&) { GPRET(gp_list_get_value(cameras, i, &port)) };
+      cameras_factories.push_back(make_shared<Private::CameraFactoryImpl>(name, port, d->driver, d->logger));
+    }
+  } catch(GPhoto::Exception &e) {
+    lWarning(d->logger) << "Unable to find gphoto cameras: " << e.what();
+    return {};
+  }
+  return cameras_factories;
+}
+
+Driver::Private::CameraFactoryImpl::CameraFactoryImpl(const string& name, const string& port, const GPhotoDriverPtr& driver, const LoggerPtr& logger) 
+  : m_name{name}, m_port{port}, driver{driver}, logger{logger}
+{
+}
+
+string Driver::Private::CameraFactoryImpl::name() const
+{
+  return m_name;
+}
+
+Driver::Private::CameraFactoryImpl::operator CameraPtr() const
+{
+  // TODO: move to GPhoto::Camera?
+  ::Camera *camera;
+  CameraAbilitiesList *abilities_list = nullptr;
+  CameraAbilities abilities;
+  int index;
+  GPPortInfoList *portInfoList = nullptr;
+  GPPortInfo portInfo;
+  try {
+    driver << CTX_RUN(&) { GPRET(gp_camera_new(&camera)) };
+    driver << CTX_RUN(&) { GPRET(gp_abilities_list_new(&abilities_list)) };
+    driver << CTX_RUN(&) { GPRET(gp_abilities_list_load(abilities_list, gp_ctx)) };
+    driver << CTX_RUN(&) { index = gp_abilities_list_lookup_model(abilities_list, m_name.c_str()); GPRET(index) };
+    driver << CTX_RUN(&) { GPRET(gp_abilities_list_get_abilities(abilities_list, index, &abilities)) };
+    driver << CTX_RUN(&) { GPRET(gp_camera_set_abilities(camera, abilities)) };
+    driver << CTX_RUN(&) { GPRET(gp_port_info_list_new(&portInfoList)) };
+    driver << CTX_RUN(&) { GPRET(gp_port_info_list_load(portInfoList)) };
+    driver << CTX_RUN(&) { GPRET(gp_port_info_list_count(portInfoList)) };
+    driver << CTX_RUN(&) { index = gp_port_info_list_lookup_path(portInfoList, m_port.c_str()); GPRET(index) };
+    driver << CTX_RUN(&) { GPRET(gp_port_info_list_get_info(portInfoList, index, &portInfo))  };
+    driver << CTX_RUN(&) { GPRET(gp_camera_set_port_info(camera, portInfo)) };
+    
+    return make_shared<GPhoto::Camera>(make_shared<GPhotoCamera>(camera, driver), logger);
+  } catch(GPhoto::Exception &e) {
+    lWarning(logger) << "Unable to connect to camera " << m_name << " on port " << m_port << ": " << e.what();
+    return {};
+  }
+
+}
+
+
+

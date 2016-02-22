@@ -31,6 +31,13 @@ public:
     Driver(const LoggerPtr &logger = {}, LibGPhotoLogLevel libgphotoLogLevel = None);
     ~Driver();
     GPhoto::CameraPtr autodetect() const;
+    class CameraFactory {
+    public:
+      virtual std::string name() const = 0;
+      virtual operator CameraPtr() const = 0;
+      typedef std::shared_ptr<CameraFactory> ptr;
+    };
+    std::list<CameraFactory::ptr> cameras();
 private:
   DPTR
 };
