@@ -299,3 +299,4 @@ CameraFolderPtr GPhotoCPP::Camera::root(const string& root_path)
 {
   return make_shared<CameraFolder>(root_path, d->camera, d->logger);
 }
+

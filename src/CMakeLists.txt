@@ -3,10 +3,11 @@ file(GLOB_RECURSE headers_FILES *.h)
 add_subdirectory(widgets)
 add_subdirectory(backend)
 add_subdirectory(utils)
-set(libgphoto++_SRCS 
+set(libgphoto++_SRCS
   camerafile.cpp
   driver.cpp
   camera.cpp
+  camera_settings.cpp
   camera_filesystem.cpp
   serialshooter.cpp
   exposure.cpp
