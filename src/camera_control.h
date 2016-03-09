@@ -1,6 +1,6 @@
 #pragma once
-#ifndef LIBGPHOTO_CPP_CAMERA_SETTINGS_H
-#define LIBGPHOTO_CPP_CAMERA_SETTINGS_H
+#ifndef LIBGPHOTO_CPP_CAMERA_CONTROL_H
+#define LIBGPHOTO_CPP_CAMERA_CONTROL_H
 /*
  * libgphoto++ - modern c++ wrapper library for gphoto2
  * Copyright (C) 2016 Marco Gulino <marco AT gulinux.net>
@@ -25,27 +25,15 @@
 #include "utils/dptr.h"
 namespace GPhotoCPP {
 
-class Camera::Settings
+class GPhotoCPP::Camera::Control
 {
 public:
-  Settings(const CameraPtr &camera, const LoggerPtr &logger);
-  ~Settings();
-  bool needs_serial_port() const;
-  
-  std::list<std::string> iso_choices() const;
-  std::list<std::string> format_choices() const;
-  std::string iso() const;
-  std::string format() const;
-  void set_iso(const std::string &iso);
-  void set_format(const std::string &format);
-  void set_serial_port(const std::string &port);
-
-  ExposurePtr exposure() const;
-  ShooterPtr shooter() const;
-  
+  Control(const CameraPtr &camera, const SettingsPtr &settings, const LoggerPtr &logger);
+  ~Control();
+  GPhotoCPP::Camera::ShotPtr shoot(const milliseconds &exposure, bool mirror_lock = false);
 private:
   DPTR
 };
 }
 
-#endif // LIBGPHOTO_CPP_CAMERA_SETTINGS_H
+#endif // LIBGPHOTO_CPP_CAMERA_CONTROL_H

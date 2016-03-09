@@ -33,7 +33,9 @@ class Camera : public std::enable_shared_from_this<Camera>
 {
 public:
     class Settings;
+    class Control;
     typedef std::shared_ptr<Settings> SettingsPtr;
+    typedef std::shared_ptr<Control> ControlPtr;
     struct MirrorLock {
       milliseconds duration;
       ShooterPtr shooter;
@@ -81,5 +83,6 @@ std::ostream &operator<<(std::ostream &o, const GPhotoCPP::Camera &c);
 inline std::ostream &operator<<(std::ostream &o, const GPhotoCPP::CameraPtr &c) { return o << *c; }
 
 #include "camera_settings.h"
+#include "camera_control.h"
 
 #endif // LIBGPHOTO_CPP_CAMERA_H

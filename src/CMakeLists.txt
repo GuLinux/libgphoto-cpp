@@ -8,6 +8,7 @@ set(libgphoto++_SRCS
   driver.cpp
   camera.cpp
   camera_settings.cpp
+  camera_control.cpp
   camera_filesystem.cpp
   serialshooter.cpp
   exposure.cpp
