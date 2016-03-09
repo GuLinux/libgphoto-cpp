@@ -39,7 +39,7 @@ public:
   const LoggerPtr logger;
   
   void set_choice(Setting setting, const string &choice);
-  list< string > choices(Setting setting) const;
+  vector< string > choices(Setting setting) const;
   string choice_value(Setting setting) const;
 private:
 };
@@ -89,12 +89,12 @@ std::string GPhotoCPP::Camera::Settings::iso() const
 {
   return d->choice_value(Private::ISO);
 }
-std::list< std::string > GPhotoCPP::Camera::Settings::format_choices() const
+std::vector< std::string > GPhotoCPP::Camera::Settings::format_choices() const
 {
   return d->choices(Private::Format);
 }
 
-std::list< std::string > GPhotoCPP::Camera::Settings::iso_choices() const
+std::vector< std::string > GPhotoCPP::Camera::Settings::iso_choices() const
 {
   return d->choices(Private::ISO);
 }
@@ -128,12 +128,12 @@ void GPhotoCPP::Camera::Settings::Private::set_choice(GPhotoCPP::Camera::Setting
 }
 
 
-list< string > GPhotoCPP::Camera::Settings::Private::choices(Setting setting) const
+vector< string > GPhotoCPP::Camera::Settings::Private::choices(Setting setting) const
 {
   if(!widgets.at(setting))
     return {};
   auto choices = widgets.at(setting)->get<Widget::MenuValue>()->choices();
-  list<string> choices_strings(choices.size());
+  vector<string> choices_strings(choices.size());
   transform(begin(choices), end(choices), begin(choices_strings), [](const Widget::MenuValue::Choice &c){ return c.text;});
   return choices_strings;
 }

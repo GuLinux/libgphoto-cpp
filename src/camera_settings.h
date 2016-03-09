@@ -23,6 +23,7 @@
 #include "fwd.h"
 #include "camera.h"
 #include "utils/dptr.h"
+#include <vector>
 namespace GPhotoCPP {
 
 class Camera::Settings
@@ -32,8 +33,8 @@ public:
   ~Settings();
   bool needs_serial_port() const;
   
-  std::list<std::string> iso_choices() const;
-  std::list<std::string> format_choices() const;
+  std::vector<std::string> iso_choices() const;
+  std::vector<std::string> format_choices() const;
   std::string iso() const;
   std::string format() const;
   void set_iso(const std::string &iso);
