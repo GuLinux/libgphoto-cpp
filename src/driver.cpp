@@ -36,6 +36,7 @@ public:
     CameraFactoryImpl(const string &name, const string &port, const GPhotoDriverPtr &driver, const LoggerPtr &logger);
     virtual string name() const;
     virtual operator CameraPtr() const;
+    virtual CameraPtr camera(const LoggerPtr& logger = {}) const;
   private:
     const string m_name, m_port;
     const GPhotoDriverPtr driver;
@@ -83,12 +84,12 @@ Driver::~Driver()
 
 }
 
-GPhotoCPP::CameraPtr Driver::autodetect() const
+GPhotoCPP::CameraPtr Driver::autodetect(const LoggerPtr &logger) const
 {
   ::Camera *camera;
   try {
     d->driver << CTX_RUN(&){ GPRET(gp_camera_new(&camera)) } << CTX_RUN(this, &camera) { GPRET(gp_camera_init(camera, gp_ctx)) };
-    return make_shared<GPhotoCPP::Camera>(make_shared<GPhotoCamera>(camera, d->driver), d->logger);
+    return make_shared<GPhotoCPP::Camera>(make_shared<GPhotoCamera>(camera, d->driver), logger ? logger : d->logger);
   } catch(GPhotoCPP::Exception &e) {
     lWarning(d->logger) << "Unable to connect to gphoto2 camera: " << e.what();
     return {};
@@ -127,7 +128,7 @@ string Driver::Private::CameraFactoryImpl::name() const
   return m_name;
 }
 
-Driver::Private::CameraFactoryImpl::operator CameraPtr() const
+CameraPtr Driver::Private::CameraFactoryImpl::camera(const LoggerPtr& logger) const
 {
   // TODO: move to GPhotoCPP::Camera?
   ::Camera *camera;
@@ -150,12 +151,17 @@ Driver::Private::CameraFactoryImpl::operator CameraPtr() const
     driver << CTX_RUN(&) { GPRET(gp_port_info_list_get_info(portInfoList, index, &portInfo))  };
     driver << CTX_RUN(&) { GPRET(gp_camera_set_port_info(camera, portInfo)) };
     
-    return make_shared<GPhotoCPP::Camera>(make_shared<GPhotoCamera>(camera, driver), logger);
+    return make_shared<GPhotoCPP::Camera>(make_shared<GPhotoCamera>(camera, driver), logger ? logger : this->logger);
   } catch(GPhotoCPP::Exception &e) {
-    lWarning(logger) << "Unable to connect to camera " << m_name << " on port " << m_port << ": " << e.what();
+    lWarning(this->logger) << "Unable to connect to camera " << m_name << " on port " << m_port << ": " << e.what();
     return {};
   }
+}
 
+
+Driver::Private::CameraFactoryImpl::operator CameraPtr() const
+{
+  return *this;
 }
 
 

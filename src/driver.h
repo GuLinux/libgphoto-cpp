@@ -31,11 +31,12 @@ public:
   enum LibGPhotoLogLevel { None, Error, Verbose, Debug };
     Driver(const LoggerPtr &logger = {}, LibGPhotoLogLevel libgphotoLogLevel = None);
     ~Driver();
-    GPhotoCPP::CameraPtr autodetect() const;
+    GPhotoCPP::CameraPtr autodetect(const LoggerPtr &logger = {}) const;
     class CameraFactory {
     public:
       virtual std::string name() const = 0;
       virtual operator CameraPtr() const = 0;
+      virtual CameraPtr camera(const LoggerPtr &logger = {}) const = 0;
       typedef std::shared_ptr<CameraFactory> ptr;
     };
     std::list<CameraFactory::ptr> cameras();
