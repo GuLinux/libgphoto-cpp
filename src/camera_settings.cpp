@@ -58,7 +58,7 @@ GPhotoCPP::Camera::Settings::Private::Private(const GPhotoCPP::CameraPtr& camera
     {ISO, "eos-iso"},
   };
   multimap<Setting, WidgetPtr> widgets_init;
-  auto settings = camera->settings();
+  auto settings = camera->widgets_settings();
   transform(begin(widget_names), end(widget_names), inserter(widgets_init, end(widgets_init)), [&](const pair<Setting,string> &p){ return make_pair(p.first,  settings->child_by_name(p.second));});
   copy_if(begin(widgets_init), end(widgets_init), inserter(widgets, end(widgets)), [](const pair<Setting,WidgetPtr> &p){ return static_cast<bool>(p.second);});
   static map<Setting, string> settings_names { {ShutterControl, "ShutterControl"}, {ShutterSpeed, "ShutterSpeed"}, {Format, "Format"}, {ISO, "ISO"} };

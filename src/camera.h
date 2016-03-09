@@ -46,7 +46,7 @@ public:
     typedef std::shared_ptr<Shot> ShotPtr;
     Camera(const GPhotoCameraPtr &camera, const LoggerPtr &logger = {});
     ~Camera();
-    WidgetPtr settings() const;
+    WidgetPtr widgets_settings() const;
     void save_settings();
     std::string summary() const;
     std::list<std::string> folders(const std::string &folder) const;
@@ -60,6 +60,9 @@ public:
     CameraFolderPtr root(const std::string &root_path="/");
     ShotPtr shoot_preset(const MirrorLock &mirror_lock = {}) const;
     ShotPtr shoot_bulb(const milliseconds &exposure, const ShooterPtr &shooter, const MirrorLock &mirror_lock = {}) const;
+    
+    Settings &settings() const;
+    Control &control() const;
 private:
   DPTR
 };

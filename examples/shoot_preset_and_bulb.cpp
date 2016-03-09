@@ -40,7 +40,7 @@ int main(int argc, char **argv) {
   auto camera = init_camera(logger);
   if(!camera)
     return 1;
-  auto settings = camera->settings();
+  auto settings = camera->widgets_settings();
   
   static multimap<string, string> widget_names{
     {"shutter", "eosremoterelease"}, 
@@ -76,7 +76,7 @@ int main(int argc, char **argv) {
   
   cout << "Using mirror lock (option -m): " << boolalpha << static_cast<bool>(mirror_lock) << endl;
   cout << "Widgets: " << endl;
-  for(auto setting: camera->settings()->all_children()) {
+  for(auto setting: camera->widgets_settings()->all_children()) {
     cout << "** " << setting << endl;
   }
   

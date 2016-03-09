@@ -28,10 +28,11 @@ namespace GPhotoCPP {
 class GPhotoCPP::Camera::Control
 {
 public:
-  Control(const CameraPtr &camera, const SettingsPtr &settings, const LoggerPtr &logger);
   ~Control();
   GPhotoCPP::Camera::ShotPtr shoot(const milliseconds &exposure, bool mirror_lock = false);
 private:
+  friend class Camera;
+  Control(const GPhotoCPP::CameraPtr& camera, GPhotoCPP::Camera::Settings& settings, const GPhotoCPP::LoggerPtr& logger);
   DPTR
 };
 }

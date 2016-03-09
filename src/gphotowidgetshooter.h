@@ -50,7 +50,7 @@ public:
       : camera{camera}, widget_name{widget_name}, on_value{on_value}, off_value{off_value}, logger{logger} {
       }
     virtual GPhotoCPP::Shooter::ShootPtr shoot() const {
-      WidgetPtr widget = camera->settings()->child_by_name(widget_name);
+      WidgetPtr widget = camera->widgets_settings()->child_by_name(widget_name);
       return std::make_shared<GPhotoWidgetShooter::Shoot>(widget, camera, on_value, off_value, logger);
     }
 private:

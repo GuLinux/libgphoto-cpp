@@ -29,7 +29,6 @@ namespace GPhotoCPP {
 class Camera::Settings
 {
 public:
-  Settings(const CameraPtr &camera, const LoggerPtr &logger);
   ~Settings();
   bool needs_serial_port() const;
   
@@ -45,6 +44,8 @@ public:
   ShooterPtr shooter() const;
   
 private:
+  friend class Camera;
+  Settings(const CameraPtr &camera, const LoggerPtr &logger);
   DPTR
 };
 }

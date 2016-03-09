@@ -36,17 +36,18 @@ using namespace std::chrono;
 
 DPTR_CLASS(GPhotoCPP::Camera) {
 public:
-  Private(const GPhotoCameraPtr &camera, const LoggerPtr &logger, Camera *q);
+  Private(const GPhotoCameraPtr &camera, const LoggerPtr &logger, const CameraPtr &q);
   CameraFilePtr wait_for_file(milliseconds timeout = seconds{120});
   void try_mirror_lock(MirrorLock mirror_lock);
   void wait_for(milliseconds how_much);
   GPhotoCameraPtr camera;
   LoggerPtr logger;
   string summary;
-  shared_ptr< Widget > settings;
+  shared_ptr< Widget > widgets_settings;
   list<string> downloaded_files;
-private:
-  Camera *q;
+  shared_ptr< Settings > settings;
+  shared_ptr< Control > control;
+  const CameraPtr q;
 };
 
 
@@ -117,20 +118,20 @@ GPhotoCPP::milliseconds GPhotoCPP::Camera::Shot::duration() const
 
 
 
-GPhotoCPP::Camera::Private::Private(const GPhotoCameraPtr& camera, const LoggerPtr& logger, GPhotoCPP::Camera* q) : camera{camera}, logger{logger}, q{q}
+GPhotoCPP::Camera::Private::Private(const GPhotoCameraPtr& camera, const LoggerPtr& logger, const CameraPtr& q) : camera{camera}, logger{logger}, q{q}
 {
 
 }
 
 
-GPhotoCPP::Camera::Camera(const GPhotoCameraPtr &camera, const LoggerPtr &logger) : dptr(camera, logger, this)
+GPhotoCPP::Camera::Camera(const GPhotoCameraPtr &camera, const LoggerPtr &logger) : dptr(camera, logger, shared_from_this())
 {
   CameraText text;
   d->camera << CAM_RUN(&) { GPRET(gp_camera_get_summary(gp_cam, &text, gp_ctx)) };
   d->summary = {text.text};
   CameraWidget *w;
   d->camera << CAM_RUN(&) { GPRET(gp_camera_get_config(gp_cam, &w, gp_ctx)) };
-  d->settings = make_shared<Widget>(w, *d->camera, d->logger);
+  d->widgets_settings = make_shared<Widget>(w, *d->camera, d->logger);
 }
 
 GPhotoCPP::Camera::~Camera()
@@ -138,9 +139,9 @@ GPhotoCPP::Camera::~Camera()
 
 }
 
-WidgetPtr GPhotoCPP::Camera::settings() const
+WidgetPtr GPhotoCPP::Camera::widgets_settings() const
 {
-  return d->settings;
+  return d->widgets_settings;
 }
 
 string GPhotoCPP::Camera::summary() const
@@ -247,7 +248,7 @@ void GPhotoCPP::Camera::Private::try_mirror_lock(GPhotoCPP::Camera::MirrorLock m
 
 void GPhotoCPP::Camera::save_settings()
 {
-  d->camera << CAM_RUN(this) { GPRET(gp_camera_set_config(gp_cam, *d->settings, gp_ctx)) };
+  d->camera << CAM_RUN(this) { GPRET(gp_camera_set_config(gp_cam, *d->widgets_settings, gp_ctx)) };
 }
 
 GPhotoCPP::Camera::MirrorLock::MirrorLock(const milliseconds& duration, const ShooterPtr shooter)
@@ -299,4 +300,19 @@ CameraFolderPtr GPhotoCPP::Camera::root(const string& root_path)
 {
   return make_shared<CameraFolder>(root_path, d->camera, d->logger);
 }
+
+GPhotoCPP::Camera::Control &GPhotoCPP::Camera::control() const
+{
+  if(! d->control)
+    d->control.reset(new Control{d->q, settings(), d->logger});
+  return *d->control;
+}
+
+GPhotoCPP::Camera::Settings& GPhotoCPP::Camera::settings() const
+{
+  if(! d->settings)
+    d->settings.reset(new Settings{d->q, d->logger});
+  return *d->settings;
+}
+
 
