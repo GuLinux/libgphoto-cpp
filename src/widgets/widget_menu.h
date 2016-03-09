@@ -1,4 +1,6 @@
 #pragma once
+#ifndef LIBGPHOTO_CPP_WIDGETS_WIDGET_MENU_H
+#define LIBGPHOTO_CPP_WIDGETS_WIDGET_MENU_H
 /*
  * libgphoto++ - modern c++ wrapper library for gphoto2
  * Copyright (C) 2016 Marco Gulino <marco AT gulinux.net>
@@ -47,3 +49,4 @@ std::ostream &operator<<(std::ostream &s, const GPhotoCPP::Widget::MenuValue::Ch
 std::ostream &operator<<(std::ostream &s, const std::vector<GPhotoCPP::Widget::MenuValue::Choice> &c);
 std::ostream &operator<<(std::ostream &o, const GPhotoCPP::Widget::MenuValue &w);
 inline std::ostream &operator<<(std::ostream &o, const std::shared_ptr<GPhotoCPP::Widget::MenuValue> &w) { return o << *w; }
+#endif // LIBGPHOTO_CPP_WIDGETS_WIDGET_MENU_H

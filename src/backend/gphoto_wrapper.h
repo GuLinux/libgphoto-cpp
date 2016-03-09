@@ -1,4 +1,6 @@
 #pragma once
+#ifndef LIBGPHOTO_CPP_BACKEND_GPHOTO_WRAPPER_H
+#define LIBGPHOTO_CPP_BACKEND_GPHOTO_WRAPPER_H
 /*
  * libgphoto++ - modern c++ wrapper library for gphoto2
  * Copyright (C) 2016 Marco Gulino <marco AT gulinux.net>
@@ -73,3 +75,4 @@ GPhotoCPP::GPhotoCameraPtr operator<<(const GPhotoCPP::GPhotoCameraPtr &, GPhoto
 #define GP2_RUN(...) [ __VA_ARGS__ ]() -> GPhotoReturn
 #define CTX_RUN(...) [ __VA_ARGS__ ](::GPContext *gp_ctx) -> GPhotoReturn
 #define CAM_RUN(...) [ __VA_ARGS__ ](::GPContext *gp_ctx, ::Camera *gp_cam) -> GPhotoReturn
+#endif // LIBGPHOTO_CPP_BACKEND_GPHOTO_WRAPPER_H

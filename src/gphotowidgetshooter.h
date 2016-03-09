@@ -1,4 +1,6 @@
 #pragma once
+#ifndef LIBGPHOTO_CPP_GPHOTOWIDGETSHOOTER_H
+#define LIBGPHOTO_CPP_GPHOTOWIDGETSHOOTER_H
 /*
  * libgphoto++ - modern c++ wrapper library for gphoto2
  * Copyright (C) 2016 Marco Gulino <marco AT gulinux.net>
@@ -71,3 +73,4 @@ BulbSettingShutter(const CameraPtr& camera, const LoggerPtr& logger = {})
   : GPhotoWidgetShooter< GPhotoCPP::Widget::ToggleValue, Widget::ToggleValue::Type>(camera, "bulb", true, false) {}
 };
 }
+#endif // LIBGPHOTO_CPP_GPHOTOWIDGETSHOOTER_H

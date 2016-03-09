@@ -1,3 +1,6 @@
+#pragma once
+#ifndef LIBGPHOTO_CPP_WIDGETS_WIDGET_TOGGLE_H
+#define LIBGPHOTO_CPP_WIDGETS_WIDGET_TOGGLE_H
 /*
  * libgphoto++ - modern c++ wrapper library for gphoto2
  * Copyright (C) 2016 Marco Gulino <marco AT gulinux.net>
@@ -16,8 +19,6 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef GPHOTO_WIDGET_BOOL_H
-#define GPHOTO_WIDGET_BOOL_H
 #include "widget.h"
 namespace GPhotoCPP {
 class Widget::ToggleValue : public Widget::Value<bool, int, std::shared_ptr<int>>{
@@ -29,4 +30,4 @@ private:
 
 std::ostream &operator<<(std::ostream &o, const GPhotoCPP::Widget::ToggleValue &w);
 inline std::ostream &operator<<(std::ostream &o, const std::shared_ptr<GPhotoCPP::Widget::ToggleValue> &w) { return o << *w; }
-#endif
+#endif // LIBGPHOTO_CPP_WIDGETS_WIDGET_TOGGLE_H

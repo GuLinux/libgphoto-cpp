@@ -1,0 +1,21 @@
+#!/bin/bash
+file="$1"
+libname="LIBGPHOTO_CPP_"
+file_header_guard="${libname}$( tr '-' '_' <<< "$file" | tr '.' '_' | tr 'a-z' 'A-Z' | tr '/' '_' | tr '+' '_' )"
+tmpfile="/tmp/$$.temp"
+sed -i '/#pragma once/d' "$file"
+current_header_guard="$( grep -Ee  '#ifndef .*_H' "$file" | awk '{ print $2  }' | head -n 1 )"
+if [[ -n "$current_header_guard" ]]; then
+  sed -r -i "/.*${current_header_guard}.*/d" "$file"
+fi
+
+cat >"$tmpfile" <<EOF
+#pragma once
+#ifndef ${file_header_guard}
+#define ${file_header_guard}
+$( cat "$file" )
+#endif // ${file_header_guard}
+EOF
+cat "$tmpfile" > "$file"
+rm -f "$tmpfile"
+

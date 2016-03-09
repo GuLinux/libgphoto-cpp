@@ -1,4 +1,6 @@
 #pragma once
+#ifndef LIBGPHOTO_CPP_WIDGETS_WIDGET_RANGE_H
+#define LIBGPHOTO_CPP_WIDGETS_WIDGET_RANGE_H
 /*
  * libgphoto++ - modern c++ wrapper library for gphoto2
  * Copyright (C) 2016 Marco Gulino <marco AT gulinux.net>
@@ -37,3 +39,4 @@ private:
 
 std::ostream &operator<<(std::ostream &o, const GPhotoCPP::Widget::RangeValue &w);
 inline std::ostream &operator<<(std::ostream &o, const std::shared_ptr<GPhotoCPP::Widget::RangeValue> &w) { return o << *w; }
+#endif // LIBGPHOTO_CPP_WIDGETS_WIDGET_RANGE_H

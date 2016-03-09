@@ -1,4 +1,6 @@
 #pragma once
+#ifndef LIBGPHOTO_CPP_WIDGETS_WIDGETS_H
+#define LIBGPHOTO_CPP_WIDGETS_WIDGETS_H
 /*
  * Copyright (C) 2016  Marco Gulino <marco@gulinux.net>
  *
@@ -23,3 +25,4 @@
 #include "widget_menu.h"
 #include "widget_date.h"
 #include "widget_toggle.h"
+#endif // LIBGPHOTO_CPP_WIDGETS_WIDGETS_H

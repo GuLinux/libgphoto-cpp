@@ -1,4 +1,6 @@
 #pragma once
+#ifndef LIBGPHOTO_CPP_FWD_H
+#define LIBGPHOTO_CPP_FWD_H
 /*
  * libgphoto++ - modern c++ wrapper library for gphoto2
  * Copyright (C) 2016 Marco Gulino <marco AT gulinux.net>
@@ -48,3 +50,4 @@ namespace GPhotoCPP {
   typedef std::future<CameraFilePtr> CameraFileFuture;
   typedef std::list<WidgetPtr> Widgets;
 };
+#endif // LIBGPHOTO_CPP_FWD_H

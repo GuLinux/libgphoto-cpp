@@ -1,4 +1,6 @@
 #pragma once
+#ifndef LIBGPHOTO_CPP_DRIVER_H
+#define LIBGPHOTO_CPP_DRIVER_H
 /*
  * libgphoto++ - modern c++ wrapper library for gphoto2
  * Copyright (C) 2016 Marco Gulino <marco AT gulinux.net>
@@ -41,4 +43,4 @@ private:
   DPTR
 };
 }
-
+#endif // LIBGPHOTO_CPP_DRIVER_H

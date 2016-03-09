@@ -1,4 +1,6 @@
 #pragma once
+#ifndef LIBGPHOTO_CPP_UTILS_UTILS_H
+#define LIBGPHOTO_CPP_UTILS_UTILS_H
 /*
  * libgphoto++ - modern c++ wrapper library for gphoto2
  * Copyright (C) 2016 Marco Gulino <marco AT gulinux.net>
@@ -39,3 +41,4 @@ private:
 };
 
 }
+#endif // LIBGPHOTO_CPP_UTILS_UTILS_H

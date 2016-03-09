@@ -1,4 +1,6 @@
 #pragma once
+#ifndef LIBGPHOTO_CPP_SHOOTER_H
+#define LIBGPHOTO_CPP_SHOOTER_H
 /*
  * libgphoto++ - modern c++ wrapper library for gphoto2
  * Copyright (C) 2016 Marco Gulino <marco AT gulinux.net>
@@ -30,3 +32,4 @@ public:
   virtual ShootPtr shoot() const = 0;
 };
 }
+#endif // LIBGPHOTO_CPP_SHOOTER_H

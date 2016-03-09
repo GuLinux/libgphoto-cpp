@@ -1,4 +1,6 @@
 #pragma once
+#ifndef LIBGPHOTO_CPP_WIDGETS_WIDGET_P_H
+#define LIBGPHOTO_CPP_WIDGETS_WIDGET_P_H
 /*
  * libgphoto++ - modern c++ wrapper library for gphoto2
  * Copyright (C) 2016 Marco Gulino <marco AT gulinux.net>
@@ -44,3 +46,4 @@ public:
 private:
   Widget *q;
 };
+#endif // LIBGPHOTO_CPP_WIDGETS_WIDGET_P_H

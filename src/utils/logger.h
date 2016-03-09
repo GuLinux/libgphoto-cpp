@@ -1,4 +1,6 @@
 #pragma once
+#ifndef LIBGPHOTO_CPP_UTILS_LOGGER_H
+#define LIBGPHOTO_CPP_UTILS_LOGGER_H
 /*
  * libgphoto++ - modern c++ wrapper library for gphoto2
  * Copyright (C) 2016 Marco Gulino <marco AT gulinux.net>
@@ -81,3 +83,4 @@ inline std::ostream &operator<<(std::ostream &o, const std::chrono::time_point<s
 #define lInfo(logger) lLog(INFO, logger)
 #define lWarning(logger) lLog(WARNING, logger)
 #define lError(logger) lLog(ERROR, logger)
+#endif // LIBGPHOTO_CPP_UTILS_LOGGER_H
