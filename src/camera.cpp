@@ -36,7 +36,7 @@ using namespace std::chrono;
 
 DPTR_CLASS(GPhotoCPP::Camera) {
 public:
-  Private(const GPhotoCameraPtr &camera, const LoggerPtr &logger, const CameraPtr &q);
+  Private(const GPhotoCameraPtr& camera, const LoggerPtr& logger, GPhotoCPP::Camera* q);
   CameraFilePtr wait_for_file(milliseconds timeout = seconds{120});
   void try_mirror_lock(MirrorLock mirror_lock);
   void wait_for(milliseconds how_much);
@@ -47,7 +47,9 @@ public:
   list<string> downloaded_files;
   shared_ptr< Settings > settings;
   shared_ptr< Control > control;
-  const CameraPtr q;
+  CameraPtr cameraptr() const { return q->shared_from_this(); }
+private:
+  Camera *q;
 };
 
 
@@ -118,13 +120,12 @@ GPhotoCPP::milliseconds GPhotoCPP::Camera::Shot::duration() const
 
 
 
-GPhotoCPP::Camera::Private::Private(const GPhotoCameraPtr& camera, const LoggerPtr& logger, const CameraPtr& q) : camera{camera}, logger{logger}, q{q}
+GPhotoCPP::Camera::Private::Private(const GPhotoCameraPtr& camera, const LoggerPtr& logger, Camera *q) : camera{camera}, logger{logger}, q{q}
 {
-
 }
 
 
-GPhotoCPP::Camera::Camera(const GPhotoCameraPtr &camera, const LoggerPtr &logger) : dptr(camera, logger, shared_from_this())
+GPhotoCPP::Camera::Camera(const GPhotoCameraPtr &camera, const LoggerPtr &logger) : dptr(camera, logger, this)
 {
   CameraText text;
   d->camera << CAM_RUN(&) { GPRET(gp_camera_get_summary(gp_cam, &text, gp_ctx)) };
@@ -304,14 +305,14 @@ CameraFolderPtr GPhotoCPP::Camera::root(const string& root_path)
 GPhotoCPP::Camera::Control &GPhotoCPP::Camera::control() const
 {
   if(! d->control)
-    d->control.reset(new Control{d->q, settings(), d->logger});
+    d->control.reset(new Control{d->cameraptr(), settings(), d->logger});
   return *d->control;
 }
 
 GPhotoCPP::Camera::Settings& GPhotoCPP::Camera::settings() const
 {
   if(! d->settings)
-    d->settings.reset(new Settings{d->q, d->logger});
+    d->settings.reset(new Settings{d->cameraptr(), d->logger});
   return *d->settings;
 }
 
