@@ -49,9 +49,9 @@ GPhotoCPP::Camera::Control::~Control()
 GPhotoCPP::Camera::ShotPtr GPhotoCPP::Camera::Control::shoot(const milliseconds& exposure, bool mirror_lock)
 {
   Camera::MirrorLock mirror_lock_trigger;
-  if(mirror_lock)
+  if(mirror_lock && d->settings.shooter() )
     mirror_lock_trigger = Camera::MirrorLock{seconds{2000}, d->settings.shooter()};
-  if(exposure < seconds{2}) {
+  if(exposure < seconds{2} && d->settings.shooter() ) {
     d->settings.exposure()->set(exposure);
     d->camera->save_settings();
     return d->camera->shoot_preset(mirror_lock_trigger);
