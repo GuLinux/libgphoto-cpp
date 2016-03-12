@@ -32,7 +32,7 @@ class GPhotoCPP::Camera::Settings::Private {
 public:
   Private(const CameraPtr& camera, const LoggerPtr& logger);
   enum Setting { ISO, Format, ShutterSpeed, ShutterControl, };
-  const GPhotoCPP::CameraPtr &camera;
+  const GPhotoCPP::CameraPtr camera;
   map<Setting, WidgetPtr> widgets;
   ShooterPtr shutterControl;
   ExposurePtr exposure;
