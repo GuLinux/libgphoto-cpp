@@ -161,7 +161,7 @@ CameraPtr Driver::Private::CameraFactoryImpl::camera(const LoggerPtr& logger) co
 
 Driver::Private::CameraFactoryImpl::operator CameraPtr() const
 {
-  return *this;
+  return camera();
 }
 
 
