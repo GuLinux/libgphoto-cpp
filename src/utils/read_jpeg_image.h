@@ -22,14 +22,14 @@
 
 #include "read_image.h"
 #include "utils/dptr.h"
-namespace GPhoto {
+namespace GPhotoCPP {
 
-class ReadJPEGImage : public GPhoto::ReadImage
+class ReadJPEGImage : public ReadImage
 {
 public:
   ReadJPEGImage();
   ~ReadJPEGImage();
-  virtual GPhoto::ReadImage::Image read(const std::string& file_path);
+  virtual Image read(const std::string& file_path);
   virtual Image read(const std::vector< uint8_t >& data, const std::string &filename);
 private:
   DPTR

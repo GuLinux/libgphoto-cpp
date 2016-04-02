@@ -21,7 +21,7 @@
 #include "libraw/libraw.h"
 #include <algorithm>
 #include <iostream>
-using namespace GPhoto;
+using namespace GPhotoCPP;
 using namespace std;
 
 DPTR_CLASS(ReadRawImage) {
@@ -29,7 +29,7 @@ public:
   LibRaw raw;
   typedef function<int(LibRaw &)> LoadRaWImage;
   void run(LoadRaWImage f);
-  GPhoto::ReadImage::Image read_image(const LoadRaWImage &init_raw, const std::string &filename);
+  ReadImage::Image read_image(const LoadRaWImage &init_raw, const std::string &filename);
 };
 
 ostream &operator<<(ostream &o, const libraw_image_sizes_t &s) {
@@ -64,7 +64,7 @@ ReadImage::Image ReadRawImage::read(const vector< uint8_t >& data, const std::st
 }
 
 
-GPhoto::ReadImage::Image ReadRawImage::read(const string& file_path)
+ReadImage::Image ReadRawImage::read(const string& file_path)
 {
   return d->read_image([&](LibRaw &r) { return r.open_file(file_path.c_str()); }, file_path);
 }

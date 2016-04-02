@@ -25,7 +25,7 @@
 //#include <CImg/plugins/jpeg_buffer.h>
 #include <CImg.h>
 #include <fstream>
-using namespace GPhoto;
+using namespace GPhotoCPP;
 using namespace cimg_library;
 using namespace std;
 
@@ -52,7 +52,7 @@ ReadImage::Image ReadJPEGImage::read(const vector< uint8_t >& data, const string
 }
 
 
-GPhoto::ReadImage::Image ReadJPEGImage::read(const string& file_path)
+ReadImage::Image ReadJPEGImage::read(const string& file_path)
 {
   return d->read_from([&](CImg<uint8_t> &img) { img.load_jpeg(file_path.c_str()); }, file_path);
 }

@@ -25,7 +25,7 @@
 #include <memory>
 #include <map>
 
-namespace GPhoto {
+namespace GPhotoCPP {
 class ReadImage {
 public:
   struct Image {
@@ -39,6 +39,12 @@ public:
   virtual Image read(const std::string &file_path) = 0;
   virtual Image read(const std::vector<uint8_t> &data, const std::string &filename) = 0;
   typedef std::shared_ptr<ReadImage> ptr;
+  
+  struct FileInfo {
+    std::string filename;
+    std::string mimetype;
+  };
+  static ptr factory(const FileInfo &fileinfo);
 };
 }
 #endif

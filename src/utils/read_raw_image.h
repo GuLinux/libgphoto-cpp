@@ -24,9 +24,9 @@
 #include "read_image.h"
 #include "utils/dptr.h"
 
-namespace GPhoto {
+namespace GPhotoCPP {
 
-class ReadRawImage : public GPhoto::ReadImage
+class ReadRawImage : public ReadImage
 {
 public:
     class error : public std::runtime_error {
@@ -35,7 +35,7 @@ public:
     };
     ReadRawImage();
     ~ReadRawImage();
-    virtual GPhoto::ReadImage::Image read(const std::string& file_path);
+    virtual Image read(const std::string& file_path);
     virtual Image read(const std::vector< uint8_t >& data, const std::__cxx11::string& filename);
 private:
   DPTR
