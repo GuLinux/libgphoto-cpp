@@ -22,9 +22,10 @@
  #include <jerror.h>
 #define cimg_plugin "CImg/plugins/jpeg_buffer.h"
 
-//#include <CImg/plugins/jpeg_buffer.h>
 #include <CImg.h>
 #include <fstream>
+#include <list>
+#include <unordered_map>
 using namespace GPhotoCPP;
 using namespace cimg_library;
 using namespace std;
@@ -64,6 +65,18 @@ ReadImage::Image ReadJPEGImage::Private::read_from(ReadJPEGImage::Private::LoadI
   auto axis = cimg_image.spectrum() == 3 ? 3 : 2;
   Image image{axis, cimg_image.width(), cimg_image.height(), 8, vector<uint8_t>(cimg_image.width()*cimg_image.height()*cimg_image.spectrum()), filename};
   copy(begin(cimg_image), end(cimg_image), begin(image.data));
+  auto init_channel = [&](Image::Channel c) -> Image::Pixels & {
+    image.channels[c].resize(cimg_image.width() * cimg_image.height() * cimg_image.depth());
+    return image.channels[c];
+  };
+  auto channels = cimg_image.get_split('c');
+  static vector<Image::Channel> channels_map{ Image::Red, Image::Green, Image::Blue, Image::Grey };
+  
+  auto channels_map_offset = channels.size() == 1 ? 3 : 0;
+  for(int i=0; i<channels.size(); i++) {
+    Image::Pixels &pixels = init_channel(channels_map[i+channels_map_offset]);
+    copy(channels[i].begin(), channels[i].end(), pixels.begin());
+  }
   return image;
 
 }

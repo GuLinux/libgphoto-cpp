@@ -16,6 +16,8 @@
  *
  */
 #include "gtest/gtest.h"
+#define cimg_display 0
+#include <CImg.h>
 #include "utils/read_image.h"
 #include <utils/read_jpeg_image.h>
 #include <utils/read_raw_image.h>
@@ -48,3 +50,48 @@ TEST_F(TestReadImage, Factory_Mime_Type) {
   ASSERT_EQ(typeid(ReadRawImage), typeid(*read_image));
 }
 
+TEST_F(TestReadImage, DISABLED_TestRGBChannels) {
+  auto read_image = ReadImage::factory({ {}, "image/jpeg"});
+  auto image = read_image->read("/home/marco/test_colors.jpg");
+  map<ReadImage::Image::Channel, string> channels {
+    {ReadImage::Image::Grey, "grey" },
+    {ReadImage::Image::Red, "red" },
+    {ReadImage::Image::Green, "green" },
+    {ReadImage::Image::Blue, "blue" },
+  };
+  cimg_library::CImgList<uint8_t> images;
+  for(auto channel: image.channels) {
+    stringstream fname;
+    fname << "/tmp/rgb_" << channels[channel.first] << ".png";
+    cimg_library::CImg<uint8_t> channel_image(image.w, image.h);
+    copy(channel.second.begin(), channel.second.end(), channel_image.begin());
+    images.push_back(channel_image);
+    cout << "writing to " << fname.str() << endl;
+    channel_image.save(fname.str().c_str());
+  }
+  auto merged = images.get_append('c');
+  merged.save("/tmp/rgb_all_channels.png");
+} 
+
+TEST_F(TestReadImage, DISABLED_TestGreyChannel) {
+  auto read_image = ReadImage::factory({ {}, "image/jpeg"});
+  auto image = read_image->read("/home/marco/test_grey.jpg");
+  map<ReadImage::Image::Channel, string> channels {
+    {ReadImage::Image::Grey, "grey" },
+    {ReadImage::Image::Red, "red" },
+    {ReadImage::Image::Green, "green" },
+    {ReadImage::Image::Blue, "blue" },
+  };
+  cimg_library::CImgList<uint8_t> images;
+  for(auto channel: image.channels) {
+    stringstream fname;
+    fname << "/tmp/grey_test_" << channels[channel.first] << ".png";
+    cimg_library::CImg<uint8_t> channel_image(image.w, image.h);
+    copy(channel.second.begin(), channel.second.end(), channel_image.begin());
+    images.push_back(channel_image);
+    cout << "writing to " << fname.str() << endl;
+    channel_image.save(fname.str().c_str());
+  }
+  auto merged = images.get_append('c');
+  merged.save("/tmp/grey_channel_merged.png");
+} 
