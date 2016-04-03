@@ -29,15 +29,14 @@ namespace GPhotoCPP {
 class ReadImage {
 public:
   struct Image {
-    int axis;
     int w,h;
     int bpp;
     enum Channel { Red, Green, Blue, Grey };
     typedef std::vector<uint8_t> Pixels;
-    Pixels data;
     std::string filename;
     std::map<std::string, std::string> metadata;
     std::map<Channel, Pixels> channels;
+    Pixels &init_channel(Channel channel);
   };
   virtual Image read(const std::string &file_path) = 0;
   virtual Image read(const std::vector<uint8_t> &data, const std::string &filename) = 0;

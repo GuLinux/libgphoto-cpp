@@ -90,9 +90,9 @@ ReadImage::Image ReadRawImage::Private::read_image(const LoadRaWImage& init_raw,
   run([&](LibRaw &r) { return r.raw2image(); });
   
   image_data =  raw.imgdata;
-  Image out_image{2, image_data.sizes.width, image_data.sizes.height, 16, vector<uint8_t>(out_image.h*out_image.w*2), filename};
-  uint16_t *data_8_16 = reinterpret_cast<uint16_t*>(out_image.data.data());
-  transform(image_data.image, image_data.image + out_image.data.size()/2, data_8_16, [](uint16_t *data){ return accumulate(data, data+4, 0); });
+  Image out_image{image_data.sizes.width, image_data.sizes.height, 16, filename};
+  uint16_t *data_8_16 = reinterpret_cast<uint16_t*>(out_image.init_channel(Image::Grey).data() );
+  transform(image_data.image, image_data.image + out_image.channels[Image::Grey].size()/2, data_8_16, [](uint16_t *data){ return accumulate(data, data+4, 0); });
   raw.free_image();
   return out_image;
 }

@@ -72,3 +72,11 @@ ReadImage::ptr ReadImage::factory(const ReadImage::FileInfo& fileinfo)
   }
   return {};
 }
+
+ReadImage::Image::Pixels& ReadImage::Image::init_channel(ReadImage::Image::Channel channel)
+{
+  Pixels &pixels = channels[channel];
+  pixels.resize(w * h * (bpp == 8 ? 1 : 2));
+  return pixels;
+}
+
