@@ -53,6 +53,35 @@ private:
 };
 
 
+/** Temporary workaround class to fix localization of menus **/
+// https://github.com/gphoto/libgphoto2/issues/49
+namespace GPhotoCPP {
+  namespace {
+    class TempLocale {
+    public:
+      TempLocale(const string &new_locale = "C");
+      ~TempLocale();
+    private:
+      const string previous_locale;
+    };
+  }
+}
+
+TempLocale::TempLocale(const string& new_locale) : previous_locale(std::setlocale(LC_ALL, nullptr))
+{
+  std::setlocale(LC_ALL, new_locale.c_str());
+  std::cerr << "current locale: " << std::setlocale(LC_ALL, nullptr) << endl;
+}
+
+TempLocale::~TempLocale()
+{
+  std::setlocale(LC_ALL, previous_locale.c_str());
+  std::cerr << "current locale: " << std::setlocale(LC_ALL, nullptr) << endl;
+}
+
+
+/** Temporary workaround class to fix localization of menus **/
+
 class GPhotoCPP::Camera::Shot::Private {
 public:
   Private(const milliseconds &exposure);
@@ -127,6 +156,7 @@ GPhotoCPP::Camera::Private::Private(const GPhotoCameraPtr& camera, const LoggerP
 
 GPhotoCPP::Camera::Camera(const GPhotoCameraPtr &camera, const LoggerPtr &logger) : dptr(camera, logger, this)
 {
+  TempLocale templocale;
   CameraText text;
   d->camera << CAM_RUN(&) { GPRET(gp_camera_get_summary(gp_cam, &text, gp_ctx)) };
   d->summary = {text.text};
