@@ -34,25 +34,6 @@ using namespace GPhotoCPP;
 using namespace std;
 using namespace std::chrono;
 
-DPTR_CLASS(GPhotoCPP::Camera) {
-public:
-  Private(const GPhotoCameraPtr& camera, const LoggerPtr& logger, GPhotoCPP::Camera* q);
-  CameraFilePtr wait_for_file(milliseconds timeout = seconds{120});
-  void try_mirror_lock(MirrorLock mirror_lock);
-  void wait_for(milliseconds how_much);
-  GPhotoCameraPtr camera;
-  LoggerPtr logger;
-  string summary;
-  shared_ptr< Widget > widgets_settings;
-  list<string> downloaded_files;
-  shared_ptr< Settings > settings;
-  shared_ptr< Control > control;
-  CameraPtr cameraptr() const { return q->shared_from_this(); }
-private:
-  Camera *q;
-};
-
-
 /** Temporary workaround class to fix localization of menus **/
 // https://github.com/gphoto/libgphoto2/issues/49
 namespace GPhotoCPP {
@@ -81,6 +62,26 @@ TempLocale::~TempLocale()
 
 
 /** Temporary workaround class to fix localization of menus **/
+
+DPTR_CLASS(GPhotoCPP::Camera) {
+public:
+  Private(const GPhotoCameraPtr& camera, const LoggerPtr& logger, GPhotoCPP::Camera* q);
+  TempLocale fix_temp_c_locale;
+  CameraFilePtr wait_for_file(milliseconds timeout = seconds{120});
+  void try_mirror_lock(MirrorLock mirror_lock);
+  void wait_for(milliseconds how_much);
+  GPhotoCameraPtr camera;
+  LoggerPtr logger;
+  string summary;
+  shared_ptr< Widget > widgets_settings;
+  list<string> downloaded_files;
+  shared_ptr< Settings > settings;
+  shared_ptr< Control > control;
+  CameraPtr cameraptr() const { return q->shared_from_this(); }
+private:
+  Camera *q;
+};
+
 
 class GPhotoCPP::Camera::Shot::Private {
 public:
