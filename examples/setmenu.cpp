@@ -36,6 +36,7 @@ int main(int argc, char **argv) {
   
   
   auto camera = init_camera(logger);
+  
   if(!camera)
     return 1;
   auto settings = camera->widgets_settings();

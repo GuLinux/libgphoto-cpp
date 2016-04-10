@@ -18,10 +18,13 @@
 
 #include "backend/gphoto_wrapper.h"
 #include "backend/exceptions.h"
+#include <gphoto2/gphoto2-version.h>
 #include <sstream>
 using namespace GPhotoCPP;
 using namespace std;
 DPTR_CLASS(GPhotoWrapper) {
+public:
+  Version version;
 };
 
 string GPhotoReturn::describe() const
@@ -44,9 +47,18 @@ GPhotoReturn::operator int() const
   return result;
 }
 
+#include <iostream>
 
 GPhotoWrapper::GPhotoWrapper() : dptr()
 {
+  (*this)(GP2_RUN(&) {
+    auto versions = gp_library_version(GP_VERSION_SHORT);
+    string library_version{versions[0]};
+    stringstream ss(library_version);
+    char dot;
+    ss >> d->version.major >> dot >> d->version.minor >> dot >> d->version.patch;
+    GPRET(GP_OK);
+  });
 }
 
 GPhotoWrapper::~GPhotoWrapper()
@@ -158,6 +170,30 @@ GPhotoCamera::operator GPhotoWrapperPtr() const
 GPhotoDriver::operator GPhotoWrapperPtr() const
 {
   return d->wrapper;
+}
+
+bool GPhotoWrapper::Version::operator<(const GPhotoWrapper::Version& other) const
+{
+  if(major != other.major)
+    return major < other.major;
+  if(minor != other.minor)
+    return minor < other.minor;
+  return patch < other.patch;
+}
+
+bool GPhotoWrapper::Version::operator==(const GPhotoWrapper::Version& other) const
+{
+  return major == other.major && minor == other.minor && patch == other.patch;
+}
+
+GPhotoWrapper::Version GPhotoWrapper::version() const
+{
+  return d->version;
+}
+
+ostream& operator<<(ostream& o, const GPhotoWrapper::Version& v)
+{
+  return o << v.major << "." << v.minor << "." << v.patch;
 }
 
 

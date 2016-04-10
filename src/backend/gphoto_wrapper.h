@@ -37,6 +37,16 @@ namespace GPhotoCPP {
   public:
     typedef std::function<GPhotoReturn()> GPhotoRun;
     GPhotoReturn operator()(GPhotoRun run);
+    struct Version {
+      int major, minor, patch;
+      bool operator==(const Version &other) const;
+      bool operator<(const Version &other) const;
+      bool operator!=(const Version &other) const { return ! this->operator==(other); }
+      bool operator>(const Version &other) const { return ! this->operator<(other) && ! this->operator==(other); }
+      bool operator>=(const Version &other) const { return ! this->operator<(other); }
+      bool operator<=(const Version &other) const { return ! this->operator>(other); }
+    };
+    Version version() const;
     GPhotoWrapper();
     ~GPhotoWrapper();
   private:
@@ -67,6 +77,7 @@ namespace GPhotoCPP {
   };
 };
 
+std::ostream &operator<<(std::ostream &o, const GPhotoCPP::GPhotoWrapper::Version &v);
 GPhotoCPP::GPhotoWrapperPtr operator<<(const GPhotoCPP::GPhotoWrapperPtr &, GPhotoCPP::GPhotoWrapper::GPhotoRun);
 GPhotoCPP::GPhotoDriverPtr operator<<(const GPhotoCPP::GPhotoDriverPtr &, GPhotoCPP::GPhotoDriver::ContextRun);
 GPhotoCPP::GPhotoCameraPtr operator<<(const GPhotoCPP::GPhotoCameraPtr &, GPhotoCPP::GPhotoCamera::CameraRun);

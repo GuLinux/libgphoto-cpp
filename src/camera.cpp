@@ -40,6 +40,7 @@ namespace GPhotoCPP {
   namespace {
     class TempLocale {
     public:
+      typedef std::shared_ptr<TempLocale> ptr;
       TempLocale(const string &new_locale = "C");
       ~TempLocale();
     private:
@@ -66,7 +67,7 @@ TempLocale::~TempLocale()
 DPTR_CLASS(GPhotoCPP::Camera) {
 public:
   Private(const GPhotoCameraPtr& camera, const LoggerPtr& logger, GPhotoCPP::Camera* q);
-  TempLocale fix_temp_c_locale;
+  TempLocale::ptr fix_temp_c_locale;
   CameraFilePtr wait_for_file(milliseconds timeout = seconds{120});
   void try_mirror_lock(MirrorLock mirror_lock);
   void wait_for(milliseconds how_much);
@@ -152,6 +153,8 @@ GPhotoCPP::milliseconds GPhotoCPP::Camera::Shot::duration() const
 
 GPhotoCPP::Camera::Private::Private(const GPhotoCameraPtr& camera, const LoggerPtr& logger, Camera *q) : camera{camera}, logger{logger}, q{q}
 {
+  if( camera->operator GPhotoWrapperPtr()-> version() <= GPhotoWrapper::Version{2,5,10})
+    fix_temp_c_locale = make_shared<TempLocale>();
 }
 
 
