@@ -36,6 +36,8 @@ public:
     std::string filename;
     std::map<std::string, std::string> metadata;
     std::map<Channel, Pixels> channels;
+  private:
+    friend class ReadImage;
     Pixels &init_channel(Channel channel);
   };
   virtual Image read(const std::string &file_path) = 0;
@@ -47,6 +49,8 @@ public:
     std::string mimetype;
   };
   static ptr factory(const FileInfo &fileinfo);
+protected:
+  Image::Pixels &init_channel(Image &image, Image::Channel channel) { return image.init_channel(channel); }
 };
 }
 #endif
