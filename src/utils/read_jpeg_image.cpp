@@ -20,7 +20,7 @@
  #include <cstdio>
  #include <jpeglib.h>
  #include <jerror.h>
-#define cimg_plugin "CImg/plugins/jpeg_buffer.h"
+#define cimg_plugin "plugins/jpeg_buffer.h"
 
 #include <CImg.h>
 #include <fstream>
