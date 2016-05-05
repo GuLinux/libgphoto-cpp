@@ -100,5 +100,5 @@ private:
 
 std::ostream &operator<<(std::ostream& o, GPhotoCPP::Widget& w);
 inline std::ostream &operator<<(std::ostream &o, const GPhotoCPP::WidgetPtr &w) { return o << *w; }
-// template<typename A, typename B, typename C> inline std::ostream &operator<<(std::ostream &o, const GPhotoCPP::Widget::Value<A, B, C> &v) { return o << v.get(); }
+template<typename A, typename B, typename C> inline std::ostream &operator<<(std::ostream &o, const GPhotoCPP::Widget::Value<A, B, C> &v) { return o << v.get(); }
 #endif // LIBGPHOTO_CPP_WIDGETS_WIDGET_H
