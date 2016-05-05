@@ -1,4 +1,3 @@
-#pragma once
 #ifndef LIBGPHOTO_CPP_WIDGETS_WIDGET_P_H
 #define LIBGPHOTO_CPP_WIDGETS_WIDGET_P_H
 /*
@@ -19,7 +18,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "widget.h"
+#include "widgets.h"
 #include "widget_string.h"
 #include "backend/gphoto_wrapper.h"
 #include <gphoto2/gphoto2.h>

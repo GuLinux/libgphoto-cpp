@@ -1,4 +1,3 @@
-#pragma once
 #ifndef LIBGPHOTO_CPP_WIDGETS_WIDGETS_H
 #define LIBGPHOTO_CPP_WIDGETS_WIDGETS_H
 /*

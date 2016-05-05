@@ -1,4 +1,3 @@
-#pragma once
 #ifndef LIBGPHOTO_CPP_BACKEND_LIST_H
 #define LIBGPHOTO_CPP_BACKEND_LIST_H
 /*

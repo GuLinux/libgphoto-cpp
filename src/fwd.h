@@ -1,4 +1,3 @@
-#pragma once
 #ifndef LIBGPHOTO_CPP_FWD_H
 #define LIBGPHOTO_CPP_FWD_H
 /*

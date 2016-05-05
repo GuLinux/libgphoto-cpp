@@ -1,4 +1,3 @@
-#pragma once
 #ifndef LIBGPHOTO_CPP_CAMERA_CONTROL_H
 #define LIBGPHOTO_CPP_CAMERA_CONTROL_H
 /*

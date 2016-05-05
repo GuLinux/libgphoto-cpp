@@ -1,4 +1,3 @@
-#pragma once
 #ifndef LIBGPHOTO_CPP_SERIALSHOOTER_H
 #define LIBGPHOTO_CPP_SERIALSHOOTER_H
 /*

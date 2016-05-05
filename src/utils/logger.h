@@ -1,4 +1,3 @@
-#pragma once
 #ifndef LIBGPHOTO_CPP_UTILS_LOGGER_H
 #define LIBGPHOTO_CPP_UTILS_LOGGER_H
 /*
