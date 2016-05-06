@@ -20,7 +20,7 @@
  #include <cstdio>
  #include <jpeglib.h>
  #include <jerror.h>
-#define cimg_plugin "CImg/plugins/jpeg_buffer.h"
+#define cimg_plugin "plugins/jpeg_buffer.h"
 
 #include <CImg.h>
 #include <fstream>
@@ -33,11 +33,18 @@ using namespace std;
 
 DPTR_CLASS(ReadJPEGImage) {
 public:
+  Private(ReadJPEGImage *q);
   typedef function<void(CImg<uint8_t> &)> LoadImage;
   ReadImage::Image read_from(LoadImage loader, const std::string &filename);
+private:
+  ReadJPEGImage *q;
 };
 
-ReadJPEGImage::ReadJPEGImage() : dptr()
+ReadJPEGImage::Private::Private(ReadJPEGImage* q) : q{q}
+{
+}
+
+ReadJPEGImage::ReadJPEGImage() : dptr(this)
 {
 }
 
@@ -68,7 +75,7 @@ ReadImage::Image ReadJPEGImage::Private::read_from(ReadJPEGImage::Private::LoadI
   
   auto channels_map_offset = channels.size() == 1 ? 3 : 0;
   for(int i=0; i<channels.size(); i++) {
-    auto &pixels = image.init_channel(channels_map[i+channels_map_offset]);
+    auto &pixels = q->init_channel(image, channels_map[i+channels_map_offset]);
     copy(channels[i].begin(), channels[i].end(), pixels.begin());
   }
   return image;

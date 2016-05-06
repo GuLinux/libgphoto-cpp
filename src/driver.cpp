@@ -51,6 +51,8 @@ Driver::Private::Private(const LoggerPtr &logger, Driver* q) : driver{make_share
 
 }
 
+#include "gphoto2/gphoto2-version.h"
+
 
 Driver::Driver(const LoggerPtr &logger, LibGPhotoLogLevel libgphotoLogLevel) : dptr(logger, this)
 {

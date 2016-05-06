@@ -23,6 +23,7 @@
 using namespace GPhotoCPP;
 using namespace std;
 
+
 Widget::MenuValue::MenuValue(Widget* widget): StringValue(widget)
 {
   int choices = (*widget->d->gphoto)(GP2_RUN(this, &widget) { GPRET(gp_widget_count_choices(widget->d->widget)) });

@@ -26,11 +26,19 @@ using namespace std;
 
 DPTR_CLASS(ReadRawImage) {
 public:
+  Private(ReadRawImage *q);
   LibRaw raw;
   typedef function<int(LibRaw &)> LoadRaWImage;
   void run(LoadRaWImage f);
   ReadImage::Image read_image(const LoadRaWImage &init_raw, const std::string &filename);
+private:
+  ReadRawImage *q;
 };
+
+ReadRawImage::Private::Private(ReadRawImage* q) : q{q}
+{
+}
+
 
 ostream &operator<<(ostream &o, const libraw_image_sizes_t &s) {
   o << "{ "
@@ -49,7 +57,7 @@ ostream &operator<<(ostream &o, const libraw_image_sizes_t &s) {
   return o;
 }
 
-ReadRawImage::ReadRawImage() : dptr()
+ReadRawImage::ReadRawImage() : dptr(this)
 {
 
 }
@@ -91,7 +99,7 @@ ReadImage::Image ReadRawImage::Private::read_image(const LoadRaWImage& init_raw,
   
   image_data =  raw.imgdata;
   Image out_image{image_data.sizes.width, image_data.sizes.height, 16, filename};
-  uint16_t *data_8_16 = reinterpret_cast<uint16_t*>(out_image.init_channel(Image::Grey).data() );
+  uint16_t *data_8_16 = reinterpret_cast<uint16_t*>(q->init_channel(out_image, Image::Grey).data() );
   transform(image_data.image, image_data.image + out_image.channels[Image::Grey].size()/2, data_8_16, [](uint16_t *data){ return accumulate(data, data+4, 0); });
   raw.free_image();
   return out_image;

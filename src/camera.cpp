@@ -34,9 +34,40 @@ using namespace GPhotoCPP;
 using namespace std;
 using namespace std::chrono;
 
+/** Temporary workaround class to fix localization of menus **/
+// https://github.com/gphoto/libgphoto2/issues/49
+namespace GPhotoCPP {
+  namespace {
+    class TempLocale {
+    public:
+      typedef std::shared_ptr<TempLocale> ptr;
+      TempLocale(const string &new_locale = "C");
+      ~TempLocale();
+    private:
+      const string previous_locale;
+    };
+  }
+}
+
+TempLocale::TempLocale(const string& new_locale) : previous_locale(std::setlocale(LC_ALL, nullptr))
+{
+  std::setlocale(LC_ALL, new_locale.c_str());
+  std::cerr << "current locale: " << std::setlocale(LC_ALL, nullptr) << endl;
+}
+
+TempLocale::~TempLocale()
+{
+  std::setlocale(LC_ALL, previous_locale.c_str());
+  std::cerr << "current locale: " << std::setlocale(LC_ALL, nullptr) << endl;
+}
+
+
+/** Temporary workaround class to fix localization of menus **/
+
 DPTR_CLASS(GPhotoCPP::Camera) {
 public:
   Private(const GPhotoCameraPtr& camera, const LoggerPtr& logger, GPhotoCPP::Camera* q);
+  TempLocale::ptr fix_temp_c_locale;
   CameraFilePtr wait_for_file(milliseconds timeout = seconds{120});
   void try_mirror_lock(MirrorLock mirror_lock);
   void wait_for(milliseconds how_much);
@@ -122,11 +153,14 @@ GPhotoCPP::milliseconds GPhotoCPP::Camera::Shot::duration() const
 
 GPhotoCPP::Camera::Private::Private(const GPhotoCameraPtr& camera, const LoggerPtr& logger, Camera *q) : camera{camera}, logger{logger}, q{q}
 {
+  if( camera->operator GPhotoWrapperPtr()-> version() <= GPhotoWrapper::Version{2,5,10})
+    fix_temp_c_locale = make_shared<TempLocale>();
 }
 
 
 GPhotoCPP::Camera::Camera(const GPhotoCameraPtr &camera, const LoggerPtr &logger) : dptr(camera, logger, this)
 {
+  TempLocale templocale;
   CameraText text;
   d->camera << CAM_RUN(&) { GPRET(gp_camera_get_summary(gp_cam, &text, gp_ctx)) };
   d->summary = {text.text};

@@ -9,6 +9,8 @@ add_definitions(-DSOURCES_ROOT="${CMAKE_SOURCE_DIR}")
 
 set(CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
 find_package(GPHOTO2 REQUIRED)
+find_package(CImg REQUIRED)
+include_directories(${CImg_INCLUDE_DIRS})
 find_package(GTest)
 SET(CMAKE_CXX_FLAGS "-Wall -std=c++11 -fpermissive" )
 SET(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -std=c++11 -fpermissive" )
