@@ -99,6 +99,21 @@ TEST_F(TestExposureParsing, setBulb) {
   exposure->set_bulb();
   ASSERT_EQ("bulb", exposure->value().text);
 }
+
+TEST_F(TestExposureParsing, setBulb_throw_if_no_bulb_widget) {
+  gphoto = make_shared<GPhotoWrapper>();
+  gphoto << GP2_RUN(&) { GPRET(gp_widget_new(GP_WIDGET_WINDOW, "Top Window", &top_window)) }
+	 << GP2_RUN(&) { GPRET(gp_widget_set_name(top_window, "top_window")) }
+  ;
+  create_widget({"1/200","3/2", "5"});
+  try {
+    exposure->set_bulb();
+    FAIL() << "Expecting ValueError exception";
+  } catch(ValueError &e) {
+    ASSERT_EQ("Unable to find bulb exposure", string{e.what()});
+  }
+}
+
 TEST_F(TestExposureParsing, findClosestDuration) {
   exposure->set(milliseconds{5});
   ASSERT_EQ("1/200", exposure->value().text);

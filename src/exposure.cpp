@@ -22,6 +22,7 @@
 #include <map>
 #include "widgets/widgets.h"
 #include "backend/exceptions.h"
+#include "utils/containers_streams.h"
 
 using namespace GPhotoCPP;
 using namespace std;
@@ -42,8 +43,8 @@ Exposure::Private::Private(const WidgetPtr& widget, Exposure* q) : widget{widget
 Exposure::Exposure(const WidgetPtr& widget)
  : dptr(widget, this)
 {
-  auto choices = widget->get<Widget::MenuValue>()->choices();
-  transform(begin(choices), end(choices), back_inserter(d->values), [](const Widget::MenuValue::Choice &c){ return Value{c.text}; });
+  d->values = GuLinux::make_stream(widget->get<Widget::MenuValue>()->choices())
+    .transform<list<Value>>([](const Widget::MenuValue::Choice &c){ return Value{c.text}; });
 }
 
 Exposure::~Exposure()
@@ -90,22 +91,27 @@ void Exposure::set(const Exposure::Value& value)
 
 void Exposure::set_bulb()
 {
-  vector<Value> bulb_choices;
-  copy_if(begin(d->values), end(d->values), back_inserter(bulb_choices), [&](const Value &v){ return v.bulb(); });
+  static map<string, int> ordering{{"bulb", 10}, {"Bulb", 9}};
+  vector<Value> bulb_choices = GuLinux::make_stream(d->values)
+    .transform<vector<Value>>(GuLinux::identity<Value>{})
+    .filter([&](const Value &v){ return v.bulb(); })
+    .sorted([&](const Value &v1, const Value &v2){ return ordering[v1.text] > ordering[v2.text]; } );
+
   if(bulb_choices.size() == 0)
     throw ValueError{"Unable to find bulb exposure"};
-  static map<string, int> ordering{{"bulb", 10}, {"Bulb", 9}};
-  sort(begin(bulb_choices), end(bulb_choices), [&](const Value &v1, const Value &v2){ return ordering[v1.text] > ordering[v2.text]; });
   set(bulb_choices[0]);
 }
 
 
 void Exposure::set(const milliseconds& duration, double tolerance)
 {
-  vector<Value> values;
-  copy_if(begin(d->values), end(d->values), back_inserter(values), [](const Value &v){ return !v.bulb(); });
   auto difference = [](const milliseconds &a, const milliseconds &b) -> double { return abs(a.count()-b.count()); };
-  sort(begin(values), end(values), [&](const Value &a, const Value &b) { return difference(a.duration(), duration) < difference(b.duration(), duration); });
+  
+  vector<Value> values = GuLinux::make_stream(d->values)
+    .transform<vector<Value>>(GuLinux::identity<Value>{})
+    .remove([](const Value &v){ return v.bulb(); })
+    .sorted([&](const Value &a, const Value &b) { return difference(a.duration(), duration) < difference(b.duration(), duration); });
+    
   auto tolerance_value = duration.count()* tolerance;
   if(difference(values[0].duration(), duration) > tolerance_value) {
     stringstream ss;
