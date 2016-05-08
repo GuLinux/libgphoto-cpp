@@ -20,6 +20,7 @@
 #define GULINUX_COMMONS_CONTAINERS_STREAMS
 #include <utility>
 #include <algorithm>
+#include <numeric>
 #include <functional>
 #include <list>
 #include <vector>
@@ -99,7 +100,7 @@ public:
   
   
   template<typename UnaryFunction = std::plus<value_type>> value_type accumulate(value_type initial = {}, UnaryFunction op = {}) const {
-    return std::accumulate(std::begin(_container_ref), std::end(_container_ref), initial, op);
+    return accumulate(std::begin(_container_ref), std::end(_container_ref), initial, op);
   }
   
   template<typename UnaryFunction> cstream<C> &for_each(UnaryFunction f) {

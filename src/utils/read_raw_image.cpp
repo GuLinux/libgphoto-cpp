@@ -21,6 +21,8 @@
 #include "libraw/libraw.h"
 #include <algorithm>
 #include <iostream>
+#include <numeric>
+
 using namespace GPhotoCPP;
 using namespace std;
 
@@ -68,7 +70,7 @@ ReadRawImage::~ReadRawImage()
 
 ReadImage::Image ReadRawImage::read(const vector< uint8_t >& data, const std::string &filename)
 {
-  return d->read_image([&](LibRaw &r) { return r.open_buffer(data.data(), data.size()); }, filename);
+  return d->read_image([&](LibRaw &r) { return r.open_buffer(const_cast<void*>(static_cast<const void*>(data.data())), data.size()); }, filename);
 }
 
 

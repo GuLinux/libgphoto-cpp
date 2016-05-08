@@ -23,7 +23,7 @@
 #include "widgets/widgets.h"
 #include "backend/exceptions.h"
 #include "utils/containers_streams.h"
-
+#include <cmath>
 using namespace GPhotoCPP;
 using namespace std;
 
@@ -105,7 +105,7 @@ void Exposure::set_bulb()
 
 void Exposure::set(const milliseconds& duration, double tolerance)
 {
-  auto difference = [](const milliseconds &a, const milliseconds &b) -> double { return abs(a.count()-b.count()); };
+  auto difference = [](const milliseconds &a, const milliseconds &b) -> double { return abs((a-b).count()); };
   
   vector<Value> values = GuLinux::make_stream(d->values)
     .transform<vector<Value>>(GuLinux::identity<Value>{})
