@@ -61,19 +61,11 @@ GPhotoCPP::Camera::Settings::Private::Private(const iCamera::ptr& camera, const 
   static map<Setting, string> settings_names { {ShutterControl, "ShutterControl"}, {ShutterSpeed, "ShutterSpeed"}, {Format, "Format"}, {ISO, "ISO"} };
   auto settings = camera->widgets_settings();
   
-  /* WIP
-  map<Setting, WidgetPtr> widgets2 = GuLinux::make_stream(settings_names)
-    .transform<multimap<Setting, WidgetPtr>>([&](const pair<Setting,string> &p){ return make_pair(p.first,  settings->child_by_name(p.second));})
+  widgets = GuLinux::make_stream(widget_names)
+    .transform<multimap<Setting, WidgetPtr>>([&](const pair<Setting,string> &p){return make_pair(p.first,  settings->child_by_name(p.second));})
     .filter_ms([](const pair<Setting,WidgetPtr> &p){ return static_cast<bool>(p.second);})
-    .transform<map<Setting, WidgetPtr>>(GuLinux::identity<pair<Setting, WidgetPtr>>{});
-  lDebug(logger) << "widgets2 found: ";
-  for(auto widget: widgets2) lDebug(logger) << settings_names[widget.first] << ": " << widget.second;
-    */
-  
-  multimap<Setting, WidgetPtr> widgets_init;
-  transform(begin(widget_names), end(widget_names), inserter(widgets_init, end(widgets_init)), [&](const pair<Setting,string> &p){ return make_pair(p.first,  settings->child_by_name(p.second));});
-  copy_if(begin(widgets_init), end(widgets_init), inserter(widgets, end(widgets)), [](const pair<Setting,WidgetPtr> &p){ return static_cast<bool>(p.second);});
-  
+    .transform<map<Setting, WidgetPtr>>(GuLinux::identity<pair<Setting, WidgetPtr>>{})
+    ;
   lDebug(logger) << "Main widgets found: ";
   for(auto widget: widgets) lDebug(logger) << settings_names[widget.first] << ": " << widget.second;
   if(widgets[ShutterControl]) {
