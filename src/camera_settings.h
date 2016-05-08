@@ -24,7 +24,6 @@
 #include "utils/dptr.h"
 #include <vector>
 namespace GPhotoCPP {
-
 class Camera::Settings
 {
 public:
@@ -41,10 +40,8 @@ public:
 
   ExposurePtr exposure() const;
   ShooterPtr shooter() const;
-  
-private:
-  friend class Camera;
-  Settings(const CameraPtr &camera, const LoggerPtr &logger);
+  // TODO: private again?
+  Settings(const iCamera::ptr &camera, const LoggerPtr &logger);
   DPTR
 };
 }

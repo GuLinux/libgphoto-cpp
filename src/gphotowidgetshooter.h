@@ -32,7 +32,7 @@ class GPhotoWidgetShooter : public GPhotoCPP::Shooter
 public:
     class Shoot : public GPhotoCPP::Shooter::Shoot {
     public:
-      Shoot(const WidgetPtr &widget, const GPhotoCPP::CameraPtr &camera, const ValueType &on_value, const ValueType off_value, const LoggerPtr &logger) 
+      Shoot(const WidgetPtr &widget, const iCamera::ptr &camera, const ValueType &on_value, const ValueType off_value, const LoggerPtr &logger) 
       : widget{widget}, camera{camera}, off_value{off_value}, logger{logger} {
 	widget->get<WidgetType>()->set(on_value);
 	camera->save_settings();
@@ -41,11 +41,11 @@ public:
     ~Shoot() {}
     private:
       WidgetPtr widget;
-      CameraPtr camera;
+      iCamera::ptr camera;
       const ValueType off_value;
       LoggerPtr logger;
     };
-    GPhotoWidgetShooter(const CameraPtr &camera, const std::string &widget_name, const ValueType &on_value, const ValueType &off_value, const LoggerPtr &logger = {})
+    GPhotoWidgetShooter(const iCamera::ptr &camera, const std::string &widget_name, const ValueType &on_value, const ValueType &off_value, const LoggerPtr &logger = {})
       : camera{camera}, widget_name{widget_name}, on_value{on_value}, off_value{off_value}, logger{logger} {
       }
     virtual GPhotoCPP::Shooter::ShootPtr shoot() const {
@@ -53,7 +53,7 @@ public:
       return std::make_shared<GPhotoWidgetShooter::Shoot>(widget, camera, on_value, off_value, logger);
     }
 private:
-  CameraPtr camera;
+  iCamera::ptr camera;
   std::string widget_name;
   const ValueType on_value;
   const ValueType off_value;
@@ -62,13 +62,13 @@ private:
  
 class EOSRemoteReleaseShutter : public GPhotoWidgetShooter<Widget::MenuValue, int> {
 public:
-EOSRemoteReleaseShutter(const CameraPtr& camera, const LoggerPtr& logger = {})
+EOSRemoteReleaseShutter(const iCamera::ptr& camera, const LoggerPtr& logger = {})
   : GPhotoWidgetShooter< GPhotoCPP::Widget::MenuValue, int>(camera, "eosremoterelease", 2, 4) {}
 };
  
 class BulbSettingShutter : public GPhotoWidgetShooter<Widget::ToggleValue, Widget::ToggleValue::Type> {
 public:
-BulbSettingShutter(const CameraPtr& camera, const LoggerPtr& logger = {})
+BulbSettingShutter(const iCamera::ptr& camera, const LoggerPtr& logger = {})
   : GPhotoWidgetShooter< GPhotoCPP::Widget::ToggleValue, Widget::ToggleValue::Type>(camera, "bulb", true, false) {}
 };
 }

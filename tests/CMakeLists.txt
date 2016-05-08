@@ -16,3 +16,7 @@ GTEST_ADD_TESTS(test_read_image "" test_read_image.cpp)
 add_executable(test_version test_version.cpp)
 target_link_libraries(test_version gphoto++ ${GTEST_BOTH_LIBRARIES} gphoto2)
 GTEST_ADD_TESTS(test_version "" test_version.cpp)
+
+add_executable(test_camera_settings test_camera_settings.cpp)
+target_link_libraries(test_camera_settings gphoto++ ${GTEST_BOTH_LIBRARIES} gphoto2 pthread)
+GTEST_ADD_TESTS(test_camera_settings "" test_camera_settings.cpp)

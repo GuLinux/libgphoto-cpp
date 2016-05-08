@@ -28,7 +28,14 @@
 #include <ratio>
 namespace GPhotoCPP {
 
-class Camera : public std::enable_shared_from_this<Camera>
+class iCamera {
+public:
+    virtual WidgetPtr widgets_settings() const = 0;
+    virtual void save_settings() = 0;
+    typedef std::shared_ptr<iCamera> ptr;
+};
+  
+class Camera : public std::enable_shared_from_this<Camera>, public iCamera
 {
 public:
     class Settings;
@@ -45,8 +52,8 @@ public:
     typedef std::shared_ptr<Shot> ShotPtr;
     Camera(const GPhotoCameraPtr &camera, const LoggerPtr &logger = {});
     ~Camera();
-    WidgetPtr widgets_settings() const;
-    void save_settings();
+    virtual WidgetPtr widgets_settings() const;
+    virtual void save_settings();
     std::string summary() const;
     std::list<std::string> folders(const std::string &folder) const;
     struct FileInfo {

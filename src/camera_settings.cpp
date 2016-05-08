@@ -21,6 +21,7 @@
 #include <map>
 #include <algorithm>
 #include "utils/logger.h"
+#include "utils/containers_streams.h"
 #include "exposure.h"
 #include "widgets/widgets.h"
 #include "gphotowidgetshooter.h"
@@ -30,9 +31,9 @@ using namespace std;
 using namespace GPhotoCPP;
 class GPhotoCPP::Camera::Settings::Private {
 public:
-  Private(const CameraPtr& camera, const LoggerPtr& logger);
+  Private(const iCamera::ptr& camera, const LoggerPtr& logger);
   enum Setting { ISO, Format, ShutterSpeed, ShutterControl, };
-  const GPhotoCPP::CameraPtr camera;
+  const iCamera::ptr camera;
   map<Setting, WidgetPtr> widgets;
   ShooterPtr shutterControl;
   ExposurePtr exposure;
@@ -44,7 +45,7 @@ public:
 private:
 };
 
-GPhotoCPP::Camera::Settings::Private::Private(const GPhotoCPP::CameraPtr& camera, const LoggerPtr& logger) : camera{camera}, logger{logger}
+GPhotoCPP::Camera::Settings::Private::Private(const iCamera::ptr& camera, const LoggerPtr& logger) : camera{camera}, logger{logger}
 {
   widgets.clear();
   static multimap<Setting, string> widget_names{
@@ -57,21 +58,31 @@ GPhotoCPP::Camera::Settings::Private::Private(const GPhotoCPP::CameraPtr& camera
     {ISO, "iso"},
     {ISO, "eos-iso"},
   };
-  multimap<Setting, WidgetPtr> widgets_init;
+  static map<Setting, string> settings_names { {ShutterControl, "ShutterControl"}, {ShutterSpeed, "ShutterSpeed"}, {Format, "Format"}, {ISO, "ISO"} };
   auto settings = camera->widgets_settings();
+  
+  /* WIP
+  map<Setting, WidgetPtr> widgets2 = GuLinux::make_stream(settings_names)
+    .transform<multimap<Setting, WidgetPtr>>([&](const pair<Setting,string> &p){ return make_pair(p.first,  settings->child_by_name(p.second));})
+    .filter_ms([](const pair<Setting,WidgetPtr> &p){ return static_cast<bool>(p.second);})
+    .transform<map<Setting, WidgetPtr>>(GuLinux::identity<pair<Setting, WidgetPtr>>{});
+  lDebug(logger) << "widgets2 found: ";
+  for(auto widget: widgets2) lDebug(logger) << settings_names[widget.first] << ": " << widget.second;
+    */
+  
+  multimap<Setting, WidgetPtr> widgets_init;
   transform(begin(widget_names), end(widget_names), inserter(widgets_init, end(widgets_init)), [&](const pair<Setting,string> &p){ return make_pair(p.first,  settings->child_by_name(p.second));});
   copy_if(begin(widgets_init), end(widgets_init), inserter(widgets, end(widgets)), [](const pair<Setting,WidgetPtr> &p){ return static_cast<bool>(p.second);});
-  static map<Setting, string> settings_names { {ShutterControl, "ShutterControl"}, {ShutterSpeed, "ShutterSpeed"}, {Format, "Format"}, {ISO, "ISO"} };
   
   lDebug(logger) << "Main widgets found: ";
   for(auto widget: widgets) lDebug(logger) << settings_names[widget.first] << ": " << widget.second;
   if(widgets[ShutterControl]) {
-    shutterControl = widgets[ShutterControl]->name() == "eos-shutterspeed" ? ShooterPtr(new EOSRemoteReleaseShutter{camera, logger}) : ShooterPtr(new BulbSettingShutter{camera, logger});
+    shutterControl = widgets[ShutterControl]->name() == "eosremoterelease" ? ShooterPtr(new EOSRemoteReleaseShutter{camera, logger}) : ShooterPtr(new BulbSettingShutter{camera, logger});
   }
   exposure = make_shared<Exposure>(widgets[ShutterSpeed]);
 }
 
-GPhotoCPP::Camera::Settings::Settings(const GPhotoCPP::CameraPtr& camera, const LoggerPtr& logger) : dptr(camera, logger)
+GPhotoCPP::Camera::Settings::Settings(const iCamera::ptr& camera, const LoggerPtr& logger) : dptr(camera, logger)
 {
 }
 
@@ -132,10 +143,8 @@ vector< string > GPhotoCPP::Camera::Settings::Private::choices(Setting setting) 
 {
   if(!widgets.at(setting))
     return {};
-  auto choices = widgets.at(setting)->get<Widget::MenuValue>()->choices();
-  vector<string> choices_strings(choices.size());
-  transform(begin(choices), end(choices), begin(choices_strings), [](const Widget::MenuValue::Choice &c){ return c.text;});
-  return choices_strings;
+  return GuLinux::make_stream(widgets.at(setting)->get<Widget::MenuValue>()->choices())
+    .transform<vector<string>>([](const Widget::MenuValue::Choice &c){ return c.text;});
 }
 
 
