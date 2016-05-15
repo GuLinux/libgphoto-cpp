@@ -10,7 +10,11 @@ add_definitions(-DSOURCES_ROOT="${CMAKE_SOURCE_DIR}")
 set(CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
 find_package(GPHOTO2 REQUIRED)
 find_package(CImg REQUIRED)
-include_directories(${CImg_INCLUDE_DIRS})
+include_directories(${CImg_INCLUDE_DIRS} gulinux-commons/)
+
+
+set(GPHOTO_CPP_INCLUDE_DIRS ${CMAKE_CURRENT_SOURCE_DIR}/src CACHE INTERNAL "libGPhotoC++ includes")
+
 find_package(GTest)
 SET(CMAKE_CXX_FLAGS "-Wall -std=c++11 -fpermissive" )
 SET(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -std=c++11 -fpermissive" )

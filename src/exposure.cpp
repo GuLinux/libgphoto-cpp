@@ -22,7 +22,7 @@
 #include <map>
 #include "widgets/widgets.h"
 #include "backend/exceptions.h"
-#include "utils/containers_streams.h"
+#include "c++/containers_streams.h"
 #include <cmath>
 using namespace GPhotoCPP;
 using namespace std;
