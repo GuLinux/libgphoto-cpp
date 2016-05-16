@@ -42,6 +42,7 @@ public:
   ShooterPtr shooter() const;
   // TODO: private again?
   Settings(const iCamera::ptr &camera, const LoggerPtr &logger);
+private:
   DPTR
 };
 }
