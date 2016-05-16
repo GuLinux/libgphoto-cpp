@@ -25,6 +25,8 @@
 #include <list>
 #include <vector>
 #include <iostream>
+#include "optional.h"
+
 namespace GuLinux {
   
   
@@ -153,6 +155,20 @@ public:
     return static_cast<double>(accumulate()) / static_cast<double>(size());
   }
   
+  optional<value_type> first() const {
+    if(std::begin(_container_ref) == std::end(_container_ref) )
+      return {};
+    return { *std::begin(_container_ref) };
+  }
+  
+  template<typename UnaryFunction>
+  optional<value_type> first(UnaryFunction f) const {
+    auto it = std::find_if( std::begin(_container_ref), std::end(_container_ref), f );
+    if(it == std::end(_container_ref))
+      return {};
+    return { *it };
+  }
+  
 private:
   C __moved;
   C &_container_ref;  
@@ -176,6 +192,13 @@ template<typename T> cstream<T> make_stream(T &&t) {
 template<typename T> cstream<T> make_stream_copy(const T &t) {
   return cstream<T>{T{t}};
 }
+template<typename N, typename T = N> cstream<std::vector<N>> cpstream(T *t, std::size_t size) {
+  std::vector<N> data(size);
+  std::copy_n(t, size, data.begin());
+  return make_stream(std::move(data));
+}
+
+
 }
 
 #endif
