@@ -76,17 +76,22 @@ public:
 	widget->set_value(c);
       }
     }
-  protected:
-    Value(Widget *widget, V2C v2c= [](V &v){ return v; }, C2V c2v = [](C c){ return V{c};}) : widget{widget}, v2c{v2c} {
+    Value &refresh() {
       C c;
       widget->get_value(&c);
       value=c2v(c);
       original_value=c2v(c);
+      return *this;
+    }
+  protected:
+    Value(Widget *widget, V2C v2c= [](V &v){ return v; }, C2V c2v = [](C c){ return V{c};}) : widget{widget}, v2c{v2c}, c2v{c2v} {
+      refresh();
     }
     V value;
     V original_value;
     Widget *widget;
     V2C v2c;
+    C2V c2v;
   };
   
 private:
