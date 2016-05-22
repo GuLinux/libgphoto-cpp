@@ -28,7 +28,7 @@ class GPhotoCPP::Camera::Control
 {
 public:
   ~Control();
-  GPhotoCPP::Camera::ShotPtr shoot(const milliseconds &exposure, bool mirror_lock = false);
+  GPhotoCPP::Camera::ShotPtr shoot(const milliseconds &exposure, bool mirror_lock = false, seconds mirror_lock_duration = seconds{2});
 private:
   friend class Camera;
   Control(const std::weak_ptr<GPhotoCPP::Camera>& camera, GPhotoCPP::Camera::Settings& settings, const GPhotoCPP::LoggerPtr& logger);
