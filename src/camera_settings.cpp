@@ -31,9 +31,9 @@ using namespace std;
 using namespace GPhotoCPP;
 class GPhotoCPP::Camera::Settings::Private {
 public:
-  Private(const iCamera::ptr& camera, const LoggerPtr& logger);
+  Private(const weak_ptr< iCamera >& camera, const LoggerPtr& logger);
   enum Setting { ISO, Format, ShutterSpeed, ShutterControl, };
-  const iCamera::ptr camera;
+  const weak_ptr<iCamera> camera;
   map<Setting, WidgetPtr> widgets;
   ShooterPtr shutterControl;
   ExposurePtr exposure;
@@ -45,7 +45,7 @@ public:
 private:
 };
 
-GPhotoCPP::Camera::Settings::Private::Private(const iCamera::ptr& camera, const LoggerPtr& logger) : camera{camera}, logger{logger}
+GPhotoCPP::Camera::Settings::Private::Private(const weak_ptr<iCamera> &camera, const LoggerPtr& logger) : camera{camera}, logger{logger}
 {
   widgets.clear();
   static multimap<Setting, string> widget_names{
@@ -59,7 +59,7 @@ GPhotoCPP::Camera::Settings::Private::Private(const iCamera::ptr& camera, const 
     {ISO, "eos-iso"},
   };
   static map<Setting, string> settings_names { {ShutterControl, "ShutterControl"}, {ShutterSpeed, "ShutterSpeed"}, {Format, "Format"}, {ISO, "ISO"} };
-  auto settings = camera->widgets_settings();
+  auto settings = camera.lock()->widgets_settings();
   
   widgets = GuLinux::make_stream(widget_names)
     .transform<multimap<Setting, WidgetPtr>>([&](const pair<Setting,string> &p){return make_pair(p.first,  settings->child_by_name(p.second));})
@@ -69,12 +69,12 @@ GPhotoCPP::Camera::Settings::Private::Private(const iCamera::ptr& camera, const 
   lDebug(logger) << "Main widgets found: ";
   for(auto widget: widgets) lDebug(logger) << settings_names[widget.first] << ": " << widget.second;
   if(widgets[ShutterControl]) {
-    shutterControl = widgets[ShutterControl]->name() == "eosremoterelease" ? ShooterPtr(new EOSRemoteReleaseShutter{camera, logger}) : ShooterPtr(new BulbSettingShutter{camera, logger});
+    shutterControl = widgets[ShutterControl]->name() == "eosremoterelease" ? ShooterPtr(new EOSRemoteReleaseShutter{camera.lock(), logger}) : ShooterPtr(new BulbSettingShutter{camera.lock(), logger});
   }
   exposure = make_shared<Exposure>(widgets[ShutterSpeed]);
 }
 
-GPhotoCPP::Camera::Settings::Settings(const iCamera::ptr& camera, const LoggerPtr& logger) : dptr(camera, logger)
+GPhotoCPP::Camera::Settings::Settings(const weak_ptr<iCamera> &camera, const LoggerPtr& logger) : dptr(camera, logger)
 {
 }
 
@@ -127,7 +127,7 @@ void GPhotoCPP::Camera::Settings::Private::set_choice(GPhotoCPP::Camera::Setting
 {
   if(widgets[setting])
     widgets[setting]->get<Widget::MenuValue>()->set(choice);
-  camera->save_settings();
+  camera.lock()->save_settings();
 }
 
 

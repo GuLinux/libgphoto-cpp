@@ -31,7 +31,7 @@ public:
   GPhotoCPP::Camera::ShotPtr shoot(const milliseconds &exposure, bool mirror_lock = false);
 private:
   friend class Camera;
-  Control(const GPhotoCPP::CameraPtr& camera, GPhotoCPP::Camera::Settings& settings, const GPhotoCPP::LoggerPtr& logger);
+  Control(const std::weak_ptr<GPhotoCPP::Camera>& camera, GPhotoCPP::Camera::Settings& settings, const GPhotoCPP::LoggerPtr& logger);
   DPTR
 };
 }

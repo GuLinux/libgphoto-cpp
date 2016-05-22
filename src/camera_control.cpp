@@ -25,19 +25,19 @@ using namespace std;
 
 class GPhotoCPP::Camera::Control::Private {
 public:
-  Private(const CameraPtr& camera, GPhotoCPP::Camera::Settings& settings, const LoggerPtr& logger);
-  const CameraPtr camera;
+  Private(const weak_ptr<GPhotoCPP::Camera> &camera, GPhotoCPP::Camera::Settings& settings, const LoggerPtr& logger);
+  weak_ptr<GPhotoCPP::Camera> camera;
   Settings &settings;
   const LoggerPtr logger;
 };
 
-GPhotoCPP::Camera::Control::Private::Private(const CameraPtr& camera, GPhotoCPP::Camera::Settings& settings, const LoggerPtr& logger)
+GPhotoCPP::Camera::Control::Private::Private(const weak_ptr< GPhotoCPP::Camera >& camera, GPhotoCPP::Camera::Settings& settings, const LoggerPtr& logger)
   : camera{camera}, settings{settings}, logger{logger}
 {
 }
 
 
-GPhotoCPP::Camera::Control::Control(const CameraPtr& camera, Settings& settings, const LoggerPtr& logger) : dptr(camera, settings, logger)
+GPhotoCPP::Camera::Control::Control(const weak_ptr<GPhotoCPP::Camera> &camera, Settings& settings, const LoggerPtr& logger) : dptr(camera, settings, logger)
 {
 }
 
@@ -53,10 +53,10 @@ GPhotoCPP::Camera::ShotPtr GPhotoCPP::Camera::Control::shoot(const milliseconds&
     mirror_lock_trigger = Camera::MirrorLock{seconds{2000}, d->settings.shooter()};
   if(exposure < seconds{2} || ! d->settings.shooter() ) {
     d->settings.exposure()->set(exposure);
-    d->camera->save_settings();
-    return d->camera->shoot_preset(mirror_lock_trigger);
+    d->camera.lock()->save_settings();
+    return d->camera.lock()->shoot_preset(mirror_lock_trigger);
   }
   d->settings.exposure()->set_bulb();
-  d->camera->save_settings();
-  return d->camera->shoot_bulb(exposure, d->settings.shooter(), mirror_lock_trigger);
+  d->camera.lock()->save_settings();
+  return d->camera.lock()->shoot_bulb(exposure, d->settings.shooter(), mirror_lock_trigger);
 }

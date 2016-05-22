@@ -41,7 +41,7 @@ public:
   ExposurePtr exposure() const;
   ShooterPtr shooter() const;
   // TODO: private again?
-  Settings(const iCamera::ptr &camera, const LoggerPtr &logger);
+  Settings(const std::weak_ptr<iCamera> &camera, const LoggerPtr &logger);
 private:
   DPTR
 };

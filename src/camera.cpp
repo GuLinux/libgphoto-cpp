@@ -171,7 +171,9 @@ GPhotoCPP::Camera::Camera(const GPhotoCameraPtr &camera, const LoggerPtr &logger
 
 GPhotoCPP::Camera::~Camera()
 {
-
+  d->camera
+    << CAM_RUN(&) { GPRET(gp_camera_exit(gp_cam, gp_ctx)) }
+    << CAM_RUN(&) { GPRET(gp_camera_unref(gp_cam)) };
 }
 
 WidgetPtr GPhotoCPP::Camera::widgets_settings() const
