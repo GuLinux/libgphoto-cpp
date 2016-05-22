@@ -147,6 +147,17 @@ string GPhotoCPP::Camera::Settings::Private::choice_value(GPhotoCPP::Camera::Set
   return *widgets.at(setting)->get<Widget::MenuValue>();
 }
 
+WidgetPtr GPhotoCPP::Camera::Settings::format_widget() const
+{
+  return d->widgets.at(Private::Format);
+}
+
+WidgetPtr GPhotoCPP::Camera::Settings::iso_widget() const
+{
+  return d->widgets.at(Private::ISO);
+}
+
+
 ExposurePtr GPhotoCPP::Camera::Settings::exposure() const
 {
   return d->exposure;

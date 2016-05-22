@@ -34,6 +34,10 @@ public:
   std::vector<std::string> format_choices() const;
   std::string iso() const;
   std::string format() const;
+  
+  WidgetPtr iso_widget() const;
+  WidgetPtr format_widget() const;
+  
   void set_iso(const std::string &iso);
   void set_format(const std::string &format);
   void set_serial_port(const std::string &port);
