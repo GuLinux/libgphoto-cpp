@@ -31,7 +31,7 @@ public:
   operator Range() const;
 private:
   friend class Widget;
-  RangeValue(Widget *widget);
+  RangeValue(const WidgetPtr &widget);
   Range _range;
 };
 }

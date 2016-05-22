@@ -57,7 +57,7 @@ public:
   
   std::string path() const;
 
-  template<typename T> std::shared_ptr<T> get() { return std::shared_ptr<T>{new T(this)}; }
+  template<typename T> std::shared_ptr<T> get() { return std::shared_ptr<T>{new T(shared_from_this())}; }
   operator CameraWidget*() const; // TODO: remove
   
   template<typename V, typename C = V, typename Cs = C> class Value {
@@ -84,12 +84,12 @@ public:
       return *this;
     }
   protected:
-    Value(Widget *widget, V2C v2c= [](V &v){ return v; }, C2V c2v = [](C c){ return V{c};}) : widget{widget}, v2c{v2c}, c2v{c2v} {
+    Value(const WidgetPtr &widget, V2C v2c= [](V &v){ return v; }, C2V c2v = [](C c){ return V{c};}) : widget{widget}, v2c{v2c}, c2v{c2v} {
       refresh();
     }
     V value;
     V original_value;
-    Widget *widget;
+    WidgetPtr widget;
     V2C v2c;
     C2V c2v;
   };

@@ -23,7 +23,7 @@ namespace GPhotoCPP {
 class Widget::StringValue : public Widget::Value<std::string, char*, char*>{
 private:
   friend class Widget;
-  StringValue(Widget* widget);
+  StringValue(const WidgetPtr &widget);
 };
 }
 

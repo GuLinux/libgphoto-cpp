@@ -23,7 +23,7 @@ namespace GPhotoCPP {
 class Widget::ToggleValue : public Widget::Value<bool, int, std::shared_ptr<int>>{
 private:
   friend class Widget;
-  ToggleValue(Widget* widget);
+  ToggleValue(const WidgetPtr &widget);
 };
 }
 

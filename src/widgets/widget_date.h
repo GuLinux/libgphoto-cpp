@@ -26,7 +26,7 @@ public:
   virtual ~DateValue();
 private:
   friend class Widget;
-  DateValue(Widget *widget);
+  DateValue(const WidgetPtr &widget);
   DPTR
 };
 }

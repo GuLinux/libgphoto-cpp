@@ -22,7 +22,7 @@
 using namespace GPhotoCPP;
 using namespace std;
 
-Widget::StringValue::StringValue(Widget* widget): Value< std::string, char*, char* >(widget, [](string &s) -> char*{
+Widget::StringValue::StringValue(const WidgetPtr& widget): Value< std::string, char*, char* >(widget, [](string &s) -> char*{
   return s.c_str();
 })
 {

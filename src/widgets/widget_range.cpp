@@ -21,7 +21,7 @@
 using namespace GPhotoCPP;
 using namespace std;
 
-Widget::RangeValue::RangeValue(Widget* widget): Value< float, float, float* >(widget, [](float &f) {return &f; })
+Widget::RangeValue::RangeValue(const WidgetPtr &widget): Value< float, float, float* >(widget, [](float &f) {return &f; })
 {
   widget->d->gphoto << GP2_RUN(this, widget) { GPRET(gp_widget_get_range(widget->d->widget, &_range.min, &_range.max, &_range.increment)) };
 }
