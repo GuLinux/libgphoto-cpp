@@ -97,6 +97,15 @@ TEST(ContainersStream, filter) {
   ASSERT_EQ(expected, actual);
 }
 
+TEST(ContainersStream, cp_filter) {
+  vector<int> v{1, 5, 34, 6, 3};
+  auto c = make_stream(v);
+  vector<int> actual = c.cp_filter([](int a){ return a %2 != 0; });
+  vector<int> expected{1, 5, 3};
+  ASSERT_EQ(expected, actual);
+  ASSERT_EQ( (vector<int>{1, 5, 34, 6, 3}), v);
+}
+
 
 TEST(ContainersStream, filter_map) {
   auto c = make_stream(map<int, string>{ {1, "1"}, {5, "5"}, {34, "34"} } );
@@ -111,6 +120,13 @@ TEST(ContainersStream, filter_unordered_map) {
   unordered_map<int, string> expected{ {1, "1"}, {5, "5"} };
   ASSERT_EQ(expected, actual);
 }
+
+TEST(ContainersStream, map_first) {
+  auto c = make_stream(map<int, string>{ {1, "1"}, {5, "5"}, {34, "34"} } );
+  ASSERT_EQ((vector<int>{1, 5, 34}), c.transform<vector<int>>( Pair<int,string>::first ).get() );
+  ASSERT_EQ((vector<string>{"1", "5", "34"}), c.transform<vector<string>>( Pair<int,string>::second ).get() );
+}
+
 
 TEST(ContainersStream, accumulate) {
   auto c = make_stream(vector<int>{1, 5, 34, 6, 3});
