@@ -35,7 +35,7 @@ public:
     ReadRawImage();
     ~ReadRawImage();
     virtual Image read(const std::string& file_path);
-    virtual Image read(const std::vector< uint8_t >& data, const std::__cxx11::string& filename);
+    virtual Image read(const std::vector< uint8_t >& data, const std::string& filename);
 private:
   DPTR
 };
