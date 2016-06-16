@@ -1,22 +1,15 @@
-include_directories(../src)
-add_executable(test_gphoto_widgets test_gphoto_widgets.cpp)
-target_link_libraries(test_gphoto_widgets gphoto++ ${GTEST_BOTH_LIBRARIES} gphoto2)
-GTEST_ADD_TESTS(test_gphoto_widgets "" test_gphoto_widgets.cpp)
+if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/googletest/CMakeLists.txt")
+  add_subdirectory(googletest)
+  include_directories(../src)
+  include(add_gtest)
+  find_package(JPEG REQUIRED)
+  
+  add_gtest(NAME gphoto_widgets TYPE integration SOURCES test_gphoto_widgets.cpp TARGET_LINK_LIBRARIES gphoto++ gphoto2 )
+  add_gtest(NAME exposure_parsing TYPE unit SOURCES test_exposure_parsing.cpp TARGET_LINK_LIBRARIES gphoto++ gphoto2 )
+  add_gtest(NAME read_image TYPE integration SOURCES test_read_image.cpp TARGET_LINK_LIBRARIES gphoto++ gphoto2 raw ${JPEG_LIBRARIES})
+  add_gtest(NAME version TYPE unit SOURCES test_version.cpp TARGET_LINK_LIBRARIES gphoto++ gphoto2)
+  add_gtest(NAME camera_settings TYPE unit SOURCES test_camera_settings.cpp TARGET_LINK_LIBRARIES gphoto++ gphoto2)
 
-add_executable(test_exposure_parsing test_exposure_parsing.cpp)
-target_link_libraries(test_exposure_parsing gphoto++ ${GTEST_BOTH_LIBRARIES} gphoto2)
-GTEST_ADD_TESTS(test_exposure_parsing "" test_exposure_parsing.cpp)
-
-find_package(JPEG REQUIRED)
-
-add_executable(test_read_image test_read_image.cpp)
-target_link_libraries(test_read_image gphoto++ ${GTEST_BOTH_LIBRARIES} gphoto2 raw pthread ${JPEG_LIBRARIES})
-GTEST_ADD_TESTS(test_read_image "" test_read_image.cpp)
-
-add_executable(test_version test_version.cpp)
-target_link_libraries(test_version gphoto++ ${GTEST_BOTH_LIBRARIES} gphoto2)
-GTEST_ADD_TESTS(test_version "" test_version.cpp)
-
-add_executable(test_camera_settings test_camera_settings.cpp)
-target_link_libraries(test_camera_settings gphoto++ ${GTEST_BOTH_LIBRARIES} gphoto2 pthread)
-GTEST_ADD_TESTS(test_camera_settings "" test_camera_settings.cpp)
+else(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/googletest/CMakeLists.txt")
+  message(WARNING "Tests are enabled but googletest submodule was not found")
+endif(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/googletest/CMakeLists.txt")

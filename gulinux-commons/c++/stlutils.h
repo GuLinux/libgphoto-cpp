@@ -25,8 +25,8 @@
 #include <chrono>
 #include <iomanip>
 #include <sstream>
+#include <numeric>
 
-#include "containers_stream.h"
 
 namespace GuLinux {
 class Scope {
